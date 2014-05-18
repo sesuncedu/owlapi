@@ -33,7 +33,6 @@ public class Clause {
      *        tag
      */
     public Clause(String tag) {
-        super();
         this.tag = tag;
     }
 
@@ -65,9 +64,7 @@ public class Clause {
      *             variable.
      */
     @Deprecated
-    public Clause() {
-        super();
-    }
+    public Clause() {}
 
     /** @return tag */
     public String getTag() {
@@ -247,8 +244,8 @@ public class Clause {
 
     private static boolean collectionsEquals(@Nullable Collection<?> c1,
             @Nullable Collection<?> c2) {
-        if (c1 == null || c1.size() == 0) {
-            return c2 == null || c2.size() == 0;
+        if (c1 == null || c1.isEmpty()) {
+            return c2 == null || c2.isEmpty();
         }
         if (c2 == null) {
             return false;
@@ -274,14 +271,14 @@ public class Clause {
     }
 
     @Override
-    public boolean equals(Object e) {
-        if (e == null || !(e instanceof Clause)) {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Clause)) {
             return false;
         }
-        if (e == this) {
+        if (obj == this) {
             return true;
         }
-        Clause other = (Clause) e;
+        Clause other = (Clause) obj;
         if (!getTag().equals(other.getTag())) {
             return false;
         }

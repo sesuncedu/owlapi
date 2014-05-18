@@ -47,11 +47,10 @@ public class RDFLiteral extends RDFNode {
      * @param datatype
      *        datatype IRI
      */
-    @SuppressWarnings("null")
-    public RDFLiteral(@Nonnull String literal, @Nullable String lang,
+    public RDFLiteral(@Nonnull String literal, @Nonnull String lang,
             @Nullable IRI datatype) {
         lexicalValue = checkNotNull(literal, "literal cannot be null");
-        this.lang = lang == null ? "" : lang.trim();
+        this.lang = lang;
         this.datatype = datatype == null ? OWL2Datatype.RDF_PLAIN_LITERAL
                 .getIRI() : datatype;
     }
@@ -82,14 +81,14 @@ public class RDFLiteral extends RDFNode {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this) {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
         }
-        if (!(o instanceof RDFLiteral)) {
+        if (!(obj instanceof RDFLiteral)) {
             return false;
         }
-        RDFLiteral other = (RDFLiteral) o;
+        RDFLiteral other = (RDFLiteral) obj;
         if (!lexicalValue.equals(other.lexicalValue)) {
             return false;
         }
@@ -143,15 +142,15 @@ public class RDFLiteral extends RDFNode {
     }
 
     @Override
-    public int compareTo(RDFNode b) {
-        if (!b.isLiteral()) {
+    public int compareTo(RDFNode o) {
+        if (!o.isLiteral()) {
             return -1;
         }
-        if (equals(b)) {
+        if (equals(o)) {
             return 0;
         }
         int diff = 0;
-        RDFLiteral lit2 = (RDFLiteral) b;
+        RDFLiteral lit2 = (RDFLiteral) o;
         diff = lexicalValue.compareTo(lit2.lexicalValue);
         if (diff == 0) {
             diff = getDatatype().compareTo(lit2.getDatatype());

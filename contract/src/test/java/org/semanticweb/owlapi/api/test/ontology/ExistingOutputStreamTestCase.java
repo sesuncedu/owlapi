@@ -29,7 +29,6 @@ import org.semanticweb.owlapi.io.StringDocumentTarget;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
-import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
 
 /**
  * API writers/storers/renderers should not close streams if they didn't open
@@ -56,8 +55,7 @@ public class ExistingOutputStreamTestCase extends TestBase {
     @Nonnull
     @Override
     protected StringDocumentTarget saveOntology(@Nonnull OWLOntology o,
-            OWLOntologyFormat format) throws UnknownOWLOntologyException,
-            OWLOntologyStorageException {
+            OWLOntologyFormat format) throws OWLOntologyStorageException {
         BufferedOutputStream os = new BufferedOutputStream(
                 new ByteArrayOutputStream());
         o.getOWLOntologyManager().saveOntology(o, format, os);

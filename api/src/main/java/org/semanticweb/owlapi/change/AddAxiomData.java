@@ -14,7 +14,6 @@ package org.semanticweb.owlapi.change;
 
 import javax.annotation.Nonnull;
 
-
 import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -33,7 +32,7 @@ public class AddAxiomData extends AxiomChangeData {
     private static final long serialVersionUID = 40000L;
 
     /**
-     * Constructs an {@link AddAxiomData} object which specifies the addition of
+     * Constructs an {@code AddAxiomData} object which specifies the addition of
      * an axiom to "some ontology".
      * 
      * @param axiom

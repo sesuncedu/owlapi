@@ -24,6 +24,7 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
  *         Management Group
  * @since 2.2.0
  */
+@SuppressWarnings("null")
 public abstract class AbstractFileRoundTrippingTestCase extends
         AbstractRoundTrippingTestCase {
 
@@ -31,8 +32,7 @@ public abstract class AbstractFileRoundTrippingTestCase extends
     protected OWLOntology createOntology() {
         try {
             String fileName = getFileName();
-            URL resource = getClass().getResource("/" + fileName);
-            @SuppressWarnings("null")
+            URL resource = getClass().getResource('/' + fileName);
             IRI iri = IRI.create(resource.toURI());
             return m.loadOntologyFromOntologyDocument(iri);
         } catch (URISyntaxException e) {

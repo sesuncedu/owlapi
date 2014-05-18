@@ -76,20 +76,20 @@ public class OWLClassLiteralCollector extends OWLObjectWalker<OWLObject> {
     private class OWLClassLiteralCollectorVisitor extends
             OWLObjectVisitorAdapter {
 
-        public OWLClassLiteralCollectorVisitor() {}
+        OWLClassLiteralCollectorVisitor() {}
 
         @Override
-        public void visit(OWLClass desc) {
+        public void visit(OWLClass ce) {
             List<OWLClassExpression> path = getClassExpressionPath();
             if (path.size() > 1) {
                 OWLClassExpression prev = path.get(path.size() - 2);
                 if (prev instanceof OWLObjectComplementOf) {
-                    neg.add(desc);
+                    neg.add(ce);
                 } else {
-                    pos.add(desc);
+                    pos.add(ce);
                 }
             } else {
-                pos.add(desc);
+                pos.add(ce);
             }
         }
     }

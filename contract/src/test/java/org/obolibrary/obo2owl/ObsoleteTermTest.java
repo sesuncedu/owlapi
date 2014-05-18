@@ -1,6 +1,6 @@
 package org.obolibrary.obo2owl;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Set;
 
@@ -17,10 +17,9 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class ObsoleteTermTest extends OboFormatTestBasics {
 
-    @SuppressWarnings("null")
     @Test
     public void testConvert() {
         // PARSE TEST FILE
@@ -50,6 +49,6 @@ public class ObsoleteTermTest extends OboFormatTestBasics {
         Frame tf = obodoc.getTermFrame("XX:0000034");
         Clause c = tf.getClause(OboFormatTag.TAG_IS_OBSELETE);
         Object v = c.getValue();
-        assertTrue(v.equals("true")); // should this be a Boolean object? TODO
+        assertEquals("true", v); // should this be a Boolean object? TODO
     }
 }

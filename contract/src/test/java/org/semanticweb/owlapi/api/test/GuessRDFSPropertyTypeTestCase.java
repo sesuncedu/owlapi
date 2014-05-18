@@ -46,29 +46,25 @@ import org.semanticweb.owlapi.search.Searcher;
  * See <a href="http://www.cidoc-crm.org/">The CIDOC Web Site</a> for more
  * details.
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class GuessRDFSPropertyTypeTestCase {
 
     @Nonnull
     private static final String CIDOC_FILE = "/cidoc_crm_v5.0.4_official_release.rdfs.xml";
     @Nonnull
     private static final String CIDOC_PREFIX = "http://www.cidoc-crm.org/cidoc-crm/";
-    @SuppressWarnings("null")
     @Nonnull
     private OWLOntology cidocOntology;
-    @SuppressWarnings("null")
     @Nonnull
     private PrefixOWLOntologyFormat prefixOWLOntologyFormat;
 
     @Before
-    public void setUp()
-            throws org.semanticweb.owlapi.model.UnknownOWLOntologyException,
-            OWLOntologyCreationException {
+    public void setUp() throws OWLOntologyCreationException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntologyLoaderConfiguration config = new OWLOntologyLoaderConfiguration()
                 .setStrict(false);
         @SuppressWarnings("resource")
-        InputStream in = this.getClass().getResourceAsStream(CIDOC_FILE);
+        InputStream in = getClass().getResourceAsStream(CIDOC_FILE);
         assertNotNull("can't find CIDOC_FILE", in);
         cidocOntology = manager.loadOntologyFromOntologyDocument(
                 new StreamDocumentSource(in), config);

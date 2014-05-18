@@ -15,7 +15,6 @@ package uk.ac.manchester.cs.owl.owlapi;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLAxiomVisitorEx;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -28,8 +27,6 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 /** @author ignazio */
 public class ClassAxiomByClassPointer extends
         MapPointer<OWLClass, OWLClassAxiom> {
-
-    private static final long serialVersionUID = 40000L;
 
     /**
      * @param t

@@ -37,7 +37,7 @@ import org.semanticweb.owlapi.util.ShortFormProvider;
 public class ManchesterOWLSyntaxPrefixNameShortFormProvider implements
         ShortFormProvider {
 
-    private DefaultPrefixManager prefixManager;
+    private final DefaultPrefixManager prefixManager;
 
     /**
      * Constructs a short form provider that reuses any prefix name mappings
@@ -103,7 +103,7 @@ public class ManchesterOWLSyntaxPrefixNameShortFormProvider implements
      *        The IRI
      * @return The short form for the specified IRI
      */
-    public String getShortForm(@Nonnull IRI iri) {
+    public static String getShortForm(@Nonnull IRI iri) {
         return iri.toQuotedString();
     }
 

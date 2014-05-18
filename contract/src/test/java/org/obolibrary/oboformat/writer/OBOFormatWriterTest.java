@@ -19,17 +19,14 @@ import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatConstants.OboFormatTag;
 
 /** Tests for {@link OBOFormatWriter}. */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class OBOFormatWriterTest extends OboFormatTestBasics {
 
     /**
      * Test a special case of the specification. For intersections put the genus
      * before the differentia, instead of the default case-insensitive
      * alphabetical ordering.
-     * 
-     * @throws Exception
      */
-    @SuppressWarnings("null")
     @Test
     public void testSortTermClausesIntersection_of() {
         OBODoc oboDoc = parseOBOFile("equivtest.obo");
@@ -78,15 +75,13 @@ public class OBOFormatWriterTest extends OboFormatTestBasics {
                 writeObsolete(Boolean.TRUE.toString()));
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     private static String writeObsolete(Object value) throws Exception {
         Clause cl = new Clause(OboFormatTag.TAG_IS_OBSELETE);
         cl.addValue(value);
-        OBOFormatWriter writer = new OBOFormatWriter();
         StringWriter out = new StringWriter();
         BufferedWriter bufferedWriter = new BufferedWriter(out);
-        writer.write(cl, bufferedWriter, null);
+        OBOFormatWriter.write(cl, bufferedWriter, null);
         bufferedWriter.close();
         return out.toString().trim();
     }
@@ -94,8 +89,6 @@ public class OBOFormatWriterTest extends OboFormatTestBasics {
     /**
      * Test that the OBO format writer only writes one new-line at the end of
      * the file.
-     * 
-     * @throws Exception
      */
     @Test
     public void testWriteEndOfFile() throws Exception {
@@ -147,7 +140,6 @@ public class OBOFormatWriterTest extends OboFormatTestBasics {
         }
         reader.close();
         String input = sb.toString();
-        @SuppressWarnings("null")
         OBODoc obodoc = parseOboToString(input);
         String written = renderOboToString(obodoc);
         assertEquals(input, written);

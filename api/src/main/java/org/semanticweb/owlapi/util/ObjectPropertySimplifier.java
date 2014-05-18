@@ -12,7 +12,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.util;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
 import javax.annotation.Nonnull;
 
@@ -72,20 +72,19 @@ public class ObjectPropertySimplifier {
 
     private static class Simplifier implements OWLPropertyExpressionVisitor {
 
-        private OWLObjectProperty property;
+        private OWLObjectProperty p;
         private int depth;
 
-        public Simplifier() {}
+        Simplifier() {}
 
         public void reset() {
             depth = 0;
-            property = null;
+            p = null;
         }
 
-        @SuppressWarnings("null")
         @Nonnull
         public OWLObjectProperty getProperty() {
-            return property;
+            return verifyNotNull(p);
         }
 
         public boolean isInverse() {
@@ -93,20 +92,20 @@ public class ObjectPropertySimplifier {
         }
 
         @Override
-        public void visit(OWLObjectProperty p) {
-            property = p;
+        public void visit(OWLObjectProperty property) {
+            p = property;
         }
 
         @Override
-        public void visit(OWLObjectInverseOf p) {
+        public void visit(OWLObjectInverseOf property) {
             depth++;
-            p.getInverse().accept(this);
+            property.getInverse().accept(this);
         }
 
         @Override
-        public void visit(@SuppressWarnings("unused") OWLDataProperty p) {}
+        public void visit(OWLDataProperty property) {}
 
         @Override
-        public void visit(@SuppressWarnings("unused") OWLAnnotationProperty p) {}
+        public void visit(OWLAnnotationProperty property) {}
     }
 }

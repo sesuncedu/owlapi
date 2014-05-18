@@ -48,6 +48,11 @@ import org.semanticweb.owlapi.model.OWLRuntimeException;
 public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
 
 
+
+
+
+
+
 //@formatter:off
     /** RDF_XML_LITERAL */          RDF_XML_LITERAL          (RDF,  "XMLLiteral",   Category.CAT_STRING_WITHOUT_LANGUAGE_TAG, false, ".*"), 
     /** RDFS_LITERAL */             RDFS_LITERAL             (RDFS, "Literal",      Category.CAT_UNIVERSAL,                   false, ".*"),
@@ -101,7 +106,7 @@ public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
      * Gets all of the built in datatype IRIs.
      * 
      * @return A set of IRIs corresponding to the set of IRIs of all built in
-     *         {@link OWL2Datatype}s.
+     *         {@code OWL2Datatype}s.
      */
     @Nonnull
     public static Set<IRI> getDatatypeIRIs() {
@@ -143,11 +148,11 @@ public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
 
     /**
      * Given an IRI that identifies an {@link OWLDatatype}, this method obtains
-     * the corresponding {@link OWL2Datatype}.
+     * the corresponding {@code OWL2Datatype}.
      * 
      * @param datatype
      *        The datatype IRI. Not {@code null}.
-     * @return The {@link OWL2Datatype} that has the specified {@link IRI}.
+     * @return The {@code OWL2Datatype} that has the specified {@link IRI}.
      * @throws OWLRuntimeException
      *         if the specified IRI is not a built in datatype IRI.
      */
@@ -173,7 +178,7 @@ public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
     private final Category category;
     private final boolean finite;
     @Nonnull
-    private Pattern pattern;
+    private final Pattern pattern;
     @Nonnull
     private final String regExpression;
     @Nonnull
@@ -184,7 +189,7 @@ public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
             @Nonnull Category category, boolean finite, @Nonnull String regEx) {
         iri = IRI.create(namespace.toString(), shortForm);
         this.shortForm = shortForm;
-        prefixedName = namespace.getPrefixName() + ":" + shortForm;
+        prefixedName = namespace.getPrefixName() + ':' + shortForm;
         this.category = category;
         this.finite = finite;
         regExpression = regEx;
@@ -257,7 +262,7 @@ public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
      * @param factory
      *        the OWLDataFactory. Not {@code null}.
      * @return An {@link OWLDatatype} that has the same IRI as this
-     *         {@link OWL2Datatype}. Not {@code null}.
+     *         {@code OWL2Datatype}. Not {@code null}.
      */
     @Nonnull
     public OWLDatatype getDatatype(@Nonnull OWLDataFactory factory) {
@@ -320,18 +325,37 @@ public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
          * No normalization is done, the value is not changed (this is the
          * behavior required by [XML] for element content).
          */
-        PRESERVE,
+        PRESERVE {
+
+            @Override
+            public String getNormalisedString(@Nonnull String s) {
+                return s;
+            }
+        },
         /**
          * All occurrences of #x9 (tab), #xA (line feed) and #xD (carriage
          * return) are replaced with #x20 (space).
          */
-        REPLACE,
+        REPLACE {
+
+            @Override
+            public String getNormalisedString(@Nonnull String s) {
+                return s.replaceAll("\\t|\\n|\\r", " ");
+            }
+        },
         /**
          * After the processing implied by replace, contiguous sequences of
          * #x20's are collapsed to a single #x20, and any #x20 at the start or
          * end of the string is then removed.
          */
-        COLLAPSE;
+        COLLAPSE {
+
+            @Override
+            public String getNormalisedString(@Nonnull String s) {
+                return REPLACE.getNormalisedString(s).replaceAll("\\s+", " ")
+                        .trim();
+            }
+        };
 
         /**
          * Gets the normalised version of a string.
@@ -340,17 +364,6 @@ public enum OWL2Datatype implements HasIRI, HasShortForm, HasPrefixedName {
          *        The string to normalise
          * @return The normalised string
          */
-        public String getNormalisedString(@Nonnull String s) {
-            switch (this) {
-                case REPLACE:
-                    return s.replaceAll("\\t|\\n|\\r", " ");
-                case COLLAPSE:
-                    return REPLACE.getNormalisedString(s)
-                            .replaceAll("\\s+", " ").trim();
-                case PRESERVE:
-                default:
-                    return s;
-            }
-        }
+        public abstract String getNormalisedString(@Nonnull String s);
     }
 }

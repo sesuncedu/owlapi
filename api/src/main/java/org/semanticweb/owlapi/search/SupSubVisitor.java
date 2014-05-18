@@ -13,9 +13,9 @@ import org.semanticweb.owlapi.util.OWLAxiomVisitorExAdapter;
 class SupSubVisitor<C extends OWLObject> extends OWLAxiomVisitorExAdapter<C> {
 
     private static final long serialVersionUID = 40000L;
-    private boolean sup;
+    private final boolean sup;
 
-    public SupSubVisitor(boolean sup) {
+    SupSubVisitor(boolean sup) {
         this.sup = sup;
     }
 

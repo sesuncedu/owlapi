@@ -14,7 +14,6 @@ package org.semanticweb.owlapi.model;
 
 import javax.annotation.Nonnull;
 
-
 import org.semanticweb.owlapi.change.RemoveAxiomData;
 
 /**
@@ -26,6 +25,8 @@ import org.semanticweb.owlapi.change.RemoveAxiomData;
  * @since 2.0.0
  */
 public class RemoveAxiom extends OWLAxiomChange {
+
+    private static final long serialVersionUID = 40000L;
 
     /**
      * @param ont
@@ -78,13 +79,7 @@ public class RemoveAxiom extends OWLAxiomChange {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("RemoveAxiom(");
-        sb.append(getAxiom().toString());
-        sb.append(" OntologyID(");
-        sb.append(getOntology().getOntologyID());
-        sb.append(")");
-        sb.append(")");
-        return sb.toString();
+        return String.format("RemoveAxiom(%s OntologyID(%s))", getAxiom(),
+                getOntology().getOntologyID());
     }
 }

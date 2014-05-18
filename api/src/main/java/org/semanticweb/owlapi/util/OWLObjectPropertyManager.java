@@ -32,7 +32,6 @@ import javax.annotation.Nonnull;
 import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLInverseObjectPropertiesAxiom;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -48,7 +47,7 @@ import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
  */
 public class OWLObjectPropertyManager {
 
-    static final class SetSizeComparator implements
+    static class SetSizeComparator implements
             Comparator<Set<OWLObjectPropertyExpression>>, Serializable {
 
         private static final long serialVersionUID = 40000L;
@@ -63,9 +62,7 @@ public class OWLObjectPropertyManager {
     @Nonnull
     private final OWLOntologyManager man;
     @Nonnull
-    private OWLOntology ontology;
-    @Nonnull
-    private final Set<OWLObjectPropertyExpression> properties = new HashSet<OWLObjectPropertyExpression>();
+    private final OWLOntology ontology;
     @Nonnull
     private final Map<OWLObjectPropertyExpression, Set<OWLObjectPropertyExpression>> hierarchy = new HashMap<OWLObjectPropertyExpression, Set<OWLObjectPropertyExpression>>();
     @Nonnull
@@ -92,12 +89,6 @@ public class OWLObjectPropertyManager {
             @Nonnull OWLOntology ont) {
         man = checkNotNull(manager, "manager cannot be null");
         ontology = checkNotNull(ont, "ontology cannot be null");
-        for (OWLOntology o : man.getImportsClosure(ontology)) {
-            for (OWLObjectProperty prop : o.getObjectPropertiesInSignature()) {
-                properties.add(prop);
-                properties.add(prop.getInverseProperty());
-            }
-        }
         reset();
     }
 
@@ -515,7 +506,6 @@ public class OWLObjectPropertyManager {
      * @param stackProps
      *        stack entities
      */
-    @SuppressWarnings("boxing")
     public static void tarjan(@Nonnull Set<OWLOntology> ontologies,
             @Nonnull OWLObjectPropertyExpression prop, int index,
             @Nonnull Stack<OWLObjectPropertyExpression> stack,

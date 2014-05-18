@@ -49,6 +49,8 @@ import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
 public class AddClassExpressionClosureAxiom extends
         AbstractCompositeOntologyChange {
 
+    private static final long serialVersionUID = 40000L;
+
     /**
      * Creates a composite change that will add a closure axiom for a given
      * class along a specified property.
@@ -113,7 +115,7 @@ public class AddClassExpressionClosureAxiom extends
          * @param p
          *        the p
          */
-        public FillerCollector(@Nonnull OWLObjectPropertyExpression p) {
+        FillerCollector(@Nonnull OWLObjectPropertyExpression p) {
             property = checkNotNull(p, "p cannot be null");
         }
 
@@ -124,17 +126,17 @@ public class AddClassExpressionClosureAxiom extends
         }
 
         @Override
-        public void visit(@Nonnull OWLObjectSomeValuesFrom desc) {
-            if (desc.getProperty().equals(property)) {
-                fillers.add(desc.getFiller());
+        public void visit(@Nonnull OWLObjectSomeValuesFrom ce) {
+            if (ce.getProperty().equals(property)) {
+                fillers.add(ce.getFiller());
             }
         }
 
         @Override
-        public void visit(@Nonnull OWLObjectHasValue desc) {
-            if (desc.getProperty().equals(property)) {
+        public void visit(@Nonnull OWLObjectHasValue ce) {
+            if (ce.getProperty().equals(property)) {
                 fillers.add(getDataFactory().getOWLObjectOneOf(
-                        CollectionFactory.createSet(desc.getFiller())));
+                        CollectionFactory.createSet(ce.getFiller())));
             }
         }
     }

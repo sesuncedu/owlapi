@@ -68,27 +68,26 @@ public class ManchesterParseErrorTestCase extends TestBase {
 
         private final OWLDataFactory factory;
 
-        public MockEntityChecker(OWLDataFactory factory) {
+        MockEntityChecker(OWLDataFactory factory) {
             this.factory = factory;
         }
 
         @Nullable
         @Override
-        public OWLClass getOWLClass(@SuppressWarnings("unused") String name) {
+        public OWLClass getOWLClass(String name) {
             return null;
         }
 
         @Nullable
         @Override
-        public OWLObjectProperty getOWLObjectProperty(
-                @SuppressWarnings("unused") String name) {
+        public OWLObjectProperty getOWLObjectProperty(String name) {
             return null;
         }
 
         @Nullable
         @Override
         public OWLDataProperty getOWLDataProperty(@Nullable String name) {
-            if (name != null && name.equals("p")) {
+            if ("p".equals(name)) {
                 return factory
                         .getOWLDataProperty(IRI("http://protege.org/Test.owl#p"));
             } else {
@@ -98,22 +97,20 @@ public class ManchesterParseErrorTestCase extends TestBase {
 
         @Nullable
         @Override
-        public OWLAnnotationProperty getOWLAnnotationProperty(
-                @SuppressWarnings("unused") String name) {
+        public OWLAnnotationProperty getOWLAnnotationProperty(String name) {
             return null;
         }
 
         @Nullable
         @Override
-        public OWLNamedIndividual getOWLIndividual(
-                @SuppressWarnings("unused") String name) {
+        public OWLNamedIndividual getOWLIndividual(String name) {
             return null;
         }
 
         @Nullable
         @Override
         public OWLDatatype getOWLDatatype(@Nullable String name) {
-            if (name != null && name.equals("rdfs:Literal")) {
+            if ("rdfs:Literal".equals(name)) {
                 return factory.getTopDatatype();
             } else {
                 return null;

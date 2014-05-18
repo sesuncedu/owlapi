@@ -14,7 +14,6 @@ package org.semanticweb.owlapi.formats;
 
 import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,6 +23,7 @@ import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.PrefixManager;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
+import org.semanticweb.owlapi.util.StringComparator;
 
 /**
  * A PrefixOWLOntologyFormat delegates all PrefixManager operations to a
@@ -77,13 +77,13 @@ public abstract class PrefixOWLOntologyFormat extends OWLOntologyFormat
     }
 
     @Override
-    public void setDefaultPrefix(String namespace) {
-        nsm.setDefaultPrefix(namespace);
+    public void setDefaultPrefix(String defaultPrefix) {
+        nsm.setDefaultPrefix(defaultPrefix);
     }
 
     @Override
-    public boolean containsPrefixMapping(String prefix) {
-        return nsm.containsPrefixMapping(prefix);
+    public boolean containsPrefixMapping(String prefixName) {
+        return nsm.containsPrefixMapping(prefixName);
     }
 
     @Override
@@ -102,8 +102,8 @@ public abstract class PrefixOWLOntologyFormat extends OWLOntologyFormat
     }
 
     @Override
-    public IRI getIRI(String iri) {
-        return nsm.getIRI(iri);
+    public IRI getIRI(String prefixIRI) {
+        return nsm.getIRI(prefixIRI);
     }
 
     @Override
@@ -112,8 +112,13 @@ public abstract class PrefixOWLOntologyFormat extends OWLOntologyFormat
     }
 
     @Override
-    public void copyPrefixesFrom(PrefixManager prefixManager) {
-        nsm.copyPrefixesFrom(prefixManager);
+    public void copyPrefixesFrom(PrefixManager from) {
+        nsm.copyPrefixesFrom(from);
+    }
+
+    @Override
+    public void copyPrefixesFrom(Map<String, String> from) {
+        nsm.copyPrefixesFrom(from);
     }
 
     @Override
@@ -122,12 +127,12 @@ public abstract class PrefixOWLOntologyFormat extends OWLOntologyFormat
     }
 
     @Override
-    public Comparator<String> getPrefixComparator() {
+    public StringComparator getPrefixComparator() {
         return nsm.getPrefixComparator();
     }
 
     @Override
-    public void setPrefixComparator(Comparator<String> comparator) {
+    public void setPrefixComparator(StringComparator comparator) {
         nsm.setPrefixComparator(comparator);
     }
 }

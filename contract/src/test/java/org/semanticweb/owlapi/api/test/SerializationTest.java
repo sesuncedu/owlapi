@@ -52,7 +52,7 @@ import org.semanticweb.owlapi.util.DefaultPrefixManager;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.semanticweb.owlapi.vocab.OWLFacet;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class SerializationTest {
 
     @Nonnull
@@ -103,19 +103,18 @@ public class SerializationTest {
     @Nonnull
     Set<OWLPropertyExpression> setowlpropertyexpression = new HashSet<OWLPropertyExpression>();
     @Nonnull
-    OWLFacetRestriction[] lowlfacetrestriction = new OWLFacetRestriction[] { f
-            .getOWLFacetRestriction(owlfacet, 1) };
+    OWLFacetRestriction[] lowlfacetrestriction = { f.getOWLFacetRestriction(
+            owlfacet, 1) };
     @Nonnull
-    OWLFacetRestriction[] nulllowlfacetrestriction = new OWLFacetRestriction[] { f
+    OWLFacetRestriction[] nulllowlfacetrestriction = { f
             .getOWLFacetRestriction(owlfacet, 1) };
     @Nonnull
     Set<OWLClassExpression> setowlclassexpression = new HashSet<OWLClassExpression>();
     @Nonnull
     Set<OWLFacetRestriction> setowlfacetrestriction = new HashSet<OWLFacetRestriction>();
     @Nonnull
-    OWLPropertyExpression[] owlpropertyexpression = new OWLPropertyExpression[] {};
+    OWLPropertyExpression[] owlpropertyexpression = {};
 
-    @SuppressWarnings("null")
     @Test
     public void testrun() throws Exception {
         OWLOntologyManager m = OWLManager.createOWLOntologyManager();

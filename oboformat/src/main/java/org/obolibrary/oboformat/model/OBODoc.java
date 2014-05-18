@@ -36,9 +36,7 @@ public class OBODoc {
     protected Collection<OBODoc> importedOBODocs = new LinkedList<OBODoc>();
 
     /** default constructor. */
-    public OBODoc() {
-        super();
-    }
+    public OBODoc() {}
 
     /** @return the header frame */
     public Frame getHeaderFrame() {
@@ -93,7 +91,7 @@ public class OBODoc {
      */
     @Nullable
     public Frame getTermFrame(String id, boolean followImport) {
-        if (followImport == false) {
+        if (!followImport) {
             return termFrameMap.get(id);
         }
         // this set is used to check for cycles
@@ -147,7 +145,7 @@ public class OBODoc {
      */
     @Nullable
     public Frame getTypedefFrame(String id, boolean followImports) {
-        if (followImports == false) {
+        if (!followImports) {
             return typedefFrameMap.get(id);
         }
         // this set is used to check for cycles
@@ -294,7 +292,7 @@ public class OBODoc {
      * @return IRI prefix as string
      */
     @Nullable
-    public String getIDSpace(@Nonnull String prefix) {
+    public static String getIDSpace(@Nonnull String prefix) {
         // built-in
         if (prefix.equals("RO")) {
             return "http://purl.obolibrary.org/obo/RO_";
@@ -308,8 +306,8 @@ public class OBODoc {
      *        the prefix
      * @return true, if is treat xrefs as equivalent
      */
-    public boolean isTreatXrefsAsEquivalent(@Nullable String prefix) {
-        if (prefix != null && prefix.equals("RO")) {
+    public static boolean isTreatXrefsAsEquivalent(@Nullable String prefix) {
+        if ("RO".equals(prefix)) {
             return true;
         }
         return false;
@@ -384,6 +382,6 @@ public class OBODoc {
     /** @return the header descriptor */
     @Nonnull
     private String getHeaderDescriptor() {
-        return "OBODoc(" + headerFrame + ")";
+        return "OBODoc(" + headerFrame + ')';
     }
 }

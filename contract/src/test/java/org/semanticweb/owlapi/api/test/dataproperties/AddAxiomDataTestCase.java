@@ -28,15 +28,13 @@ import org.semanticweb.owlapi.model.OWLOntology;
  *         Research Group
  * @since 3.2.0
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class AddAxiomDataTestCase {
 
-    @SuppressWarnings("null")
     @Nonnull
-    private OWLAxiom mockAxiom = mock(OWLAxiom.class);
-    @SuppressWarnings("null")
+    private final OWLAxiom mockAxiom = mock(OWLAxiom.class);
     @Nonnull
-    private OWLOntology mockOntology = mock(OWLOntology.class);
+    private final OWLOntology mockOntology = mock(OWLOntology.class);
 
     @Test
     public void testEquals() {

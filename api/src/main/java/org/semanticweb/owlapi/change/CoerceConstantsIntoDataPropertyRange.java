@@ -54,6 +54,8 @@ import org.semanticweb.owlapi.util.OWLObjectDuplicator;
 public class CoerceConstantsIntoDataPropertyRange extends
         AbstractCompositeOntologyChange {
 
+    private static final long serialVersionUID = 40000L;
+
     /**
      * Instantiates a new coerce constants into data property range.
      * 
@@ -102,7 +104,7 @@ public class CoerceConstantsIntoDataPropertyRange extends
          * @param m
          *        the m
          */
-        public OWLConstantReplacer(@Nonnull OWLDataFactory dataFactory,
+        OWLConstantReplacer(@Nonnull OWLDataFactory dataFactory,
                 @Nonnull Map<OWLDataPropertyExpression, OWLDatatype> m) {
             super(dataFactory);
             map = m;
@@ -131,68 +133,72 @@ public class CoerceConstantsIntoDataPropertyRange extends
         }
 
         @Override
-        public void visit(@Nonnull OWLDataHasValue desc) {
-            super.visit(desc);
-            setLastObject(getDataFactory().getOWLDataHasValue(
-                    desc.getProperty(),
-                    process(desc.getProperty(), desc.getFiller())));
+        public void visit(@Nonnull OWLDataHasValue ce) {
+            super.visit(ce);
+            setLastObject(getDataFactory().getOWLDataHasValue(ce.getProperty(),
+                    process(ce.getProperty(), ce.getFiller())));
         }
 
         @Override
-        public void visit(OWLDataSomeValuesFrom desc) {
-            super.visit(desc);
-            if (desc instanceof OWLDataOneOf) {
-                setLastObject(getDataFactory().getOWLDataSomeValuesFrom(
-                        desc.getProperty(),
-                        process(desc.getProperty(),
-                                (OWLDataOneOf) desc.getFiller())));
+        public void visit(OWLDataSomeValuesFrom ce) {
+            super.visit(ce);
+            if (ce instanceof OWLDataOneOf) {
+                setLastObject(getDataFactory()
+                        .getOWLDataSomeValuesFrom(
+                                ce.getProperty(),
+                                process(ce.getProperty(),
+                                        (OWLDataOneOf) ce.getFiller())));
             }
         }
 
         @Override
-        public void visit(OWLDataMinCardinality desc) {
-            super.visit(desc);
-            if (desc instanceof OWLDataOneOf) {
-                setLastObject(getDataFactory().getOWLDataMinCardinality(
-                        desc.getCardinality(),
-                        desc.getProperty(),
-                        process(desc.getProperty(),
-                                (OWLDataOneOf) desc.getFiller())));
+        public void visit(OWLDataMinCardinality ce) {
+            super.visit(ce);
+            if (ce instanceof OWLDataOneOf) {
+                setLastObject(getDataFactory()
+                        .getOWLDataMinCardinality(
+                                ce.getCardinality(),
+                                ce.getProperty(),
+                                process(ce.getProperty(),
+                                        (OWLDataOneOf) ce.getFiller())));
             }
         }
 
         @Override
-        public void visit(OWLDataMaxCardinality desc) {
-            super.visit(desc);
-            if (desc instanceof OWLDataOneOf) {
-                setLastObject(getDataFactory().getOWLDataMaxCardinality(
-                        desc.getCardinality(),
-                        desc.getProperty(),
-                        process(desc.getProperty(),
-                                (OWLDataOneOf) desc.getFiller())));
+        public void visit(OWLDataMaxCardinality ce) {
+            super.visit(ce);
+            if (ce instanceof OWLDataOneOf) {
+                setLastObject(getDataFactory()
+                        .getOWLDataMaxCardinality(
+                                ce.getCardinality(),
+                                ce.getProperty(),
+                                process(ce.getProperty(),
+                                        (OWLDataOneOf) ce.getFiller())));
             }
         }
 
         @Override
-        public void visit(OWLDataExactCardinality desc) {
-            super.visit(desc);
-            if (desc instanceof OWLDataOneOf) {
-                setLastObject(getDataFactory().getOWLDataExactCardinality(
-                        desc.getCardinality(),
-                        desc.getProperty(),
-                        process(desc.getProperty(),
-                                (OWLDataOneOf) desc.getFiller())));
+        public void visit(OWLDataExactCardinality ce) {
+            super.visit(ce);
+            if (ce instanceof OWLDataOneOf) {
+                setLastObject(getDataFactory()
+                        .getOWLDataExactCardinality(
+                                ce.getCardinality(),
+                                ce.getProperty(),
+                                process(ce.getProperty(),
+                                        (OWLDataOneOf) ce.getFiller())));
             }
         }
 
         @Override
-        public void visit(OWLDataAllValuesFrom desc) {
-            super.visit(desc);
-            if (desc instanceof OWLDataOneOf) {
-                setLastObject(getDataFactory().getOWLDataAllValuesFrom(
-                        desc.getProperty(),
-                        process(desc.getProperty(),
-                                (OWLDataOneOf) desc.getFiller())));
+        public void visit(OWLDataAllValuesFrom ce) {
+            super.visit(ce);
+            if (ce instanceof OWLDataOneOf) {
+                setLastObject(getDataFactory()
+                        .getOWLDataAllValuesFrom(
+                                ce.getProperty(),
+                                process(ce.getProperty(),
+                                        (OWLDataOneOf) ce.getFiller())));
             }
         }
 

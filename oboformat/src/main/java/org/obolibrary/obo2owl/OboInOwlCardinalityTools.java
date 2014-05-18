@@ -43,7 +43,7 @@ public class OboInOwlCardinalityTools {
      * Functor for resolving conflicts for an annotation property and its
      * cardinality constraint.
      */
-    public static interface AnnotationCardinalityConfictHandler {
+    public interface AnnotationCardinalityConfictHandler {
 
         /**
          * Resolve a conflict for a given annotation property and axioms. The
@@ -61,7 +61,7 @@ public class OboInOwlCardinalityTools {
          *         AnnotationCardinalityException
          */
         @Nonnull
-        public List<OWLAnnotationAssertionAxiom> handleConflict(
+        List<OWLAnnotationAssertionAxiom> handleConflict(
                 @Nonnull OWLEntity entity,
                 @Nonnull OWLAnnotationProperty property,
                 @Nonnull Collection<OWLAnnotationAssertionAxiom> axioms)
@@ -81,7 +81,7 @@ public class OboInOwlCardinalityTools {
          *         AnnotationCardinalityException
          */
         @Nonnull
-        public List<OWLAnnotation> handleConflict(
+        List<OWLAnnotation> handleConflict(
                 @Nonnull OWLAnnotationProperty property,
                 @Nonnull Collection<OWLAnnotation> ontologyAnnotations)
                 throws AnnotationCardinalityException;
@@ -91,7 +91,7 @@ public class OboInOwlCardinalityTools {
      * Functor for reporting conflicts for an annotation property and its
      * cardinality constraint.
      */
-    public static interface AnnotationCardinalityReporter {
+    public interface AnnotationCardinalityReporter {
 
         /**
          * Report a conflict for a given annotation property and axioms.
@@ -103,7 +103,7 @@ public class OboInOwlCardinalityTools {
          * @param axioms
          *        axioms
          */
-        public void reportConflict(@Nonnull OWLEntity entity,
+        void reportConflict(@Nonnull OWLEntity entity,
                 @Nonnull OWLAnnotationProperty property,
                 @Nonnull Collection<OWLAnnotationAssertionAxiom> axioms);
 
@@ -116,7 +116,7 @@ public class OboInOwlCardinalityTools {
          * @param ontologyAnnotations
          *        ontologyAnnotations
          */
-        public void reportConflict(@Nonnull OWLAnnotationProperty property,
+        void reportConflict(@Nonnull OWLAnnotationProperty property,
                 @Nonnull Collection<OWLAnnotation> ontologyAnnotations);
     }
 
@@ -374,9 +374,9 @@ public class OboInOwlCardinalityTools {
         public List<OWLAnnotationAssertionAxiom> handleConflict(
                 @Nonnull OWLEntity entity,
                 @Nonnull OWLAnnotationProperty property,
-                @Nonnull Collection<OWLAnnotationAssertionAxiom> annotations)
+                @Nonnull Collection<OWLAnnotationAssertionAxiom> axioms)
                 throws AnnotationCardinalityException {
-            if (annotations.size() > 1) {
+            if (axioms.size() > 1) {
                 String tag = OWLAPIOwl2Obo.owlObjectToTag(property);
                 if (tag == null) {
                     tag = property.getIRI().toString();
@@ -385,7 +385,7 @@ public class OboInOwlCardinalityTools {
                 // (may be random)
                 LOGGER.info("Fixing multiple {} tags for entity: {}", tag,
                         entity.getIRI());
-                return listOfFirst(annotations);
+                return listOfFirst(axioms);
             }
             throw new AnnotationCardinalityException(
                     "Could not resolve conflict for property: " + property);

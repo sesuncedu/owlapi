@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.util;
 
+import javax.annotation.Nonnull;
+
 import org.semanticweb.owlapi.model.OWLDataComplementOf;
 import org.semanticweb.owlapi.model.OWLDataIntersectionOf;
 import org.semanticweb.owlapi.model.OWLDataOneOf;
@@ -46,7 +48,7 @@ public class OWLDataVisitorExAdapter<O> extends
      * @param defaultReturnValue
      *        default return value
      */
-    public OWLDataVisitorExAdapter(O defaultReturnValue) {
+    public OWLDataVisitorExAdapter(@Nonnull O defaultReturnValue) {
         super(defaultReturnValue);
     }
 
@@ -86,7 +88,7 @@ public class OWLDataVisitorExAdapter<O> extends
     }
 
     @Override
-    public O visit(OWLLiteral literal) {
-        return doDefault(literal);
+    public O visit(OWLLiteral node) {
+        return doDefault(node);
     }
 }

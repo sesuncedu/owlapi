@@ -32,11 +32,11 @@ import org.semanticweb.owlapi.model.IRI;
 public class XMLWriterNamespaceManager {
 
     @Nonnull
-    private Map<String, String> prefixNamespaceMap = new HashMap<String, String>();
+    private final Map<String, String> prefixNamespaceMap = new HashMap<String, String>();
     @Nonnull
-    private Map<String, String> namespacePrefixMap = new HashMap<String, String>();
+    private final Map<String, String> namespacePrefixMap = new HashMap<String, String>();
     @Nonnull
-    private Map<String, String> wellknownNamespaces = new HashMap<String, String>();
+    private final Map<String, String> wellknownNamespaces = new HashMap<String, String>();
     @Nonnull
     private String defaultNamespace;
 
@@ -121,7 +121,7 @@ public class XMLWriterNamespaceManager {
         for (String ns : namespacePrefixMap.keySet()) {
             if (name.startsWith(ns)) {
                 String localName = name.substring(ns.length(), name.length());
-                return namespacePrefixMap.get(ns) + ":" + localName;
+                return namespacePrefixMap.get(ns) + ':' + localName;
             }
         }
         return name;
@@ -142,7 +142,7 @@ public class XMLWriterNamespaceManager {
         String candidate = namespacePrefixMap.get(name.getNamespace());
         if (candidate != null) {
             String localName = name.getFragment();
-            return candidate + ":" + localName;
+            return candidate + ':' + localName;
         }
         return name.toString();
     }
@@ -197,7 +197,7 @@ public class XMLWriterNamespaceManager {
     @Nonnull
     public String getDefaultPrefix() {
         for (String prefix : prefixNamespaceMap.keySet()) {
-            if (!prefix.equals("")) {
+            if (!prefix.isEmpty()) {
                 // if the default has a blank entry then skip it
                 String ns = prefixNamespaceMap.get(prefix);
                 if (ns.equals(defaultNamespace)) {

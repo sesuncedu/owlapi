@@ -17,7 +17,6 @@ import static org.semanticweb.owlapi.search.Searcher.annotations;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +38,6 @@ import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.AddOntologyAnnotation;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
-import org.semanticweb.owlapi.model.OWLAnnotationObjectVisitorEx;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -93,7 +91,6 @@ import org.semanticweb.owlapi.util.InferredOntologyGenerator;
 import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
 import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
 import org.semanticweb.owlapi.util.OWLEntityRemover;
-import org.semanticweb.owlapi.util.OWLObjectVisitorExAdapter;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import org.semanticweb.owlapi.util.OWLOntologyWalker;
 import org.semanticweb.owlapi.util.OWLOntologyWalkerVisitorEx;
@@ -108,17 +105,17 @@ import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class TutorialSnippets {
 
     @Nonnull
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
-    @SuppressWarnings("null")
     @Nonnull
-    private static Logger log = LoggerFactory.getLogger(TutorialSnippets.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(TutorialSnippets.class);
     @Nonnull
-    private final static String koala = "<?xml version=\"1.0\"?>\n"
+    private static final String koala = "<?xml version=\"1.0\"?>\n"
             + "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\""
             + " xmlns=\"http://protege.stanford.edu/plugins/owl/owl-library/koala.owl#\" xml:base=\"http://protege.stanford.edu/plugins/owl/owl-library/koala.owl\">\n"
             + "  <owl:Ontology rdf:about=\"\"/>\n"
@@ -219,9 +216,8 @@ public class TutorialSnippets {
         }
     }
 
-    @SuppressWarnings("null")
     @Test
-    public void testSaveOntology() throws OWLException, IOException {
+    public void testSaveOntology() throws Exception {
         OWLOntologyManager m = create();
         OWLOntology o = loadPizzaOntology(m);
         assertNotNull(o);
@@ -242,8 +238,7 @@ public class TutorialSnippets {
     }
 
     @Test
-    @SuppressWarnings("null")
-    public void testIRIMapper() throws OWLException, IOException {
+    public void testIRIMapper() throws Exception {
         OWLOntologyManager m = OWLManager.createOWLOntologyManager();
         // map the ontology IRI to a physical IRI (files for example)
         // Create the document IRI for our ontology
@@ -298,7 +293,6 @@ public class TutorialSnippets {
         assertEquals(2, classes.size());
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testSWRL() throws OWLException {
         OWLOntologyManager m = create();
@@ -356,7 +350,6 @@ public class TutorialSnippets {
         m.addAxiom(o, ax);
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testDelete() throws OWLException {
         // Delete individuals representing countries
@@ -572,7 +565,7 @@ public class TutorialSnippets {
         private final Set<OWLObjectPropertyExpression> restrictedProperties;
         private final Set<OWLOntology> onts;
 
-        public RestrictionVisitor(Set<OWLOntology> onts) {
+        RestrictionVisitor(Set<OWLOntology> onts) {
             restrictedProperties = new HashSet<OWLObjectPropertyExpression>();
             processedClasses = new HashSet<OWLClass>();
             this.onts = onts;
@@ -584,15 +577,15 @@ public class TutorialSnippets {
         }
 
         @Override
-        public void visit(OWLClass desc) {
+        public void visit(OWLClass ce) {
             // avoid cycles
-            if (!processedClasses.contains(desc)) {
+            if (!processedClasses.contains(ce)) {
                 // If we are processing inherited restrictions then
                 // we recursively visit named supers.
-                processedClasses.add(desc);
+                processedClasses.add(ce);
                 for (OWLOntology ont : onts) {
                     for (OWLSubClassOfAxiom ax : ont
-                            .getSubClassAxiomsForSubClass(desc)) {
+                            .getSubClassAxiomsForSubClass(ce)) {
                         ax.getSuperClass().accept(this);
                     }
                 }
@@ -600,11 +593,11 @@ public class TutorialSnippets {
         }
 
         @Override
-        public void visit(@Nonnull OWLObjectSomeValuesFrom desc) {
+        public void visit(@Nonnull OWLObjectSomeValuesFrom ce) {
             // This method gets called when a class expression is an
             // existential (someValuesFrom) restriction and it asks us to visit
             // it
-            restrictedProperties.add(desc.getProperty());
+            restrictedProperties.add(ce.getProperty());
         }
     }
 
@@ -689,7 +682,7 @@ public class TutorialSnippets {
         m.addAxiom(
                 o2,
                 df.getOWLDeclarationAxiom(df.getOWLClass(IRI.create(example_iri
-                        .toString() + "#Weasel"))));
+                        + "#Weasel"))));
         // Create our ontology merger
         OWLOntologyMerger merger = new OWLOntologyMerger(m);
         // We merge all of the loaded ontologies. Since an OWLOntologyManager is
@@ -703,7 +696,6 @@ public class TutorialSnippets {
         assertTrue(merged.getAxiomCount() > o2.getAxiomCount());
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testOntologyWalker() throws OWLException {
         // How to use an ontology walker to walk the asserted structure of an
@@ -718,8 +710,8 @@ public class TutorialSnippets {
                 walker) {
 
             @Override
-            public Object visit(OWLObjectSomeValuesFrom desc) {
-                assertNotNull(desc);
+            public Object visit(OWLObjectSomeValuesFrom ce) {
+                assertNotNull(ce);
                 // Print out the restriction
                 // System.out.println(desc);
                 // Print out the axiom where the restriction is used
@@ -930,7 +922,8 @@ public class TutorialSnippets {
     public static class LoggingReasonerProgressMonitor implements
             ReasonerProgressMonitor {
 
-        private final Logger logger;
+        private static final long serialVersionUID = 40000L;
+        private static Logger logger;
 
         public LoggingReasonerProgressMonitor(Logger log) {
             logger = log;
@@ -938,7 +931,7 @@ public class TutorialSnippets {
 
         public LoggingReasonerProgressMonitor(@Nonnull Logger log,
                 String methodName) {
-            String loggerName = log.getName() + "." + methodName;
+            String loggerName = log.getName() + '.' + methodName;
             logger = LoggerFactory.getLogger(loggerName);
         }
 
@@ -963,23 +956,6 @@ public class TutorialSnippets {
         }
     }
 
-    class LabelExtractor extends OWLObjectVisitorExAdapter<String> implements
-            OWLAnnotationObjectVisitorEx<String> {
-
-        @Override
-        public String visit(@Nonnull OWLAnnotation annotation) {
-            /*
-             * If it's a label, grab it as the result. Note that if there are
-             * multiple labels, the last one will be used.
-             */
-            if (annotation.getProperty().isLabel()) {
-                OWLLiteral c = (OWLLiteral) annotation.getValue();
-                return c.getLiteral();
-            }
-            return "";
-        }
-    }
-
     // a visitor to extract label annotations
     @Nonnull
     LabelExtractor le = new LabelExtractor();
@@ -996,7 +972,6 @@ public class TutorialSnippets {
         return clazz.getIRI().toString();
     }
 
-    @SuppressWarnings("null")
     public void printHierarchy(@Nonnull OWLReasoner reasoner,
             @Nonnull OWLClass clazz, int level, @Nonnull Set<OWLClass> visited) {
         // Only print satisfiable classes to skip Nothing

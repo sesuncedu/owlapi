@@ -13,6 +13,7 @@
 package org.semanticweb.owlapi.rdf;
 
 import static org.junit.Assert.assertTrue;
+import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.semanticweb.owlapi.api.test.baseclasses.TestBase;
 import org.semanticweb.owlapi.formats.RDFXMLOntologyFormat;
+import org.semanticweb.owlapi.io.OWLOntologyDocumentSourceBase;
 import org.semanticweb.owlapi.io.OWLParser;
 import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -28,8 +30,6 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLOntologyStorer;
 import org.semanticweb.owlapi.rdf.rdfxml.parser.RDFXMLParser;
 import org.semanticweb.owlapi.rdf.rdfxml.renderer.RDFXMLOntologyStorer;
@@ -56,12 +56,12 @@ public class TestDisjointsTestCase extends TestBase {
     }
 
     @Test
-    public void testAnonDisjoints() throws OWLOntologyCreationException,
-            OWLOntologyStorageException {
-        OWLOntology ontA = m.createOntology(TestUtils.createIRI());
-        OWLClass clsA = df.getOWLClass(TestUtils.createIRI());
-        OWLClass clsB = df.getOWLClass(TestUtils.createIRI());
-        OWLObjectProperty prop = df.getOWLObjectProperty(TestUtils.createIRI());
+    public void testAnonDisjoints() throws Exception {
+        OWLOntology ontA = m.createOntology(OWLOntologyDocumentSourceBase
+                .getNextDocumentIRI("urntests#uri"));
+        OWLClass clsA = createClass();
+        OWLClass clsB = createClass();
+        OWLObjectProperty prop = createObjectProperty();
         OWLClassExpression descA = df.getOWLObjectSomeValuesFrom(prop, clsA);
         OWLClassExpression descB = df.getOWLObjectSomeValuesFrom(prop, clsB);
         Set<OWLClassExpression> classExpressions = new HashSet<OWLClassExpression>();

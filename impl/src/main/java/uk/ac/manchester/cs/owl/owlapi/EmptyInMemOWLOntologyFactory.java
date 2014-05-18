@@ -44,10 +44,9 @@ public class EmptyInMemOWLOntologyFactory extends
         super(builder);
     }
 
-    @SuppressWarnings("unused")
     @Nonnull
     @Override
-    public OWLOntology loadOWLOntology(OWLOntologyManager m,
+    public OWLOntology loadOWLOntology(OWLOntologyManager manager,
             OWLOntologyDocumentSource documentSource,
             OWLOntologyCreationHandler handler,
             OWLOntologyLoaderConfiguration configuration) {
@@ -56,16 +55,15 @@ public class EmptyInMemOWLOntologyFactory extends
     }
 
     @Override
-    public OWLOntology createOWLOntology(OWLOntologyManager m,
+    public OWLOntology createOWLOntology(OWLOntologyManager manager,
             OWLOntologyID ontologyID, IRI documentIRI,
             OWLOntologyCreationHandler handler) {
-        OWLOntology ont = super.createOWLOntology(m, ontologyID, documentIRI,
-                handler);
+        OWLOntology ont = super.createOWLOntology(manager, ontologyID,
+                documentIRI, handler);
         handler.setOntologyFormat(ont, new RDFXMLOntologyFormat());
         return ont;
     }
 
-    @SuppressWarnings("unused")
     @Override
     public boolean canLoad(OWLOntologyDocumentSource documentSource) {
         return false;

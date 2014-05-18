@@ -20,14 +20,13 @@ import org.semanticweb.owlapi.model.OWLObjectExactCardinality;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class RoundTripCardinalityTest extends RoundTripTest {
 
-    @SuppressWarnings("null")
     @Test
     public void testRoundTripCardinality() throws Exception {
         // create minimal ontology
-        OBODoc oboDocSource = super.parseOBOFile("roundtrip_cardinality.obo");
+        OBODoc oboDocSource = parseOBOFile("roundtrip_cardinality.obo");
         // convert to OWL and retrieve def
         OWLAPIObo2Owl bridge = new OWLAPIObo2Owl(
                 OWLManager.createOWLOntologyManager());

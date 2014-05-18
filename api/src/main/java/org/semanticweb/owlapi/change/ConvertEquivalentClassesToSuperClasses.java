@@ -35,7 +35,6 @@ package org.semanticweb.owlapi.change;/*
 
 import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,6 +48,7 @@ import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
 import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.RemoveAxiom;
+import org.semanticweb.owlapi.util.CollectionFactory;
 import org.semanticweb.owlapi.util.OWLClassExpressionVisitorExAdapter;
 
 /**
@@ -73,6 +73,7 @@ import org.semanticweb.owlapi.util.OWLClassExpressionVisitorExAdapter;
 public class ConvertEquivalentClassesToSuperClasses extends
         AbstractCompositeOntologyChange {
 
+    private static final long serialVersionUID = 40000L;
     /** The target ontology. */
     @Nonnull
     private final OWLOntology targetOntology;
@@ -137,15 +138,15 @@ public class ConvertEquivalentClassesToSuperClasses extends
     @Nonnull
     private Set<OWLClassExpression> getClassExpressions(
             @Nonnull OWLClassExpression desc) {
-        Set<OWLClassExpression> result = Collections.emptySet();
+        Set<OWLClassExpression> result = CollectionFactory.emptySet();
         if (splitIntersections) {
             result = desc
                     .accept(new OWLClassExpressionVisitorExAdapter<Set<OWLClassExpression>>() {
 
                         @Override
                         public Set<OWLClassExpression> visit(
-                                OWLObjectIntersectionOf intersection) {
-                            return intersection.getOperands();
+                                OWLObjectIntersectionOf ce) {
+                            return ce.getOperands();
                         }
                     });
         }

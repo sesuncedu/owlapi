@@ -12,7 +12,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.rdf.rdfxml.renderer;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 import static org.semanticweb.owlapi.vocab.OWLRDFVocabulary.*;
 
 import java.io.IOException;
@@ -52,13 +52,13 @@ import org.semanticweb.owlapi.util.VersionInfo;
  */
 public class RDFXMLRenderer extends RDFRendererBase {
 
-    private RDFXMLWriter writer;
+    private final RDFXMLWriter writer;
     @Nonnull
-    private Set<RDFResource> pending = new HashSet<RDFResource>();
+    private final Set<RDFResource> pending = new HashSet<RDFResource>();
     @Nonnull
-    private RDFXMLNamespaceManager qnameManager;
+    private final RDFXMLNamespaceManager qnameManager;
     @Nonnull
-    private OWLOntologyFormat format;
+    private final OWLOntologyFormat format;
 
     /**
      * @param ontology
@@ -66,11 +66,10 @@ public class RDFXMLRenderer extends RDFRendererBase {
      * @param w
      *        writer
      */
-    @SuppressWarnings("null")
     public RDFXMLRenderer(@Nonnull OWLOntology ontology, @Nonnull Writer w) {
         this(checkNotNull(ontology, "ontology cannot be null"), checkNotNull(w,
-                "w cannot be null"), ontology.getOWLOntologyManager()
-                .getOntologyFormat(ontology));
+                "w cannot be null"), verifyNotNull(ontology
+                .getOWLOntologyManager().getOntologyFormat(ontology)));
     }
 
     /**
@@ -89,9 +88,8 @@ public class RDFXMLRenderer extends RDFRendererBase {
         qnameManager = new RDFXMLNamespaceManager(ontology, format);
         String defaultNamespace = qnameManager.getDefaultNamespace();
         String base = base(defaultNamespace);
-        writer = new RDFXMLWriter(XMLWriterFactory.getInstance()
-                .createXMLWriter(checkNotNull(w, "w cannot be null"),
-                        qnameManager, base));
+        writer = new RDFXMLWriter(XMLWriterFactory.createXMLWriter(
+                checkNotNull(w, "w cannot be null"), qnameManager, base));
     }
 
     @SuppressWarnings("null")

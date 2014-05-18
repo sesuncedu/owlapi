@@ -13,7 +13,7 @@
 package org.semanticweb.owlapi.examples;
 
 import static org.junit.Assert.assertNotNull;
-import static org.semanticweb.owlapi.model.parameters.Imports.*;
+import static org.semanticweb.owlapi.model.parameters.Imports.INCLUDED;
 import static org.semanticweb.owlapi.search.Searcher.*;
 import static org.semanticweb.owlapi.vocab.OWLFacet.*;
 
@@ -83,7 +83,6 @@ import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyID;
 import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLRuntimeException;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.model.OWLSubObjectPropertyOfAxiom;
 import org.semanticweb.owlapi.model.PrefixManager;
@@ -127,11 +126,11 @@ import com.google.common.base.Optional;
  *         Informatics Group
  * @since 2.0.0
  */
-@SuppressWarnings({ "unused", "javadoc" })
+@SuppressWarnings({ "javadoc", "unused", "null" })
 public class Examples extends TestBase {
 
     @Nonnull
-    private final static String koala = "<?xml version=\"1.0\"?>\n"
+    private static final String koala = "<?xml version=\"1.0\"?>\n"
             + "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns=\"http://protege.stanford.edu/plugins/owl/owl-library/koala.owl#\" xml:base=\"http://protege.stanford.edu/plugins/owl/owl-library/koala.owl\">\n"
             + "  <owl:Ontology rdf:about=\"\"/>\n"
             + "  <owl:Class rdf:ID=\"Female\"><owl:equivalentClass><owl:Restriction><owl:onProperty><owl:FunctionalProperty rdf:about=\"#hasGender\"/></owl:onProperty><owl:hasValue><Gender rdf:ID=\"female\"/></owl:hasValue></owl:Restriction></owl:equivalentClass></owl:Class>\n"
@@ -165,7 +164,6 @@ public class Examples extends TestBase {
      * @throws Exception
      *         exception
      */
-    @SuppressWarnings("null")
     public void shouldLoad() throws Exception {
         // Get hold of an ontology manager
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -217,10 +215,9 @@ public class Examples extends TestBase {
         // OWLOntology pizzaOntology = manager
         // .loadOntologyFromOntologyDocument(iri);
         // in this test, we load from a string instead
-        OWLOntology pizzaOntology = manager
+        return manager
                 .loadOntologyFromOntologyDocument(new StringDocumentSource(
                         koala));
-        return pizzaOntology;
     }
 
     /**
@@ -230,7 +227,6 @@ public class Examples extends TestBase {
      * @throws Exception
      *         exception
      */
-    @SuppressWarnings("null")
     @Test
     public void shouldSaveOntologies() throws Exception {
         // Get hold of an ontology manager
@@ -270,7 +266,6 @@ public class Examples extends TestBase {
         }
         manager.saveOntology(pizzaOntology, manSyntaxFormat,
                 new StreamDocumentTarget(new ByteArrayOutputStream()));
-        file.delete();
     }
 
     /**
@@ -365,7 +360,7 @@ public class Examples extends TestBase {
         // Now create the restriction. The OWLFacet enum provides an enumeration
         // of the various facets that can be used
         OWLDatatypeRestriction integerGE18 = factory.getOWLDatatypeRestriction(
-                integer, OWLFacet.MIN_INCLUSIVE, eighteen);
+                integer, MIN_INCLUSIVE, eighteen);
         // We could use this datatype in restriction, as the range of data
         // properties etc. For example, if we want to restrict the range of the
         // :hasAge data property to 18 or more we specify its range as this data
@@ -444,7 +439,7 @@ public class Examples extends TestBase {
         OWLLiteral eighteenConstant = factory.getOWLLiteral(18);
         // Now create our custom datarange, which is int greater than or equal
         // to 18. To do this, we need the minInclusive facet
-        OWLFacet facet = OWLFacet.MIN_INCLUSIVE;
+        OWLFacet facet = MIN_INCLUSIVE;
         // Create the restricted data range by applying the facet restriction
         // with a value of 18 to int
         OWLDataRange intGreaterThan18 = factory.getOWLDatatypeRestriction(
@@ -491,7 +486,6 @@ public class Examples extends TestBase {
      * @throws Exception
      *         exception
      */
-    @SuppressWarnings("null")
     @Test
     public void shouldLoadAndSave() throws Exception {
         // A simple example of how to load and save an ontology We first need to
@@ -524,7 +518,6 @@ public class Examples extends TestBase {
         manager.saveOntology(ontology, new OWLXMLOntologyFormat(), documentIRI2);
         // Remove the ontology from the manager
         manager.removeOntology(ontology);
-        f.delete();
     }
 
     @Test
@@ -803,7 +796,6 @@ public class Examples extends TestBase {
         Set<SWRLAtom> antecedent = new HashSet<SWRLAtom>();
         antecedent.add(propAtom);
         antecedent.add(propAtom2);
-        @SuppressWarnings("null")
         SWRLRule rule2 = factory.getSWRLRule(antecedent,
                 Collections.singleton(propAtom));
         manager.applyChange(new AddAxiom(ontology, rule2));
@@ -1154,7 +1146,6 @@ public class Examples extends TestBase {
                 .hasNext();) {
             OWLClass cls = it.next();
             // User a prefix manager to provide a slightly nicer shorter name
-            @SuppressWarnings("null")
             String shortForm = pm.getShortForm(cls);
             assertNotNull(shortForm);
         }
@@ -1221,32 +1212,24 @@ public class Examples extends TestBase {
 
         @Nonnull
         private final Set<OWLClass> processedClasses;
-        @Nonnull
-        private final Set<OWLObjectPropertyExpression> restrictedProperties;
         private final Set<OWLOntology> onts;
 
-        public RestrictionVisitor(Set<OWLOntology> onts) {
-            restrictedProperties = new HashSet<OWLObjectPropertyExpression>();
+        RestrictionVisitor(Set<OWLOntology> onts) {
             processedClasses = new HashSet<OWLClass>();
             this.onts = onts;
         }
 
-        @Nonnull
-        public Set<OWLObjectPropertyExpression> getRestrictedProperties() {
-            return restrictedProperties;
-        }
-
         @Override
-        public void visit(OWLClass desc) {
-            if (!processedClasses.contains(desc)) {
+        public void visit(OWLClass ce) {
+            if (!processedClasses.contains(ce)) {
                 // If we are processing inherited restrictions then we
                 // recursively visit named supers. Note that we need to keep
                 // track of the classes that we have processed so that we don't
                 // get caught out by cycles in the taxonomy
-                processedClasses.add(desc);
+                processedClasses.add(ce);
                 for (OWLOntology ont : onts) {
                     for (OWLSubClassOfAxiom ax : ont
-                            .getSubClassAxiomsForSubClass(desc)) {
+                            .getSubClassAxiomsForSubClass(ce)) {
                         ax.getSuperClass().accept(this);
                     }
                 }
@@ -1254,10 +1237,9 @@ public class Examples extends TestBase {
         }
 
         @Override
-        public void visit(@Nonnull OWLObjectSomeValuesFrom desc) {
+        public void visit(@Nonnull OWLObjectSomeValuesFrom ce) {
             // This method gets called when a class expression is an existential
             // (someValuesFrom) restriction and it asks us to visit it
-            restrictedProperties.add(desc.getProperty());
         }
     }
 
@@ -1276,7 +1258,7 @@ public class Examples extends TestBase {
         // We want to add a comment to the pizza class. First, we need to obtain
         // a reference to the pizza class
         OWLClass pizzaCls = df.getOWLClass(IRI.create(ont.getOntologyID()
-                .getOntologyIRI().get().toString()
+                .getOntologyIRI().get()
                 + "#Pizza"));
         // Now we create the content of our comment. In this case we simply want
         // a plain string literal. We'll attach a language to the comment to
@@ -1439,7 +1421,7 @@ public class Examples extends TestBase {
                 walker) {
 
             @Override
-            public Object visit(OWLObjectSomeValuesFrom desc) {
+            public Object visit(OWLObjectSomeValuesFrom ce) {
                 // Print out the restriction
                 // System.out.println(desc);
                 // Print out the axiom where the restriction is used
@@ -1487,40 +1469,6 @@ public class Examples extends TestBase {
         if (hasProperty(man, reasoner, mozzarellaTopping, hasOrigin)) {
             // System.out.println("Instances of " + mozzarellaTopping
             // + " have a country of origin");
-        }
-    }
-
-    /**
-     * Prints out the properties that instances of a class expression must have.
-     * 
-     * @param man
-     *        The manager
-     * @param ont
-     *        The ontology
-     * @param reasoner
-     *        The reasoner
-     * @param cls
-     *        The class expression
-     */
-    private static void printProperties(@Nonnull OWLOntologyManager man,
-            @Nonnull OWLOntology ont, @Nonnull OWLReasoner reasoner,
-            @Nonnull OWLClass cls) {
-        if (!ont.containsClassInSignature(cls.getIRI(), EXCLUDED)) {
-            throw new OWLRuntimeException(
-                    "Class not in signature of the ontology");
-        }
-        // Note that the following code could be optimised... if we find that
-        // instances of the specified class do not have a property, then we
-        // don't need to check the sub properties of this property
-        // System.out.println("Properties of " + cls);
-        for (OWLObjectPropertyExpression prop : ont
-                .getObjectPropertiesInSignature()) {
-            assert prop != null;
-            boolean sat = hasProperty(man, reasoner, cls, prop);
-            if (sat) {
-                // System.out.println("Instances of " + cls
-                // + " necessarily have the property " + prop);
-            }
         }
     }
 
@@ -1599,7 +1547,6 @@ public class Examples extends TestBase {
         // folder and maps their IRIs to their locations in this folder We
         // specify a directory/folder where the ontologies are located. In this
         // case we've just specified the tmp directory.
-        @SuppressWarnings("null")
         @Nonnull
         File file = folder.newFolder();
         // We can also specify a flag to indicate whether the directory should
@@ -1680,7 +1627,7 @@ public class Examples extends TestBase {
         // subclasses. We start by creating a signature that consists of
         // "PizzaTopping".
         OWLClass toppingCls = df.getOWLClass(IRI.create(ont.getOntologyID()
-                .getOntologyIRI().get().toString()
+                .getOntologyIRI().get()
                 + "#PizzaTopping"));
         Set<OWLEntity> sig = new HashSet<OWLEntity>();
         sig.add(toppingCls);

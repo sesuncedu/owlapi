@@ -23,8 +23,6 @@ public class HeaderLostBugTest extends OboFormatTestBasics {
      * During the conversion of the rdfxml formatfile the ontology header tags
      * are lost. The possible reason is that the RDFXMLOntologyFormat format
      * writes the annotation assertion axioms as annotations.
-     * 
-     * @throws Exception
      */
     @Test
     public void testHeaderLog() {
@@ -47,10 +45,9 @@ public class HeaderLostBugTest extends OboFormatTestBasics {
         try {
             ontology.getOWLOntologyManager().saveOntology(ontology,
                     new RDFXMLOntologyFormat(), target);
-            OWLOntology in = OWLManager.createOWLOntologyManager()
+            return OWLManager.createOWLOntologyManager()
                     .loadOntologyFromOntologyDocument(
                             new StringDocumentSource(target));
-            return in;
         } catch (OWLException e) {
             throw new OWLRuntimeException(e);
         }

@@ -46,8 +46,8 @@ import com.google.common.base.Optional;
 public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
 
     private PrefixManager prefixManager;
-    protected OWLOntology ontology;
-    private Writer writer;
+    protected OWLOntology ont;
+    private final Writer writer;
     private boolean writeEntitiesAsURIs = true;
     private OWLObject focusedObject;
 
@@ -59,7 +59,7 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
      */
     public FunctionalSyntaxObjectRenderer(@Nonnull OWLOntology ontology,
             Writer writer) {
-        this.ontology = ontology;
+        ont = ontology;
         this.writer = writer;
         prefixManager = new DefaultPrefixManager();
         OWLOntologyFormat ontologyFormat = ontology.getOWLOntologyManager()
@@ -79,7 +79,7 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
                     || !existingDefault.startsWith(ontologyIRIString)) {
                 String defaultPrefix = ontologyIRIString;
                 if (!ontologyIRIString.endsWith("/")) {
-                    defaultPrefix = ontologyIRIString + "#";
+                    defaultPrefix = ontologyIRIString + '#';
                 }
                 prefixManager.setDefaultPrefix(defaultPrefix);
             }
@@ -169,35 +169,34 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
 
     @SuppressWarnings("null")
     @Override
-    public void visit(@Nonnull OWLOntology ontology1) {
+    public void visit(@Nonnull OWLOntology ontology) {
         writePrefixes();
         write("\n\n");
         write(ONTOLOGY);
         write("(");
-        if (!ontology1.isAnonymous()) {
-            writeFullIRI(ontology1.getOntologyID().getOntologyIRI().get());
-            Optional<IRI> versionIRI = ontology1.getOntologyID()
-                    .getVersionIRI();
+        if (!ontology.isAnonymous()) {
+            writeFullIRI(ontology.getOntologyID().getOntologyIRI().get());
+            Optional<IRI> versionIRI = ontology.getOntologyID().getVersionIRI();
             if (versionIRI.isPresent()) {
                 write("\n");
                 writeFullIRI(versionIRI.get());
             }
             write("\n");
         }
-        for (OWLImportsDeclaration decl : ontology1.getImportsDeclarations()) {
+        for (OWLImportsDeclaration decl : ontology.getImportsDeclarations()) {
             write(IMPORT);
             write("(");
             writeFullIRI(decl.getIRI());
             write(")\n");
         }
-        for (OWLAnnotation ontologyAnnotation : ontology1.getAnnotations()) {
+        for (OWLAnnotation ontologyAnnotation : ontology.getAnnotations()) {
             ontologyAnnotation.accept(this);
             write("\n");
         }
         write("\n");
         Set<OWLAxiom> writtenAxioms = new HashSet<OWLAxiom>();
         List<OWLEntity> signature = new ArrayList<OWLEntity>(
-                ontology1.getSignature());
+                ontology.getSignature());
         Collections.sort(signature);
         for (OWLEntity ent : signature) {
             writeDeclarations(ent, writtenAxioms);
@@ -205,7 +204,7 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
         for (OWLEntity ent : signature) {
             writeAxioms(ent, writtenAxioms);
         }
-        for (OWLAxiom ax : ontology1.getAxioms()) {
+        for (OWLAxiom ax : ontology.getAxioms()) {
             if (!writtenAxioms.contains(ax)) {
                 ax.accept(this);
                 write("\n");
@@ -241,36 +240,36 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
 
                     @Override
                     public Set<? extends OWLAxiom> visit(OWLClass cls) {
-                        return ontology.getAxioms(cls, Imports.EXCLUDED);
+                        return ont.getAxioms(cls, Imports.EXCLUDED);
                     }
 
                     @Override
                     public Set<? extends OWLAxiom> visit(
                             OWLObjectProperty property) {
-                        return ontology.getAxioms(property, Imports.EXCLUDED);
+                        return ont.getAxioms(property, Imports.EXCLUDED);
                     }
 
                     @Override
                     public Set<? extends OWLAxiom> visit(
                             OWLDataProperty property) {
-                        return ontology.getAxioms(property, Imports.EXCLUDED);
+                        return ont.getAxioms(property, Imports.EXCLUDED);
                     }
 
                     @Override
                     public Set<? extends OWLAxiom> visit(
                             OWLNamedIndividual individual) {
-                        return ontology.getAxioms(individual, Imports.EXCLUDED);
+                        return ont.getAxioms(individual, Imports.EXCLUDED);
                     }
 
                     @Override
                     public Set<? extends OWLAxiom> visit(OWLDatatype datatype) {
-                        return ontology.getAxioms(datatype, Imports.EXCLUDED);
+                        return ont.getAxioms(datatype, Imports.EXCLUDED);
                     }
 
                     @Override
                     public Set<? extends OWLAxiom> visit(
                             OWLAnnotationProperty property) {
-                        return ontology.getAxioms(property, Imports.EXCLUDED);
+                        return ont.getAxioms(property, Imports.EXCLUDED);
                     }
                 }));
         Collections.sort(axs);
@@ -304,7 +303,7 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
     @Nonnull
     public Set<OWLAxiom> writeDeclarations(@Nonnull OWLEntity entity) {
         Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
-        for (OWLAxiom ax : ontology.getDeclarationAxioms(entity)) {
+        for (OWLAxiom ax : ont.getDeclarationAxioms(entity)) {
             ax.accept(this);
             axioms.add(ax);
             write("\n");
@@ -316,7 +315,7 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
     private Set<OWLAxiom> writeDeclarations(@Nonnull OWLEntity entity,
             @Nonnull Set<OWLAxiom> alreadyWrittenAxioms) {
         Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
-        for (OWLAxiom ax : ontology.getDeclarationAxioms(entity)) {
+        for (OWLAxiom ax : ont.getDeclarationAxioms(entity)) {
             if (!alreadyWrittenAxioms.contains(ax)) {
                 ax.accept(this);
                 axioms.add(ax);
@@ -337,8 +336,8 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
     @Nonnull
     public Set<OWLAxiom> writeAnnotations(@Nonnull OWLEntity entity) {
         Set<OWLAxiom> annotationAssertions = new HashSet<OWLAxiom>();
-        for (OWLAnnotationAxiom ax : ontology
-                .getAnnotationAssertionAxioms(entity.getIRI())) {
+        for (OWLAnnotationAxiom ax : ont.getAnnotationAssertionAxioms(entity
+                .getIRI())) {
             ax.accept(this);
             annotationAssertions.add(ax);
             write("\n");
@@ -374,7 +373,8 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
             Iterator<? extends OWLObject> it = objects.iterator();
             OWLObject objA = it.next();
             OWLObject objB = it.next();
-            OWLObject lhs, rhs;
+            OWLObject lhs;
+            OWLObject rhs;
             if (objA.equals(focusedObject)) {
                 lhs = objA;
                 rhs = objB;
@@ -425,7 +425,6 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
      * @param annotation
      *        the annotation
      */
-    @SuppressWarnings("unused")
     public void write(OWLAnnotation annotation) {
         // XXX should the annotation be ignored?
     }
@@ -797,12 +796,12 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
     }
 
     @Override
-    public void visit(@Nonnull OWLClass desc) {
+    public void visit(@Nonnull OWLClass ce) {
         if (!writeEntitiesAsURIs) {
             write(CLASS);
             writeOpenBracket();
         }
-        desc.getIRI().accept(this);
+        ce.getIRI().accept(this);
         if (!writeEntitiesAsURIs) {
             writeCloseBracket();
         }
@@ -846,97 +845,97 @@ public class FunctionalSyntaxObjectRenderer implements OWLObjectVisitor {
     }
 
     @Override
-    public void visit(OWLDataAllValuesFrom desc) {
-        writeRestriction(DATA_ALL_VALUES_FROM, desc);
+    public void visit(OWLDataAllValuesFrom ce) {
+        writeRestriction(DATA_ALL_VALUES_FROM, ce);
     }
 
     @Override
-    public void visit(@Nonnull OWLDataExactCardinality desc) {
-        writeRestriction(DATA_EXACT_CARDINALITY, desc, desc.getProperty());
+    public void visit(@Nonnull OWLDataExactCardinality ce) {
+        writeRestriction(DATA_EXACT_CARDINALITY, ce, ce.getProperty());
     }
 
     @Override
-    public void visit(@Nonnull OWLDataMaxCardinality desc) {
-        writeRestriction(DATA_MAX_CARDINALITY, desc, desc.getProperty());
+    public void visit(@Nonnull OWLDataMaxCardinality ce) {
+        writeRestriction(DATA_MAX_CARDINALITY, ce, ce.getProperty());
     }
 
     @Override
-    public void visit(@Nonnull OWLDataMinCardinality desc) {
-        writeRestriction(DATA_MIN_CARDINALITY, desc, desc.getProperty());
+    public void visit(@Nonnull OWLDataMinCardinality ce) {
+        writeRestriction(DATA_MIN_CARDINALITY, ce, ce.getProperty());
     }
 
     @Override
-    public void visit(OWLDataSomeValuesFrom desc) {
-        writeRestriction(DATA_SOME_VALUES_FROM, desc);
+    public void visit(OWLDataSomeValuesFrom ce) {
+        writeRestriction(DATA_SOME_VALUES_FROM, ce);
     }
 
     @Override
-    public void visit(@Nonnull OWLDataHasValue desc) {
-        writeRestriction(DATA_HAS_VALUE, desc.getProperty(), desc.getFiller());
+    public void visit(@Nonnull OWLDataHasValue ce) {
+        writeRestriction(DATA_HAS_VALUE, ce.getProperty(), ce.getFiller());
     }
 
     @Override
-    public void visit(OWLObjectAllValuesFrom desc) {
-        writeRestriction(OBJECT_ALL_VALUES_FROM, desc);
+    public void visit(OWLObjectAllValuesFrom ce) {
+        writeRestriction(OBJECT_ALL_VALUES_FROM, ce);
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectComplementOf desc) {
-        write(OBJECT_COMPLEMENT_OF, desc.getOperand());
+    public void visit(@Nonnull OWLObjectComplementOf ce) {
+        write(OBJECT_COMPLEMENT_OF, ce.getOperand());
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectExactCardinality desc) {
-        writeRestriction(OBJECT_EXACT_CARDINALITY, desc, desc.getProperty());
+    public void visit(@Nonnull OWLObjectExactCardinality ce) {
+        writeRestriction(OBJECT_EXACT_CARDINALITY, ce, ce.getProperty());
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectIntersectionOf desc) {
+    public void visit(@Nonnull OWLObjectIntersectionOf ce) {
         write(OBJECT_INTERSECTION_OF);
         writeOpenBracket();
-        write(desc.getOperands());
+        write(ce.getOperands());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectMaxCardinality desc) {
-        writeRestriction(OBJECT_MAX_CARDINALITY, desc, desc.getProperty());
+    public void visit(@Nonnull OWLObjectMaxCardinality ce) {
+        writeRestriction(OBJECT_MAX_CARDINALITY, ce, ce.getProperty());
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectMinCardinality desc) {
-        writeRestriction(OBJECT_MIN_CARDINALITY, desc, desc.getProperty());
+    public void visit(@Nonnull OWLObjectMinCardinality ce) {
+        writeRestriction(OBJECT_MIN_CARDINALITY, ce, ce.getProperty());
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectOneOf desc) {
+    public void visit(@Nonnull OWLObjectOneOf ce) {
         write(OBJECT_ONE_OF);
         writeOpenBracket();
-        write(desc.getIndividuals());
+        write(ce.getIndividuals());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectHasSelf desc) {
-        write(OBJECT_HAS_SELF, desc.getProperty());
+    public void visit(@Nonnull OWLObjectHasSelf ce) {
+        write(OBJECT_HAS_SELF, ce.getProperty());
     }
 
     @Override
-    public void visit(OWLObjectSomeValuesFrom desc) {
-        writeRestriction(OBJECT_SOME_VALUES_FROM, desc);
+    public void visit(OWLObjectSomeValuesFrom ce) {
+        writeRestriction(OBJECT_SOME_VALUES_FROM, ce);
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectUnionOf desc) {
+    public void visit(@Nonnull OWLObjectUnionOf ce) {
         write(OBJECT_UNION_OF);
         writeOpenBracket();
-        write(desc.getOperands());
+        write(ce.getOperands());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectHasValue desc) {
-        writeRestriction(OBJECT_HAS_VALUE, desc.getProperty(), desc.getFiller());
+    public void visit(@Nonnull OWLObjectHasValue ce) {
+        writeRestriction(OBJECT_HAS_VALUE, ce.getProperty(), ce.getFiller());
     }
 
     @Override

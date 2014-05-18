@@ -12,6 +12,9 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package uk.ac.manchester.cs.owl.owlapi;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +49,12 @@ public class OWLEquivalentClassesAxiomImpl extends OWLNaryClassAxiomImpl
     private static final long serialVersionUID = 40000L;
     @Nullable
     private transient WeakReference<Set<OWLClass>> namedClasses = null;
+
+    private void readObject(java.io.ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        namedClasses = null;
+    }
 
     /**
      * @param classExpressions
@@ -115,12 +124,11 @@ public class OWLEquivalentClassesAxiomImpl extends OWLNaryClassAxiomImpl
         return false;
     }
 
-    @SuppressWarnings("null")
     @Override
     public Set<OWLClass> getNamedClasses() {
         Set<OWLClass> toReturn = null;
         if (namedClasses != null) {
-            toReturn = namedClasses.get();
+            toReturn = verifyNotNull(namedClasses).get();
         }
         if (toReturn == null) {
             Set<OWLClass> clses = new HashSet<OWLClass>(1);

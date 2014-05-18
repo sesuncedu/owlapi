@@ -29,7 +29,7 @@ import org.semanticweb.owlapi.util.AbstractOWLOntologyStorer;
  *         Group
  * @since 3.4.10
  */
-@HasPriority(value = 5)
+@HasPriority(5)
 @SupportsFormat(OBOOntologyFormat.class)
 public class OBOFormatStorer extends AbstractOWLOntologyStorer {
 
@@ -42,10 +42,8 @@ public class OBOFormatStorer extends AbstractOWLOntologyStorer {
 
     @Override
     protected void storeOntology(@Nonnull OWLOntology ontology,
-            @Nonnull Writer writer,
-            @SuppressWarnings("unused") OWLOntologyFormat format)
+            @Nonnull Writer writer, OWLOntologyFormat format)
             throws OWLOntologyStorageException {
-        OBOFormatRenderer renderer = new OBOFormatRenderer();
-        renderer.render(ontology, writer);
+        OBOFormatRenderer.render(ontology, writer);
     }
 }

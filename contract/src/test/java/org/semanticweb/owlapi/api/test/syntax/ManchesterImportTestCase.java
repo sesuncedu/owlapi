@@ -32,11 +32,9 @@ import org.semanticweb.owlapi.util.AutoIRIMapper;
 public class ManchesterImportTestCase {
 
     @Nonnull
-    private String str = "http://owlapitestontologies.com/thesuperont";
+    private final String str = "http://owlapitestontologies.com/thesuperont";
     @Nonnull
-    private String superpath = "/imports/thesuperont.omn";
-    @Nonnull
-    private String subpath = "/imports/thesubont.omn";
+    private final String superpath = "/imports/thesuperont.omn";
     @Nonnull
     private static final File RESOURCES;
     static {
@@ -93,6 +91,7 @@ public class ManchesterImportTestCase {
     @Test
     public void testImports() throws OWLOntologyCreationException {
         OWLOntologyManager manager = getManager();
+        String subpath = "/imports/thesubont.omn";
         manager.loadOntologyFromOntologyDocument(new File(RESOURCES, subpath));
     }
 }

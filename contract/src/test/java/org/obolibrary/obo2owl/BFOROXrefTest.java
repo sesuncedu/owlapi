@@ -23,7 +23,7 @@ import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class BFOROXrefTest extends OboFormatTestBasics {
 
     public static final OWLAnnotationProperty OBO_ID = OWLManager
@@ -31,12 +31,12 @@ public class BFOROXrefTest extends OboFormatTestBasics {
             .getOWLAnnotationProperty(
                     IRI.create("http://www.geneontology.org/formats/oboInOwl#id"));
     @Nonnull
-    private OWLOntology owlOnt = convertOBOFile("rel_xref_test.obo");
+    private final OWLOntology owlOnt = convertOBOFile("rel_xref_test.obo");
 
     @Test
     public void testCorrectIdAnnotationCount() {
         Set<OWLObjectProperty> ops = owlOnt.getObjectPropertiesInSignature();
-        assertTrue(ops.size() == 4);
+        assertEquals(4, ops.size());
         // Check ID Property Count Exactly 1
         assertAnnotationPropertyCountEquals(owlOnt,
                 IRI.create("http://purl.obolibrary.org/obo/BAR_0000001"),
@@ -52,12 +52,11 @@ public class BFOROXrefTest extends OboFormatTestBasics {
                 OBO_ID, 2);
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testRelationXrefConversion() {
         // test initial conversion
         Set<OWLObjectProperty> ops = owlOnt.getObjectPropertiesInSignature();
-        assertTrue(ops.size() == 4);
+        assertEquals(4, ops.size());
         Set<OWLAnnotationAssertionAxiom> aaas = owlOnt
                 .getAnnotationAssertionAxioms(IRI
                         .create("http://purl.obolibrary.org/obo/BFO_0000051"));
@@ -73,17 +72,17 @@ public class BFOROXrefTest extends OboFormatTestBasics {
                 }
             }
         }
-        assertTrue(aaas.size() > 0);
+        assertTrue(!aaas.isEmpty());
         assertTrue(ok);
         aaas = owlOnt.getAnnotationAssertionAxioms(IRI
                 .create("http://purl.obolibrary.org/obo/BFO_0000050"));
-        assertTrue(aaas.size() > 0);
+        assertTrue(!aaas.isEmpty());
         aaas = owlOnt.getAnnotationAssertionAxioms(IRI
                 .create("http://purl.obolibrary.org/obo/RO_0002111"));
-        assertTrue(aaas.size() > 0);
+        assertTrue(!aaas.isEmpty());
         aaas = owlOnt.getAnnotationAssertionAxioms(IRI
                 .create("http://purl.obolibrary.org/obo/BAR_0000001"));
-        assertTrue(aaas.size() > 0);
+        assertTrue(!aaas.isEmpty());
         OWLAPIOwl2Obo revbridge = new OWLAPIOwl2Obo(
                 OWLManager.createOWLOntologyManager());
         OBODoc d2 = revbridge.convert(owlOnt);
@@ -104,8 +103,8 @@ public class BFOROXrefTest extends OboFormatTestBasics {
         assertTrue(okOboRel);
         Frame a = d2.getTermFrame("TEST:a");
         Clause rc = a.getClause(OboFormatTag.TAG_RELATIONSHIP);
-        assertTrue(rc.getValue().equals("part_of"));
-        assertTrue(rc.getValue2().equals("TEST:b"));
+        assertEquals("part_of", rc.getValue());
+        assertEquals("TEST:b", rc.getValue2());
     }
 
     private static void assertAnnotationPropertyCountEquals(

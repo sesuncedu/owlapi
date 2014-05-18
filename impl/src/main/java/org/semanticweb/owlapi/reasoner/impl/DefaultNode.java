@@ -12,7 +12,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.reasoner.impl;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -84,7 +84,7 @@ public abstract class DefaultNode<E extends OWLObject> implements Node<E> {
      *        the entity to add
      */
     public DefaultNode(@Nonnull E entity) {
-        this.entities.add(checkNotNull(entity, "entity cannot be null"));
+        entities.add(checkNotNull(entity, "entity cannot be null"));
     }
 
     /**
@@ -137,9 +137,9 @@ public abstract class DefaultNode<E extends OWLObject> implements Node<E> {
 
     @Nonnull
     @Override
-    public Set<E> getEntitiesMinus(E E) {
+    public Set<E> getEntitiesMinus(E e) {
         HashSet<E> result = new HashSet<E>(entities);
-        result.remove(E);
+        result.remove(e);
         return result;
     }
 
@@ -174,7 +174,6 @@ public abstract class DefaultNode<E extends OWLObject> implements Node<E> {
         return entities.iterator();
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public String toString() {
@@ -182,10 +181,10 @@ public abstract class DefaultNode<E extends OWLObject> implements Node<E> {
         sb.append("Node( ");
         for (OWLObject entity : entities) {
             sb.append(entity);
-            sb.append(" ");
+            sb.append(' ');
         }
-        sb.append(")");
-        return sb.toString();
+        sb.append(')');
+        return verifyNotNull(sb.toString());
     }
 
     @Override

@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package uk.ac.manchester.cs.owl.owlapi;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import java.util.Collection;
 import java.util.Set;
 
@@ -79,11 +81,10 @@ public class OWLEntityCollectionContainerCollector extends
      *        the set that will contain the results
      */
     // XXX not in the interface
-    @SuppressWarnings("null")
     public void reset(Set<OWLEntity> toReturn) {
         objects = toReturn;
         if (anonymousIndividuals != null) {
-            anonymousIndividuals.clear();
+            verifyNotNull(anonymousIndividuals).clear();
         }
     }
 
@@ -132,9 +133,9 @@ public class OWLEntityCollectionContainerCollector extends
     }
 
     @Override
-    public void visit(OWLClass desc) {
+    public void visit(OWLClass ce) {
         if (collectClasses) {
-            objects.add(desc);
+            objects.add(ce);
         }
     }
 
@@ -160,19 +161,18 @@ public class OWLEntityCollectionContainerCollector extends
     }
 
     @Override
-    public void visit(OWLDatatype datatype) {
+    public void visit(OWLDatatype node) {
         if (collectDatatypes) {
-            objects.add(datatype);
+            objects.add(node);
         }
     }
 
-    @SuppressWarnings("null")
     @Override
     public void visit(OWLAnonymousIndividual individual) {
         // Anon individuals aren't entities
         // But store them in a set anyway for utility
         if (anonymousIndividuals != null) {
-            anonymousIndividuals.add(individual);
+            verifyNotNull(anonymousIndividuals).add(individual);
         }
     }
 

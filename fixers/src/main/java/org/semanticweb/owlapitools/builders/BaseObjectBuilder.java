@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapitools.builders;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -25,14 +27,14 @@ import org.semanticweb.owlapi.model.OWLObject;
  * 
  * @param <T>
  *        type built
- * @param <Type>
+ * @param <B>
  *        builder type
  */
-public abstract class BaseObjectBuilder<T extends OWLObject, Type> extends
-        BaseObjectPropertyBuilder<T, Type> {
+public abstract class BaseObjectBuilder<T extends OWLObject, B> extends
+        BaseObjectPropertyBuilder<T, B> {
 
     @Nullable
-    protected OWLClassExpression range = null;
+    private OWLClassExpression range = null;
 
     /**
      * @param df
@@ -50,8 +52,16 @@ public abstract class BaseObjectBuilder<T extends OWLObject, Type> extends
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withRange(OWLClassExpression arg) {
+    public B withRange(OWLClassExpression arg) {
         range = arg;
-        return (Type) this;
+        return (B) this;
+    }
+
+    /**
+     * @return range
+     */
+    @Nonnull
+    public OWLClassExpression getRange() {
+        return verifyNotNull(range);
     }
 }

@@ -83,7 +83,7 @@ public class SimpleRootClassChecker implements RootClassChecker {
     @Nonnull
     private final RootClassCheckerHelper checker = new RootClassCheckerHelper();
     @Nonnull
-    protected final NamedSuperChecker superChecker = new NamedSuperChecker();
+    private final NamedSuperChecker superChecker = new NamedSuperChecker();
 
     @Override
     public boolean isRootClass(OWLClass cls) {
@@ -104,26 +104,32 @@ public class SimpleRootClassChecker implements RootClassChecker {
 
         protected boolean namedSuper;
 
-        public NamedSuperChecker() {}
+        NamedSuperChecker() {}
 
         public void reset() {
             namedSuper = false;
         }
 
         @Override
-        public void visit(@SuppressWarnings("unused") OWLClass desc) {
+        public void visit(OWLClass ce) {
             namedSuper = true;
         }
 
         @Override
-        public void visit(OWLObjectIntersectionOf desc) {
-            for (OWLClassExpression op : desc.getOperands()) {
+        public void visit(OWLObjectIntersectionOf ce) {
+            for (OWLClassExpression op : ce.getOperands()) {
                 op.accept(this);
                 if (namedSuper) {
                     break;
                 }
             }
         }
+    }
+
+    protected boolean check(OWLClassExpression e) {
+        superChecker.reset();
+        e.accept(superChecker);
+        return !superChecker.namedSuper;
     }
 
     /**
@@ -135,7 +141,7 @@ public class SimpleRootClassChecker implements RootClassChecker {
         private boolean isRoot;
         private OWLClass cls;
 
-        public RootClassCheckerHelper() {}
+        RootClassCheckerHelper() {}
 
         public void setOWLClass(OWLClass cls) {
             // Start off with the assumption that the class is
@@ -153,9 +159,7 @@ public class SimpleRootClassChecker implements RootClassChecker {
         @Override
         public void visit(OWLSubClassOfAxiom axiom) {
             if (axiom.getSubClass().equals(cls)) {
-                superChecker.reset();
-                axiom.getSuperClass().accept(superChecker);
-                isRoot = !superChecker.namedSuper;
+                isRoot = check(axiom.getSuperClass());
             }
         }
 
@@ -165,18 +169,18 @@ public class SimpleRootClassChecker implements RootClassChecker {
             if (!descs.contains(cls)) {
                 return;
             }
+            boolean check = false;
             for (OWLClassExpression desc : descs) {
                 if (desc.equals(cls)) {
                     continue;
                 }
-                superChecker.reset();
-                desc.accept(superChecker);
-                if (superChecker.namedSuper) {
+                check = check(desc);
+                if (check) {
                     isRoot = false;
                     return;
                 }
             }
-            isRoot = !superChecker.namedSuper;
+            isRoot = check;
         }
     }
 }

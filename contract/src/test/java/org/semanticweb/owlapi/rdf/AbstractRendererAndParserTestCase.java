@@ -15,7 +15,6 @@ package org.semanticweb.owlapi.rdf;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -25,18 +24,11 @@ import org.junit.Test;
 import org.semanticweb.owlapi.api.test.baseclasses.TestBase;
 import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLDataProperty;
-import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.rdf.rdfxml.parser.RDFXMLParser;
 import org.semanticweb.owlapi.rdf.rdfxml.renderer.RDFXMLOntologyStorer;
 
@@ -51,11 +43,11 @@ import uk.ac.manchester.cs.owl.owlapi.ParsableOWLOntologyFactory;
  *         Informatics Group
  * @since 2.0.0
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public abstract class AbstractRendererAndParserTestCase extends TestBase {
 
     @Nonnull
-    private OWLOntologyManager man = new OWLOntologyManagerImpl(
+    private final OWLOntologyManager man = new OWLOntologyManagerImpl(
             new OWLDataFactoryImpl());
 
     @Before
@@ -69,35 +61,6 @@ public abstract class AbstractRendererAndParserTestCase extends TestBase {
     }
 
     @Nonnull
-    public OWLClass createClass() {
-        return man.getOWLDataFactory().getOWLClass(TestUtils.createIRI());
-    }
-
-    @Nonnull
-    public OWLAnnotationProperty createAnnotationProperty() {
-        return getManager().getOWLDataFactory().getOWLAnnotationProperty(
-                TestUtils.createIRI());
-    }
-
-    @Nonnull
-    public OWLObjectProperty createObjectProperty() {
-        return man.getOWLDataFactory().getOWLObjectProperty(
-                TestUtils.createIRI());
-    }
-
-    @Nonnull
-    public OWLDataProperty createDataProperty() {
-        return man.getOWLDataFactory()
-                .getOWLDataProperty(TestUtils.createIRI());
-    }
-
-    @Nonnull
-    public OWLIndividual createIndividual() {
-        return man.getOWLDataFactory().getOWLNamedIndividual(
-                TestUtils.createIRI());
-    }
-
-    @Nonnull
     public OWLOntologyManager getManager() {
         return man;
     }
@@ -107,10 +70,8 @@ public abstract class AbstractRendererAndParserTestCase extends TestBase {
         return man.getOWLDataFactory();
     }
 
-    @SuppressWarnings("null")
     @Test
-    public void testSaveAndReload() throws OWLOntologyCreationException,
-            OWLOntologyStorageException, IOException {
+    public void testSaveAndReload() throws Exception {
         OWLOntology ontA = man.createOntology(IRI
                 .create("http://rdfxmltests/ontology"));
         for (OWLAxiom ax : getAxioms()) {
@@ -131,18 +92,18 @@ public abstract class AbstractRendererAndParserTestCase extends TestBase {
         BminusA.removeAll(ontA.getAxioms());
         StringBuilder msg = new StringBuilder();
         if (AminusB.isEmpty() && BminusA.isEmpty()) {
-            msg.append("Ontology save/load roundtripp OK.\n");
+            msg.append("Ontology save/load roundtrip OK.\n");
         } else {
             msg.append("Ontology save/load roundtripping error.\n");
-            msg.append("=> " + AminusB.size()
-                    + " axioms lost in roundtripping.\n");
+            msg.append("=> ").append(AminusB.size())
+                    .append(" axioms lost in roundtripping.\n");
             for (OWLAxiom axiom : AminusB) {
-                msg.append(axiom.toString() + "\n");
+                msg.append(axiom + "\n");
             }
-            msg.append("=> " + BminusA.size()
-                    + " axioms added after roundtripping.\n");
+            msg.append("=> ").append(BminusA.size())
+                    .append(" axioms added after roundtripping.\n");
             for (OWLAxiom axiom : BminusA) {
-                msg.append(axiom.toString() + "\n");
+                msg.append(axiom + "\n");
             }
         }
         assertTrue(msg.toString(), AminusB.isEmpty() && BminusA.isEmpty());

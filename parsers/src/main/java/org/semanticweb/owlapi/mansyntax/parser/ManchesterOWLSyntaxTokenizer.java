@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 public class ManchesterOWLSyntaxTokenizer {
 
     /** EOF */
+    @Nonnull
     public static final String EOF = "|EOF|";
 
     /**
@@ -42,7 +43,7 @@ public class ManchesterOWLSyntaxTokenizer {
     protected Set<Character> skip = new HashSet<Character>();
     protected Set<Character> commentDelimiters = new HashSet<Character>();
     protected Set<Character> delims = new HashSet<Character>();
-    private String buffer;
+    private final String buffer;
     private int pos;
     private int col;
     private int row;
@@ -132,7 +133,9 @@ public class ManchesterOWLSyntaxTokenizer {
 
     private void consumeToken() {
         if (sb.length() > 0) {
-            tokens.add(new Token(sb.toString(), startPos, startCol, startRow));
+            String string = sb.toString();
+            assert string != null;
+            tokens.add(new Token(string, startPos, startCol, startRow));
             sb = new StringBuilder();
         }
         startPos = pos;
@@ -193,7 +196,7 @@ public class ManchesterOWLSyntaxTokenizer {
                 break;
             } else if (ch == '>') {
                 // End of IRI
-                sb.append(">");
+                sb.append('>');
                 consumeToken();
                 break;
             } else {
@@ -216,10 +219,11 @@ public class ManchesterOWLSyntaxTokenizer {
     /** token */
     public static class Token {
 
-        private String token;
-        private int pos;
-        private int col;
-        private int row;
+        @Nonnull
+        private final String token;
+        private final int pos;
+        private final int col;
+        private final int row;
 
         /**
          * @param token
@@ -231,7 +235,7 @@ public class ManchesterOWLSyntaxTokenizer {
          * @param row
          *        row
          */
-        public Token(String token, int pos, int col, int row) {
+        public Token(@Nonnull String token, int pos, int col, int row) {
             this.token = token;
             this.pos = pos;
             this.col = col;
@@ -239,6 +243,7 @@ public class ManchesterOWLSyntaxTokenizer {
         }
 
         /** @return token */
+        @Nonnull
         public String getToken() {
             return token;
         }
@@ -260,7 +265,7 @@ public class ManchesterOWLSyntaxTokenizer {
 
         @Override
         public String toString() {
-            return token + " [" + pos + ", " + col + ", " + row + "]";
+            return token + " [" + pos + ", " + col + ", " + row + ']';
         }
     }
 }

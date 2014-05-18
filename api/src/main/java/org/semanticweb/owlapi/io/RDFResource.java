@@ -25,26 +25,27 @@ public abstract class RDFResource extends RDFNode {
 
     private static final long serialVersionUID = 40000L;
 
+    // XXX implement equals()
     /** @return the resource IRI */
     @Nonnull
     public abstract IRI getResource();
 
     @Override
-    public int compareTo(RDFNode b) {
-        if (b.isLiteral()) {
+    public int compareTo(RDFNode o) {
+        if (o.isLiteral()) {
             return 1;
         }
-        if (equals(b)) {
+        if (equals(o)) {
             return 0;
         }
         int diff = 0;
         boolean anonA = isAnonymous();
-        boolean anonB = b.isAnonymous();
+        boolean anonB = o.isAnonymous();
         if (anonA == anonB) {
             // if both are anonymous or both are not anonymous,
             // comparing the id() values corresponds to comparing IRIs or
             // comparing bnode ids
-            diff = getIRI().compareTo(b.getIRI());
+            diff = getIRI().compareTo(o.getIRI());
         } else {
             // if one is anonymous and the other is not,
             // named nodes come first

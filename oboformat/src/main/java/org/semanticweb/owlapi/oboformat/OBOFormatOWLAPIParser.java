@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -34,7 +33,6 @@ import org.semanticweb.owlapi.io.OWLParser;
 import org.semanticweb.owlapi.io.OWLParserException;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyFormatFactory;
@@ -42,7 +40,7 @@ import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.util.OWLOntologyFormatFactoryImpl;
 
 /** oboformat parser */
-@HasPriority(value = 5)
+@HasPriority(5)
 public class OBOFormatOWLAPIParser implements OWLParser, Serializable {
 
     private static final long serialVersionUID = 40000L;
@@ -50,8 +48,7 @@ public class OBOFormatOWLAPIParser implements OWLParser, Serializable {
     @Nonnull
     @Override
     public OWLOntologyFormat parse(IRI documentIRI,
-            @Nonnull OWLOntology ontology) throws IOException,
-            OWLOntologyChangeException {
+            @Nonnull OWLOntology ontology) throws IOException {
         try {
             parse(documentIRI, null, ontology);
         } catch (OBOFormatParserException e) {
@@ -59,18 +56,15 @@ public class OBOFormatOWLAPIParser implements OWLParser, Serializable {
         } catch (OWLOntologyCreationException e) {
             throw new OWLParserException(e);
         }
-        OBOOntologyFormat format = new OBOOntologyFormat();
-        return format;
+        return new OBOOntologyFormat();
     }
 
     @Nonnull
     @Override
-    public
-            OWLOntologyFormat
-            parse(@Nonnull OWLOntologyDocumentSource documentSource,
-                    @Nonnull OWLOntology ontology,
-                    @SuppressWarnings("unused") OWLOntologyLoaderConfiguration configuration)
-                    throws IOException, OWLOntologyChangeException {
+    public OWLOntologyFormat parse(
+            @Nonnull OWLOntologyDocumentSource documentSource,
+            @Nonnull OWLOntology ontology,
+            OWLOntologyLoaderConfiguration configuration) throws IOException {
         // XXX configuration is not used
         try {
             parse(null, documentSource, ontology);
@@ -79,16 +73,15 @@ public class OBOFormatOWLAPIParser implements OWLParser, Serializable {
         } catch (OWLOntologyCreationException e) {
             throw new OWLParserException(e);
         }
-        OBOOntologyFormat format = new OBOOntologyFormat();
-        return format;
+        return new OBOOntologyFormat();
     }
 
     @SuppressWarnings("null")
-    private OWLOntology
+    private static OWLOntology
             parse(@Nullable IRI iri,
                     @Nullable OWLOntologyDocumentSource source,
-                    @Nonnull OWLOntology in) throws MalformedURLException,
-                    IOException, OWLOntologyCreationException {
+                    @Nonnull OWLOntology in) throws IOException,
+                    OWLOntologyCreationException {
         if (iri == null && source == null) {
             throw new IllegalArgumentException(
                     "iri and source annot both be null");

@@ -242,20 +242,21 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
                 .hasNext();) {
             it.next().accept(this);
             if (it.hasNext()) {
-                sb.append(" ");
+                sb.append(' ');
             }
         }
     }
 
     @Override
     public void visit(OWLOntology ontology) {
-        sb.append("Ontology(" + ontology.getOntologyID() + " [Axioms: "
-                + ontology.getAxiomCount() + "] [Logical axioms: "
-                + ontology.getLogicalAxiomCount() + "])");
+        sb.append("Ontology(").append(ontology.getOntologyID())
+                .append(" [Axioms: ").append(ontology.getAxiomCount())
+                .append("] [Logical axioms: ")
+                .append(ontology.getLogicalAxiomCount()).append("])");
     }
 
     private void insertSpace() {
-        sb.append(" ");
+        sb.append(' ');
     }
 
     /**
@@ -280,7 +281,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubClass().accept(this);
         insertSpace();
         axiom.getSuperClass().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -292,7 +293,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubject().accept(this);
         insertSpace();
         axiom.getObject().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -300,7 +301,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("AsymmetricObjectProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -308,7 +309,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("ReflexiveObjectProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -316,7 +317,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("DisjointClasses(");
         writeAnnotations(axiom);
         render(axiom.getClassExpressions());
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -326,7 +327,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getProperty().accept(this);
         insertSpace();
         axiom.getDomain().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -336,7 +337,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getProperty().accept(this);
         insertSpace();
         axiom.getDomain().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -356,7 +357,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubject().accept(this);
         insertSpace();
         axiom.getObject().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -390,7 +391,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getProperty().accept(this);
         insertSpace();
         axiom.getRange().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -402,7 +403,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubject().accept(this);
         insertSpace();
         axiom.getObject().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -410,7 +411,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("FunctionalObjectProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -420,7 +421,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubProperty().accept(this);
         insertSpace();
         axiom.getSuperProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -464,7 +465,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubject().accept(this);
         insertSpace();
         axiom.getValue().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -472,7 +473,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("SymmetricObjectProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -482,7 +483,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getProperty().accept(this);
         insertSpace();
         axiom.getRange().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -490,7 +491,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("FunctionalDataProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -508,7 +509,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getClassExpression().accept(this);
         insertSpace();
         axiom.getIndividual().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -528,7 +529,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubject().accept(this);
         insertSpace();
         axiom.getObject().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -536,7 +537,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("TransitiveObjectProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -544,7 +545,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("IrreflexiveObjectProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -554,7 +555,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         axiom.getSubProperty().accept(this);
         insertSpace();
         axiom.getSuperProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -562,7 +563,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("InverseFunctionalObjectProperty(");
         writeAnnotations(axiom);
         axiom.getProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -585,167 +586,167 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append(" )");
         insertSpace();
         axiom.getSuperProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLClass desc) {
-        sb.append(shortFormProvider.getShortForm(desc));
+    public void visit(OWLClass ce) {
+        sb.append(shortFormProvider.getShortForm(ce));
     }
 
     @Override
-    public void visit(OWLObjectIntersectionOf desc) {
+    public void visit(OWLObjectIntersectionOf ce) {
         sb.append("ObjectIntersectionOf(");
-        render(desc.getOperands());
-        sb.append(")");
+        render(ce.getOperands());
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectUnionOf desc) {
+    public void visit(OWLObjectUnionOf ce) {
         sb.append("ObjectUnionOf(");
-        render(desc.getOperands());
-        sb.append(")");
+        render(ce.getOperands());
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectComplementOf desc) {
+    public void visit(OWLObjectComplementOf ce) {
         sb.append("ObjectComplementOf(");
-        desc.getOperand().accept(this);
-        sb.append(")");
+        ce.getOperand().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectSomeValuesFrom desc) {
+    public void visit(OWLObjectSomeValuesFrom ce) {
         sb.append("ObjectSomeValuesFrom(");
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectAllValuesFrom desc) {
+    public void visit(OWLObjectAllValuesFrom ce) {
         sb.append("ObjectAllValuesFrom(");
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectHasValue desc) {
+    public void visit(OWLObjectHasValue ce) {
         sb.append("ObjectHasValue(");
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectMinCardinality desc) {
+    public void visit(OWLObjectMinCardinality ce) {
         sb.append("ObjectMinCardinality(");
-        sb.append(desc.getCardinality());
+        sb.append(ce.getCardinality());
         insertSpace();
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectExactCardinality desc) {
+    public void visit(OWLObjectExactCardinality ce) {
         sb.append("ObjectExactCardinality(");
-        sb.append(desc.getCardinality());
+        sb.append(ce.getCardinality());
         insertSpace();
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectMaxCardinality desc) {
+    public void visit(OWLObjectMaxCardinality ce) {
         sb.append("ObjectMaxCardinality(");
-        sb.append(desc.getCardinality());
+        sb.append(ce.getCardinality());
         insertSpace();
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectHasSelf desc) {
+    public void visit(OWLObjectHasSelf ce) {
         sb.append("ObjectHasSelf(");
-        desc.getProperty().accept(this);
-        sb.append(")");
+        ce.getProperty().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLObjectOneOf desc) {
+    public void visit(OWLObjectOneOf ce) {
         sb.append("ObjectOneOf(");
-        render(desc.getIndividuals());
-        sb.append(")");
+        render(ce.getIndividuals());
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLDataSomeValuesFrom desc) {
+    public void visit(OWLDataSomeValuesFrom ce) {
         sb.append("DataSomeValuesFrom(");
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLDataAllValuesFrom desc) {
+    public void visit(OWLDataAllValuesFrom ce) {
         sb.append("DataAllValuesFrom(");
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLDataHasValue desc) {
+    public void visit(OWLDataHasValue ce) {
         sb.append("DataHasValue(");
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLDataMinCardinality desc) {
+    public void visit(OWLDataMinCardinality ce) {
         sb.append("DataMinCardinality(");
-        sb.append(desc.getCardinality());
+        sb.append(ce.getCardinality());
         insertSpace();
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLDataExactCardinality desc) {
+    public void visit(OWLDataExactCardinality ce) {
         sb.append("DataExactCardinality(");
-        sb.append(desc.getCardinality());
+        sb.append(ce.getCardinality());
         insertSpace();
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
-    public void visit(OWLDataMaxCardinality desc) {
+    public void visit(OWLDataMaxCardinality ce) {
         sb.append("DataMaxCardinality(");
-        sb.append(desc.getCardinality());
+        sb.append(ce.getCardinality());
         insertSpace();
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
         insertSpace();
-        desc.getFiller().accept(this);
-        sb.append(")");
+        ce.getFiller().accept(this);
+        sb.append(')');
     }
 
     @Override
@@ -757,7 +758,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
     public void visit(OWLDataComplementOf node) {
         sb.append("DataComplementOf(");
         node.getDataRange().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -775,7 +776,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
             insertSpace();
             restriction.accept(this);
         }
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -784,7 +785,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append(node.getFacet());
         insertSpace();
         node.getFacetValue().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -792,12 +793,12 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         String literal = EscapeUtils.escapeString(node.getLiteral());
         if (node.isRDFPlainLiteral()) {
             // We can use a syntactic shortcut
-            sb.append("\"").append(literal).append("\"");
+            sb.append('"').append(literal).append('"');
             if (node.hasLang()) {
-                sb.append("@").append(node.getLang());
+                sb.append('@').append(node.getLang());
             }
         } else {
-            sb.append("\"").append(literal).append("\"^^");
+            sb.append('"').append(literal).append("\"^^");
             node.getDatatype().accept(this);
         }
     }
@@ -811,7 +812,7 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
     public void visit(OWLObjectInverseOf property) {
         sb.append("InverseOf(");
         property.getInverse().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -829,9 +830,9 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("InverseObjectProperties(");
         writeAnnotations(axiom);
         axiom.getFirstProperty().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         axiom.getSecondProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -843,16 +844,16 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         for (OWLObjectPropertyExpression prop : axiom
                 .getObjectPropertyExpressions()) {
             prop.accept(this);
-            sb.append(" ");
+            sb.append(' ');
         }
         sb.append(") (");
         for (OWLDataPropertyExpression prop : axiom
                 .getDataPropertyExpressions()) {
             prop.accept(this);
-            sb.append(" ");
+            sb.append(' ');
         }
-        sb.append(")");
-        sb.append(")");
+        sb.append(')');
+        sb.append(')');
     }
 
     @Override
@@ -860,9 +861,9 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("DataIntersectionOf(");
         for (OWLDataRange rng : node.getOperands()) {
             rng.accept(this);
-            sb.append(" ");
+            sb.append(' ');
         }
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -870,9 +871,9 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("DataUnionOf(");
         for (OWLDataRange rng : node.getOperands()) {
             rng.accept(this);
-            sb.append(" ");
+            sb.append(' ');
         }
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -884,18 +885,18 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
     public void visit(OWLAnnotationPropertyDomainAxiom axiom) {
         sb.append("AnnotationPropertyDomain(");
         axiom.getProperty().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         axiom.getDomain().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(OWLAnnotationPropertyRangeAxiom axiom) {
         sb.append("AnnotationPropertyRange(");
         axiom.getProperty().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         axiom.getRange().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -903,21 +904,21 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("SubAnnotationPropertyOf(");
         writeAnnotations(axiom);
         axiom.getSubProperty().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         axiom.getSuperProperty().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(OWLAnonymousIndividual individual) {
-        sb.append(individual.getID().toString());
+        sb.append(individual.getID());
     }
 
     @Override
     public void visit(IRI iri) {
-        sb.append("<");
+        sb.append('<');
         sb.append(iri);
-        sb.append(">");
+        sb.append('>');
     }
 
     @Override
@@ -926,12 +927,12 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         Set<OWLAnnotation> annos = node.getAnnotations();
         for (OWLAnnotation anno : annos) {
             anno.accept(this);
-            sb.append(" ");
+            sb.append(' ');
         }
         node.getProperty().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getValue().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -939,10 +940,10 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("DLSafeRule(");
         sb.append(" Body(");
         render(rule.getBody());
-        sb.append(")");
+        sb.append(')');
         sb.append(" Head(");
         render(rule.getHead());
-        sb.append(")");
+        sb.append(')');
         sb.append(" )");
     }
 
@@ -950,70 +951,70 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
     public void visit(SWRLClassAtom node) {
         sb.append("ClassAtom(");
         node.getPredicate().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getArgument().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(SWRLDataRangeAtom node) {
         sb.append("DataRangeAtom(");
         node.getPredicate().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getArgument().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(SWRLDifferentIndividualsAtom node) {
         sb.append("DifferentFromAtom(");
         node.getFirstArgument().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getSecondArgument().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(SWRLSameIndividualAtom node) {
         sb.append("SameAsAtom(");
         node.getFirstArgument().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getSecondArgument().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(SWRLObjectPropertyAtom node) {
         sb.append("ObjectPropertyAtom(");
         node.getPredicate().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getFirstArgument().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getSecondArgument().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(SWRLDataPropertyAtom node) {
         sb.append("DataPropertyAtom(");
         node.getPredicate().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getFirstArgument().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         node.getSecondArgument().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(SWRLBuiltInAtom node) {
         sb.append("BuiltInAtom(");
         sb.append(getShortForm(node.getPredicate()));
-        sb.append(" ");
+        sb.append(' ');
         for (SWRLArgument arg : node.getArguments()) {
             arg.accept(this);
-            sb.append(" ");
+            sb.append(' ');
         }
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
@@ -1021,16 +1022,16 @@ public class SimpleRenderer implements OWLObjectVisitor, OWLObjectRenderer {
         sb.append("DatatypeDefinition(");
         writeAnnotations(axiom);
         axiom.getDatatype().accept(this);
-        sb.append(" ");
+        sb.append(' ');
         axiom.getDataRange().accept(this);
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override
     public void visit(SWRLVariable node) {
         sb.append("Variable(");
         sb.append(getShortForm(node.getIRI()));
-        sb.append(")");
+        sb.append(')');
     }
 
     @Override

@@ -23,7 +23,6 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
-
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLNaryClassAxiom;
@@ -76,11 +75,11 @@ public abstract class OWLNaryClassAxiomImpl extends OWLClassAxiomImpl implements
 
     @Override
     public Set<OWLClassExpression> getClassExpressionsMinus(
-            OWLClassExpression... descs) {
+            OWLClassExpression... desc) {
         Set<OWLClassExpression> result = new HashSet<OWLClassExpression>(
                 classExpressions);
-        for (OWLClassExpression desc : descs) {
-            result.remove(desc);
+        for (OWLClassExpression d : desc) {
+            result.remove(d);
         }
         return result;
     }

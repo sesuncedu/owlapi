@@ -14,6 +14,7 @@ package org.semanticweb.owlapi.profiles;
 
 import static org.semanticweb.owlapi.vocab.OWL2Datatype.*;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -70,13 +71,15 @@ import org.semanticweb.owlapi.util.OWLOntologyWalkerVisitor;
  */
 public class OWL2RLProfile implements OWLProfile {
 
+    private static final long serialVersionUID = 40000L;
+
     @SuppressWarnings("null")
     @Nonnull
     static Boolean b(boolean b) {
         return b;
     }
 
-    protected final static Set<IRI> allowedDatatypes = new HashSet<IRI>(
+    protected static final Set<IRI> allowedDatatypes = new HashSet<IRI>(
             Arrays.asList(RDF_PLAIN_LITERAL.getIRI(), RDF_XML_LITERAL.getIRI(),
                     RDFS_LITERAL.getIRI(), XSD_DECIMAL.getIRI(),
                     XSD_INTEGER.getIRI(), XSD_NON_NEGATIVE_INTEGER.getIRI(),
@@ -275,7 +278,6 @@ public class OWL2RLProfile implements OWLProfile {
                     getCurrentAxiom(), node));
         }
 
-        @SuppressWarnings("unused")
         @Override
         public void visit(OWLDatatypeDefinitionAxiom axiom) {
             violations.add(new UseOfIllegalAxiom(getCurrentOntology(),
@@ -283,22 +285,23 @@ public class OWL2RLProfile implements OWLProfile {
         }
     }
 
-    @SuppressWarnings("unused")
     private class OWL2RLSubClassExpressionChecker extends
-            OWLClassExpressionVisitorExAdapter<Boolean> {
+            OWLClassExpressionVisitorExAdapter<Boolean> implements Serializable {
 
-        public OWL2RLSubClassExpressionChecker() {
-            super(Boolean.FALSE);
+        private static final long serialVersionUID = 40000L;
+
+        OWL2RLSubClassExpressionChecker() {
+            super(b(false));
         }
 
         @Override
-        public Boolean visit(OWLClass desc) {
-            return b(!desc.isOWLThing());
+        public Boolean visit(OWLClass ce) {
+            return b(!ce.isOWLThing());
         }
 
         @Override
-        public Boolean visit(OWLObjectIntersectionOf desc) {
-            for (OWLClassExpression op : desc.getOperands()) {
+        public Boolean visit(OWLObjectIntersectionOf ce) {
+            for (OWLClassExpression op : ce.getOperands()) {
                 if (!isOWL2RLSubClassExpression(op)) {
                     return b(false);
                 }
@@ -307,8 +310,8 @@ public class OWL2RLProfile implements OWLProfile {
         }
 
         @Override
-        public Boolean visit(OWLObjectUnionOf desc) {
-            for (OWLClassExpression op : desc.getOperands()) {
+        public Boolean visit(OWLObjectUnionOf ce) {
+            for (OWLClassExpression op : ce.getOperands()) {
                 if (!isOWL2RLSubClassExpression(op)) {
                     return b(false);
                 }
@@ -317,28 +320,28 @@ public class OWL2RLProfile implements OWLProfile {
         }
 
         @Override
-        public Boolean visit(OWLObjectSomeValuesFrom desc) {
-            return b(desc.getFiller().isOWLThing()
-                    || isOWL2RLSubClassExpression(desc.getFiller()));
+        public Boolean visit(OWLObjectSomeValuesFrom ce) {
+            return b(ce.getFiller().isOWLThing()
+                    || isOWL2RLSubClassExpression(ce.getFiller()));
         }
 
         @Override
-        public Boolean visit(OWLObjectHasValue desc) {
+        public Boolean visit(OWLObjectHasValue ce) {
             return b(true);
         }
 
         @Override
-        public Boolean visit(OWLObjectOneOf desc) {
+        public Boolean visit(OWLObjectOneOf ce) {
             return b(true);
         }
 
         @Override
-        public Boolean visit(OWLDataSomeValuesFrom desc) {
+        public Boolean visit(OWLDataSomeValuesFrom ce) {
             return b(true);
         }
 
         @Override
-        public Boolean visit(OWLDataHasValue desc) {
+        public Boolean visit(OWLDataHasValue ce) {
             return b(true);
         }
     }
@@ -350,23 +353,24 @@ public class OWL2RLProfile implements OWLProfile {
         return ce.accept(subClassExpressionChecker).booleanValue();
     }
 
-    @SuppressWarnings("unused")
     private class OWL2RLSuperClassExpressionChecker extends
-            OWLClassExpressionVisitorExAdapter<Boolean> {
+            OWLClassExpressionVisitorExAdapter<Boolean> implements Serializable {
 
-        public OWL2RLSuperClassExpressionChecker() {
-            super(Boolean.FALSE);
+        private static final long serialVersionUID = 40000L;
+
+        OWL2RLSuperClassExpressionChecker() {
+            super(b(false));
         }
 
         @Override
-        public Boolean visit(OWLClass desc) {
-            return b(!desc.isOWLThing());
+        public Boolean visit(OWLClass ce) {
+            return b(!ce.isOWLThing());
         }
 
         @Override
-        public Boolean visit(OWLObjectIntersectionOf desc) {
-            for (OWLClassExpression ce : desc.getOperands()) {
-                if (!ce.accept(this).booleanValue()) {
+        public Boolean visit(OWLObjectIntersectionOf ce) {
+            for (OWLClassExpression e : ce.getOperands()) {
+                if (!e.accept(this).booleanValue()) {
                     return b(false);
                 }
             }
@@ -375,40 +379,40 @@ public class OWL2RLProfile implements OWLProfile {
 
         // XXX difference in subclass and superclass - correct?
         @Override
-        public Boolean visit(OWLObjectComplementOf desc) {
-            return b(isOWL2RLSubClassExpression(desc.getOperand()));
+        public Boolean visit(OWLObjectComplementOf ce) {
+            return b(isOWL2RLSubClassExpression(ce.getOperand()));
         }
 
         @Override
-        public Boolean visit(OWLObjectAllValuesFrom desc) {
-            return desc.getFiller().accept(this);
+        public Boolean visit(OWLObjectAllValuesFrom ce) {
+            return ce.getFiller().accept(this);
         }
 
         @Override
-        public Boolean visit(OWLObjectHasValue desc) {
+        public Boolean visit(OWLObjectHasValue ce) {
             return b(true);
         }
 
         @Override
-        public Boolean visit(OWLObjectMaxCardinality desc) {
-            return b((desc.getCardinality() == 0 || desc.getCardinality() == 1)
-                    && (desc.getFiller().isOWLThing() || isOWL2RLSubClassExpression(desc
+        public Boolean visit(OWLObjectMaxCardinality ce) {
+            return b((ce.getCardinality() == 0 || ce.getCardinality() == 1)
+                    && (ce.getFiller().isOWLThing() || isOWL2RLSubClassExpression(ce
                             .getFiller())));
         }
 
         @Override
-        public Boolean visit(OWLDataAllValuesFrom desc) {
+        public Boolean visit(OWLDataAllValuesFrom ce) {
             return b(true);
         }
 
         @Override
-        public Boolean visit(OWLDataHasValue desc) {
+        public Boolean visit(OWLDataHasValue ce) {
             return b(true);
         }
 
         @Override
-        public Boolean visit(OWLDataMaxCardinality desc) {
-            return b(desc.getCardinality() == 0 || desc.getCardinality() == 1);
+        public Boolean visit(OWLDataMaxCardinality ce) {
+            return b(ce.getCardinality() == 0 || ce.getCardinality() == 1);
         }
     }
 
@@ -424,23 +428,24 @@ public class OWL2RLProfile implements OWLProfile {
         return ce.accept(superClassExpressionChecker).booleanValue();
     }
 
-    @SuppressWarnings("unused")
     private static class OWL2RLEquivalentClassExpressionChecker extends
-            OWLClassExpressionVisitorExAdapter<Boolean> {
+            OWLClassExpressionVisitorExAdapter<Boolean> implements Serializable {
 
-        public OWL2RLEquivalentClassExpressionChecker() {
-            super(Boolean.FALSE);
+        private static final long serialVersionUID = 40000L;
+
+        OWL2RLEquivalentClassExpressionChecker() {
+            super(b(false));
         }
 
         @Override
-        public Boolean visit(OWLClass desc) {
-            return b(!desc.isOWLThing());
+        public Boolean visit(OWLClass ce) {
+            return b(!ce.isOWLThing());
         }
 
         @Override
-        public Boolean visit(OWLObjectIntersectionOf desc) {
-            for (OWLClassExpression ce : desc.getOperands()) {
-                if (!ce.accept(this).booleanValue()) {
+        public Boolean visit(OWLObjectIntersectionOf ce) {
+            for (OWLClassExpression e : ce.getOperands()) {
+                if (!e.accept(this).booleanValue()) {
                     return b(false);
                 }
             }
@@ -448,12 +453,12 @@ public class OWL2RLProfile implements OWLProfile {
         }
 
         @Override
-        public Boolean visit(OWLObjectHasValue desc) {
+        public Boolean visit(OWLObjectHasValue ce) {
             return b(true);
         }
 
         @Override
-        public Boolean visit(OWLDataHasValue desc) {
+        public Boolean visit(OWLDataHasValue ce) {
             return b(true);
         }
     }

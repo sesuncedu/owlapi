@@ -33,7 +33,7 @@ public class ManchesterOWLSyntaxClassExpressionParser implements
         OWLExpressionParser<OWLClassExpression> {
 
     @Nonnull
-    private OWLDataFactory dataFactory;
+    private final OWLDataFactory dataFactory;
     @Nonnull
     private OWLEntityChecker checker;
 
@@ -59,7 +59,7 @@ public class ManchesterOWLSyntaxClassExpressionParser implements
     }
 
     @Override
-    public void setOWLEntityChecker(OWLEntityChecker checker) {
-        this.checker = checker;
+    public void setOWLEntityChecker(OWLEntityChecker entityChecker) {
+        this.checker = entityChecker;
     }
 }

@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.semanticweb.owlapi.api.test.TestUtils;
+import org.semanticweb.owlapi.io.OWLOntologyDocumentSourceBase;
 import org.semanticweb.owlapi.model.AddImport;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLImportsDeclaration;
@@ -35,7 +35,7 @@ import uk.ac.manchester.cs.owl.owlapi.OWLOntologyManagerImpl;
  *         Informatics Group
  * @since 2.0.0
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class OWLOntologyManagerImplTestCase {
 
     private OWLOntologyManager manager;
@@ -51,7 +51,8 @@ public class OWLOntologyManagerImplTestCase {
 
     @Test
     public void testContains() throws OWLOntologyCreationException {
-        OWLOntology ont = manager.createOntology(TestUtils.createIRI());
+        OWLOntology ont = manager.createOntology(OWLOntologyDocumentSourceBase
+                .getNextDocumentIRI("urn:testontology"));
         assertTrue(manager.contains(ont.getOntologyID()));
         assertNotNull("ontology should not be null",
                 manager.getOntology(ont.getOntologyID()));
@@ -64,9 +65,10 @@ public class OWLOntologyManagerImplTestCase {
 
     @Test
     public void testImports() throws OWLOntologyCreationException {
-        OWLOntology ontA = manager.createOntology(TestUtils.createIRI());
-        OWLOntology ontB = manager.createOntology(TestUtils.createIRI());
-        @SuppressWarnings("null")
+        OWLOntology ontA = manager.createOntology(OWLOntologyDocumentSourceBase
+                .getNextDocumentIRI("urn:testontology"));
+        OWLOntology ontB = manager.createOntology(OWLOntologyDocumentSourceBase
+                .getNextDocumentIRI("urn:testontology"));
         OWLImportsDeclaration decl = manager.getOWLDataFactory()
                 .getOWLImportsDeclaration(
                         ontB.getOntologyID().getOntologyIRI().get());
@@ -76,13 +78,15 @@ public class OWLOntologyManagerImplTestCase {
         assertFalse(manager.getDirectImports(ontA).contains(ontB));
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testImportsClosure() throws OWLException {
         // OntA -> OntB -> OntC (-> means imports)
-        OWLOntology ontA = manager.createOntology(TestUtils.createIRI());
-        OWLOntology ontB = manager.createOntology(TestUtils.createIRI());
-        OWLOntology ontC = manager.createOntology(TestUtils.createIRI());
+        OWLOntology ontA = manager.createOntology(OWLOntologyDocumentSourceBase
+                .getNextDocumentIRI("urn:testontology"));
+        OWLOntology ontB = manager.createOntology(OWLOntologyDocumentSourceBase
+                .getNextDocumentIRI("urn:testontology"));
+        OWLOntology ontC = manager.createOntology(OWLOntologyDocumentSourceBase
+                .getNextDocumentIRI("urn:testontology"));
         OWLImportsDeclaration declA = manager.getOWLDataFactory()
                 .getOWLImportsDeclaration(
                         ontB.getOntologyID().getOntologyIRI().get());

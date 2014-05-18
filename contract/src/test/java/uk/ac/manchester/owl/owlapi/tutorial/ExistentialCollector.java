@@ -36,32 +36,31 @@ import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
  *         Group
  * @since 2.0.0
  */
+@SuppressWarnings("javadoc")
 public class ExistentialCollector extends OWLClassExpressionVisitorAdapter {
 
     /* Collected axioms */
     private final Map<OWLObjectPropertyExpression, Set<OWLClassExpression>> restrictions;
 
-    @SuppressWarnings("javadoc")
     public ExistentialCollector(
             Map<OWLObjectPropertyExpression, Set<OWLClassExpression>> restrictions) {
         this.restrictions = restrictions;
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectIntersectionOf expression) {
-        for (OWLClassExpression operand : expression.getOperands()) {
+    public void visit(@Nonnull OWLObjectIntersectionOf ce) {
+        for (OWLClassExpression operand : ce.getOperands()) {
             operand.accept(this);
         }
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectSomeValuesFrom classExpression) {
-        Set<OWLClassExpression> fillers = restrictions.get(classExpression
-                .getProperty());
+    public void visit(@Nonnull OWLObjectSomeValuesFrom ce) {
+        Set<OWLClassExpression> fillers = restrictions.get(ce.getProperty());
         if (fillers == null) {
             fillers = new HashSet<OWLClassExpression>();
-            restrictions.put(classExpression.getProperty(), fillers);
+            restrictions.put(ce.getProperty(), fillers);
         }
-        fillers.add(classExpression.getFiller());
+        fillers.add(ce.getFiller());
     }
 }

@@ -39,8 +39,8 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
  *         Research Group
  * @since 3.2.0
  */
-@RunWith(value = Parameterized.class)
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
+@RunWith(Parameterized.class)
 public class OWLDataFactoryImplTestCase {
 
     private final OWLDataFactoryImpl dataFactory;
@@ -49,7 +49,6 @@ public class OWLDataFactoryImplTestCase {
         this.dataFactory = dataFactory;
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Parameterized.Parameters
     public static Collection<Object[]> parameters() {

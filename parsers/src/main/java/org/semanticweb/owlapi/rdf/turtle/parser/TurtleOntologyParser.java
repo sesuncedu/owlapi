@@ -24,11 +24,9 @@ import org.semanticweb.owlapi.formats.TurtleOntologyFormat;
 import org.semanticweb.owlapi.io.AbstractOWLParser;
 import org.semanticweb.owlapi.io.OWLOntologyDocumentSource;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.model.PrefixManager;
-import org.semanticweb.owlapi.model.UnloadableImportException;
 
 /**
  * The Class TurtleOntologyParser.
@@ -37,7 +35,7 @@ import org.semanticweb.owlapi.model.UnloadableImportException;
  *         Informatics Group
  * @since 2.2.0
  */
-@HasPriority(value = 3)
+@HasPriority(3)
 public class TurtleOntologyParser extends AbstractOWLParser {
 
     private static final long serialVersionUID = 40000L;
@@ -53,12 +51,11 @@ public class TurtleOntologyParser extends AbstractOWLParser {
         return TurtleOntologyFormat.class;
     }
 
-    @SuppressWarnings("all")
+    @SuppressWarnings("null")
     @Override
     public OWLOntologyFormat parse(OWLOntologyDocumentSource documentSource,
             OWLOntology ontology, OWLOntologyLoaderConfiguration configuration)
-            throws IOException, OWLOntologyChangeException,
-            UnloadableImportException {
+            throws IOException {
         Reader reader = null;
         InputStream is = null;
         try {
@@ -97,7 +94,8 @@ public class TurtleOntologyParser extends AbstractOWLParser {
         } finally {
             if (is != null) {
                 is.close();
-            } else if (reader != null) {
+            }
+            if (reader != null) {
                 reader.close();
             }
         }

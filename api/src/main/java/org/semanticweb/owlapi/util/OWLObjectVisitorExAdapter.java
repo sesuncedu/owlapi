@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.util;
 
+import javax.annotation.Nonnull;
+
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
@@ -113,7 +115,7 @@ public class OWLObjectVisitorExAdapter<O> extends OWLDataVisitorExAdapter<O>
      * @param defaultReturnValue
      *        default return value
      */
-    public OWLObjectVisitorExAdapter(O defaultReturnValue) {
+    public OWLObjectVisitorExAdapter(@Nonnull O defaultReturnValue) {
         super(defaultReturnValue);
     }
 
@@ -293,93 +295,93 @@ public class OWLObjectVisitorExAdapter<O> extends OWLDataVisitorExAdapter<O>
     }
 
     @Override
-    public O visit(OWLClass desc) {
-        return doDefault(desc);
+    public O visit(OWLClass ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLDataAllValuesFrom desc) {
-        return doDefault(desc);
+    public O visit(OWLDataAllValuesFrom ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLDataExactCardinality desc) {
-        return doDefault(desc);
+    public O visit(OWLDataExactCardinality ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLDataMaxCardinality desc) {
-        return doDefault(desc);
+    public O visit(OWLDataMaxCardinality ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLDataMinCardinality desc) {
-        return doDefault(desc);
+    public O visit(OWLDataMinCardinality ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLDataSomeValuesFrom desc) {
-        return doDefault(desc);
+    public O visit(OWLDataSomeValuesFrom ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLDataHasValue desc) {
-        return doDefault(desc);
+    public O visit(OWLDataHasValue ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectAllValuesFrom desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectAllValuesFrom ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectComplementOf desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectComplementOf ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectExactCardinality desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectExactCardinality ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectHasSelf desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectHasSelf ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectHasValue desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectHasValue ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectIntersectionOf desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectIntersectionOf ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectMaxCardinality desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectMaxCardinality ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectMinCardinality desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectMinCardinality ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectOneOf desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectOneOf ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectSomeValuesFrom desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectSomeValuesFrom ce) {
+        return doDefault(ce);
     }
 
     @Override
-    public O visit(OWLObjectUnionOf desc) {
-        return doDefault(desc);
+    public O visit(OWLObjectUnionOf ce) {
+        return doDefault(ce);
     }
 
     @Override
@@ -408,8 +410,8 @@ public class OWLObjectVisitorExAdapter<O> extends OWLDataVisitorExAdapter<O>
     }
 
     @Override
-    public O visit(OWLAnnotation annotation) {
-        return doDefault(annotation);
+    public O visit(OWLAnnotation node) {
+        return doDefault(node);
     }
 
     @Override

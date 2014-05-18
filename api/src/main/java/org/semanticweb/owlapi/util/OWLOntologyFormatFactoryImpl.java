@@ -12,8 +12,6 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -23,6 +21,8 @@ import org.semanticweb.owlapi.annotations.IsBinaryFormat;
 import org.semanticweb.owlapi.annotations.SupportsMIMEType;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyFormatFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * A generic factory class for OWLOntologyFormats. This class can act as a
@@ -37,7 +37,7 @@ public class OWLOntologyFormatFactoryImpl<T extends OWLOntologyFormat>
         implements OWLOntologyFormatFactory {
 
     private static final long serialVersionUID = 40000L;
-    private Class<T> type;
+    private final Class<T> type;
 
     /**
      * @param type
@@ -53,10 +53,12 @@ public class OWLOntologyFormatFactoryImpl<T extends OWLOntologyFormat>
             return type.newInstance();
         } catch (InstantiationException e) {
             throw new RuntimeException(
-                    "Cannot instantiate an OWLOntologyFormat of type " + type);
+                    "Cannot instantiate an OWLOntologyFormat of type " + type,
+                    e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(
-                    "Cannot instantiate an OWLOntologyFormat of type " + type);
+                    "Cannot instantiate an OWLOntologyFormat of type " + type,
+                    e);
         }
     }
 
@@ -74,28 +76,21 @@ public class OWLOntologyFormatFactoryImpl<T extends OWLOntologyFormat>
     @Nullable
     @Override
     public String getDefaultMIMEType() {
-        SupportsMIMEType types = this.type
-                .getAnnotation(SupportsMIMEType.class);
+        SupportsMIMEType types = type.getAnnotation(SupportsMIMEType.class);
         if (types == null) {
             return null;
         }
         return types.defaultMIMEType();
     }
 
-    @SuppressWarnings("null")
     @Override
     public List<String> getMIMETypes() {
-        SupportsMIMEType types = this.type
-                .getAnnotation(SupportsMIMEType.class);
+        SupportsMIMEType types = type.getAnnotation(SupportsMIMEType.class);
         if (types == null) {
-            return Collections.emptyList();
+            return CollectionFactory.emptyList();
         }
-        List<String> mimeTypes = new ArrayList<String>();
-        mimeTypes.add(types.defaultMIMEType());
-        for (String s : types.supportedMIMEtypes()) {
-            mimeTypes.add(s);
-        }
-        return mimeTypes;
+        return Lists
+                .asList(types.defaultMIMEType(), types.supportedMIMEtypes());
     }
 
     @Override
@@ -123,17 +118,17 @@ public class OWLOntologyFormatFactoryImpl<T extends OWLOntologyFormat>
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (null == other) {
+    public boolean equals(Object obj) {
+        if (null == obj) {
             return false;
         }
-        if (other == this) {
+        if (obj == this) {
             return true;
         }
-        if (!(other instanceof OWLOntologyFormatFactory)) {
+        if (!(obj instanceof OWLOntologyFormatFactory)) {
             return false;
         }
-        OWLOntologyFormatFactory otherFactory = (OWLOntologyFormatFactory) other;
+        OWLOntologyFormatFactory otherFactory = (OWLOntologyFormatFactory) obj;
         return getKey().equals(otherFactory.getKey());
     }
 }

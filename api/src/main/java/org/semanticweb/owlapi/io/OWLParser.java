@@ -13,10 +13,10 @@
 package org.semanticweb.owlapi.io;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-
 
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -43,7 +43,7 @@ import org.semanticweb.owlapi.model.UnloadableImportException;
  *         Informatics Group
  * @since 2.0.0
  */
-public interface OWLParser {
+public interface OWLParser extends Serializable {
 
     /**
      * Parses the ontology with a concrete representation available at
@@ -70,8 +70,7 @@ public interface OWLParser {
      */
     @Nonnull
     OWLOntologyFormat parse(@Nonnull IRI documentIRI,
-            @Nonnull OWLOntology ontology) throws IOException,
-            OWLOntologyChangeException;
+            @Nonnull OWLOntology ontology) throws IOException;
 
     /**
      * Parses the ontology with a concrete representation in
@@ -102,7 +101,7 @@ public interface OWLParser {
     OWLOntologyFormat parse(@Nonnull OWLOntologyDocumentSource documentSource,
             @Nonnull OWLOntology ontology,
             @Nonnull OWLOntologyLoaderConfiguration configuration)
-            throws IOException, OWLOntologyChangeException;
+            throws IOException;
 
     /** @return a name for the parser, typically the simple class name */
     @Nonnull

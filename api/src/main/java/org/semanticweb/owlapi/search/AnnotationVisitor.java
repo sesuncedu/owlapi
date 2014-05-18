@@ -1,7 +1,6 @@
 package org.semanticweb.owlapi.search;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,22 +9,23 @@ import javax.annotation.Nonnull;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.util.CollectionFactory;
 import org.semanticweb.owlapi.util.OWLAxiomVisitorExAdapter;
 
 @SuppressWarnings("unchecked")
 class AnnotationVisitor<C> extends OWLAxiomVisitorExAdapter<Set<C>> {
 
     private static final long serialVersionUID = 40000L;
-    private boolean value;
+    private final boolean value;
 
-    public AnnotationVisitor(boolean value) {
+    AnnotationVisitor(boolean value) {
         this.value = value;
     }
 
     @Nonnull
     @Override
-    protected Set<C> doDefault(@Nonnull OWLAxiom axiom) {
-        return get(axiom.getAnnotations());
+    protected Set<C> doDefault(@Nonnull OWLAxiom object) {
+        return get(object.getAnnotations());
     }
 
     @Nonnull
@@ -41,13 +41,12 @@ class AnnotationVisitor<C> extends OWLAxiomVisitorExAdapter<Set<C>> {
         return toReturn;
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<C> visit(@Nonnull OWLAnnotationAssertionAxiom axiom) {
         if (value) {
-            return Collections.singleton((C) axiom.getValue());
+            return CollectionFactory.createSet((C) axiom.getValue());
         }
-        return Collections.singleton((C) axiom.getAnnotation());
+        return CollectionFactory.createSet((C) axiom.getAnnotation());
     }
 }

@@ -20,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -39,6 +38,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyFormatFactory;
 import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
+import org.semanticweb.owlapi.util.CollectionFactory;
 import org.semanticweb.owlapi.util.OWLOntologyFormatFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,11 +70,11 @@ public abstract class AbstractOWLParser implements OWLParser, Serializable {
     protected AbstractOWLParser() {}
 
     @Nonnull
-    @SuppressWarnings({ "unchecked", "null" })
+    @SuppressWarnings("unchecked")
     @Override
     public Set<Class<OWLOntologyFormat>> getSupportedFormatClasses() {
-        return Collections
-                .singleton((Class<OWLOntologyFormat>) getFormatClass());
+        return CollectionFactory
+                .createSet((Class<OWLOntologyFormat>) getFormatClass());
     }
 
     @Nonnull
@@ -158,14 +158,13 @@ public abstract class AbstractOWLParser implements OWLParser, Serializable {
         }
         if (isZipName(documentIRI, conn)) {
             ZipInputStream zis = new ZipInputStream(is);
-            ZipEntry entry = zis.getNextEntry();
-            while (!couldBeOntology(entry)) {
-                ZipEntry nextEntry = zis.getNextEntry();
-                if (nextEntry != null) {
+            ZipEntry entry = null;
+            ZipEntry nextEntry = zis.getNextEntry();
+            while (entry != null && nextEntry != null) {
+                if (couldBeOntology(nextEntry)) {
                     entry = nextEntry;
-                } else {
-                    break;
                 }
+                nextEntry = zis.getNextEntry();
             }
             is = new BufferedInputStream(zis);
         }
@@ -258,15 +257,15 @@ public abstract class AbstractOWLParser implements OWLParser, Serializable {
     @SuppressWarnings("null")
     @Override
     public String getName() {
-        return this.getClass().getSimpleName();
+        return getClass().getSimpleName();
     }
 
     @Nonnull
-    @SuppressWarnings({ "unchecked", "null" })
+    @SuppressWarnings("unchecked")
     @Override
     public Set<OWLOntologyFormatFactory> getSupportedFormats() {
-        return Collections
-                .singleton((OWLOntologyFormatFactory) new OWLOntologyFormatFactoryImpl<OWLOntologyFormat>(
+        return CollectionFactory
+                .createSet((OWLOntologyFormatFactory) new OWLOntologyFormatFactoryImpl<OWLOntologyFormat>(
                         (Class<OWLOntologyFormat>) getFormatClass()));
     }
 }

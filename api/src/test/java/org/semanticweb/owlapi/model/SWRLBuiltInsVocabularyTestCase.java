@@ -27,13 +27,15 @@ import org.junit.runners.Parameterized;
 import org.semanticweb.owlapi.vocab.Namespaces;
 import org.semanticweb.owlapi.vocab.SWRLBuiltInsVocabulary;
 
+/**
+ * @author Matthew Horridge, Stanford University, Bio-Medical Informatics
+ *         Research Group Date: 18/02/2014
+ */
 @SuppressWarnings("javadoc")
-/** @author Matthew Horridge, Stanford University, Bio-Medical Informatics
- *         Research Group Date: 18/02/2014 */
 @RunWith(Parameterized.class)
 public class SWRLBuiltInsVocabularyTestCase {
 
-    private SWRLBuiltInsVocabulary vocabulary;
+    private final SWRLBuiltInsVocabulary vocabulary;
 
     public SWRLBuiltInsVocabularyTestCase(SWRLBuiltInsVocabulary vocabulary) {
         this.vocabulary = vocabulary;

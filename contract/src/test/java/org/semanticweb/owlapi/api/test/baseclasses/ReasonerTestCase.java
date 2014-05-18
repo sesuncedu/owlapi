@@ -46,9 +46,9 @@ import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 public class ReasonerTestCase extends TestBase {
 
     @Nonnull
-    private OWLReasonerFactory reasonerFactory = new StructuralReasonerFactory();
+    private final OWLReasonerFactory reasonerFactory = new StructuralReasonerFactory();
     @Nonnull
-    private OWLOntology ont = createOntology();
+    private final OWLOntology ont = createOntology();
     private OWLReasoner reasoner;
 
     @Nonnull
@@ -225,12 +225,12 @@ public class ReasonerTestCase extends TestBase {
         assertNotNull("object should not be null", nC);
         assertEquals(1, nC.getSize());
         assertTrue(nC.contains(getClsC()));
-        assertTrue(nC.getRepresentativeElement().equals(getClsC()));
+        assertEquals(nC.getRepresentativeElement(), getClsC());
         Node<OWLClass> nE = reasoner.getEquivalentClasses(getClsE());
         assertNotNull("object should not be null", nE);
         assertEquals(1, nE.getSize());
         assertTrue(nE.contains(getClsE()));
-        assertTrue(nE.getRepresentativeElement().equals(getClsE()));
+        assertEquals(nE.getRepresentativeElement(), getClsE());
         Node<OWLClass> nD = reasoner.getEquivalentClasses(getClsD());
         assertNotNull("object should not be null", nD);
         assertEquals(2, nD.getSize());

@@ -14,7 +14,6 @@ public class Xref {
      *        idref
      */
     public Xref(@Nonnull String idref) {
-        super();
         this.idref = idref;
     }
 
@@ -46,14 +45,14 @@ public class Xref {
     }
 
     @Override
-    public boolean equals(Object e) {
-        if (e == null || !(e instanceof Xref)) {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Xref)) {
             return false;
         }
-        if (e == this) {
+        if (obj == this) {
             return true;
         }
-        Xref other = (Xref) e;
+        Xref other = (Xref) obj;
         if (!idref.equals(other.idref)) {
             return false;
         }
@@ -81,6 +80,6 @@ public class Xref {
         if (annotation == null) {
             return idref;
         }
-        return "<" + idref + " \"" + annotation + "\">";
+        return '<' + idref + " \"" + annotation + "\">";
     }
 }

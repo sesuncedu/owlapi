@@ -50,18 +50,18 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OWLXMLParserHandler extends DefaultHandler {
 
-    private OWLOntologyManager owlOntologyManager;
+    private final OWLOntologyManager owlOntologyManager;
     @Nonnull
-    private OWLOntology ontology;
-    private List<OWLElementHandler<?>> handlerStack;
+    private final OWLOntology ontology;
+    private final List<OWLElementHandler<?>> handlerStack;
     @Nonnull
-    private Map<String, PARSER_OWLXMLVocabulary> handlerMap = new HashMap<String, PARSER_OWLXMLVocabulary>();
+    private final Map<String, PARSER_OWLXMLVocabulary> handlerMap = new HashMap<String, PARSER_OWLXMLVocabulary>();
     @Nonnull
     private Map<String, String> prefixName2PrefixMap = new HashMap<String, String>();
     private Locator locator;
-    private Stack<URI> bases;
+    private final Stack<URI> bases;
     @Nonnull
-    private OWLOntologyLoaderConfiguration configuration;
+    private final OWLOntologyLoaderConfiguration configuration;
 
     /**
      * @param ontology
@@ -258,7 +258,7 @@ public class OWLXMLParserHandler extends DefaultHandler {
         }
     }
 
-    private Map<String, IRI> iriMap = new HashMap<String, IRI>();
+    private final Map<String, IRI> iriMap = new HashMap<String, IRI>();
 
     /**
      * @param iriStr
@@ -293,7 +293,7 @@ public class OWLXMLParserHandler extends DefaultHandler {
         if (input.indexOf(':') != -1) {
             return input;
         } else {
-            return ":" + input;
+            return ':' + input;
         }
     }
 
@@ -313,13 +313,11 @@ public class OWLXMLParserHandler extends DefaultHandler {
             throw new OWLXMLParserException(this, "Prefix name not defined: "
                     + prefixName);
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(base);
-        sb.append(localName);
-        return getIRI(sb.toString());
+        return getIRI(base + localName);
     }
 
     /** @return prefix name to prefix */
+    @Nonnull
     public Map<String, String> getPrefixName2PrefixMap() {
         return prefixName2PrefixMap;
     }
@@ -365,7 +363,7 @@ public class OWLXMLParserHandler extends DefaultHandler {
         }
     }
 
-    @SuppressWarnings({ "unused", "null" })
+    @SuppressWarnings("null")
     @Override
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) {
@@ -378,7 +376,7 @@ public class OWLXMLParserHandler extends DefaultHandler {
                 if (name.endsWith(":")) {
                     prefixName2PrefixMap.put(name, iriString);
                 } else {
-                    prefixName2PrefixMap.put(name + ":", iriString);
+                    prefixName2PrefixMap.put(name + ':', iriString);
                 }
             }
             return;
@@ -417,7 +415,6 @@ public class OWLXMLParserHandler extends DefaultHandler {
         return bases.peek();
     }
 
-    @SuppressWarnings("unused")
     @Override
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals(PREFIX.getShortForm())) {

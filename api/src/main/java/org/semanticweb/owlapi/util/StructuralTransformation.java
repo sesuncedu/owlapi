@@ -14,8 +14,8 @@ package org.semanticweb.owlapi.util;
 
 import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,8 +95,9 @@ import org.semanticweb.owlapi.model.SWRLRule;
  *         Management Group
  * @since 2.2.0
  */
-public class StructuralTransformation {
+public class StructuralTransformation implements Serializable {
 
+    private static final long serialVersionUID = 40000L;
     @Nonnull
     protected final OWLDataFactory df;
     private int nameCounter = 0;
@@ -157,7 +158,7 @@ public class StructuralTransformation {
         private final Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
         private final OWLClassExpression rhs;
 
-        public AxiomFlattener(OWLDataFactory df, OWLClassExpression rhs) {
+        AxiomFlattener(OWLDataFactory df, OWLClassExpression rhs) {
             ldf = df;
             this.rhs = rhs;
         }
@@ -175,135 +176,135 @@ public class StructuralTransformation {
         }
 
         @Override
-        public OWLClassExpression visit(OWLClass desc) {
-            return desc;
+        public OWLClassExpression visit(OWLClass ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLDataAllValuesFrom desc) {
-            return desc;
+        public OWLClassExpression visit(OWLDataAllValuesFrom ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLDataExactCardinality desc) {
-            return desc;
+        public OWLClassExpression visit(OWLDataExactCardinality ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLDataMaxCardinality desc) {
-            return desc;
+        public OWLClassExpression visit(OWLDataMaxCardinality ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLDataMinCardinality desc) {
-            return desc;
+        public OWLClassExpression visit(OWLDataMinCardinality ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLDataSomeValuesFrom desc) {
-            return desc;
+        public OWLClassExpression visit(OWLDataSomeValuesFrom ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLDataHasValue desc) {
-            return desc;
+        public OWLClassExpression visit(OWLDataHasValue ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectAllValuesFrom desc) {
-            if (signature.containsAll(desc.getFiller().getSignature())) {
+        public OWLClassExpression visit(OWLObjectAllValuesFrom ce) {
+            if (signature.containsAll(ce.getFiller().getSignature())) {
                 OWLClass name = createNewName();
-                axioms.add(getSCA(name, desc.getFiller().accept(this)));
-                return ldf.getOWLObjectAllValuesFrom(desc.getProperty(), name);
+                axioms.add(getSCA(name, ce.getFiller().accept(this)));
+                return ldf.getOWLObjectAllValuesFrom(ce.getProperty(), name);
             } else {
-                return desc;
+                return ce;
             }
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectComplementOf desc) {
+        public OWLClassExpression visit(OWLObjectComplementOf ce) {
             // Should be a literal
-            if (desc.getOperand().isAnonymous()) {
+            if (ce.getOperand().isAnonymous()) {
                 throw new IllegalStateException(
                         "Negation of arbitrary class expressions not allowed");
             }
-            return desc;
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectExactCardinality desc) {
-            if (signature.containsAll(desc.getFiller().getSignature())) {
+        public OWLClassExpression visit(OWLObjectExactCardinality ce) {
+            if (signature.containsAll(ce.getFiller().getSignature())) {
                 OWLClass name = createNewName();
-                axioms.add(getSCA(name, desc.getFiller().accept(this)));
-                return ldf.getOWLObjectExactCardinality(desc.getCardinality(),
-                        desc.getProperty(), name);
+                axioms.add(getSCA(name, ce.getFiller().accept(this)));
+                return ldf.getOWLObjectExactCardinality(ce.getCardinality(),
+                        ce.getProperty(), name);
             } else {
-                return desc;
+                return ce;
             }
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectIntersectionOf desc) {
+        public OWLClassExpression visit(OWLObjectIntersectionOf ce) {
             OWLClass name = createNewName();
-            for (OWLClassExpression op : desc.getOperands()) {
+            for (OWLClassExpression op : ce.getOperands()) {
                 axioms.add(getSCA(name, op.accept(this)));
             }
             return name;
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectMaxCardinality desc) {
-            if (signature.containsAll(desc.getFiller().getSignature())) {
+        public OWLClassExpression visit(OWLObjectMaxCardinality ce) {
+            if (signature.containsAll(ce.getFiller().getSignature())) {
                 OWLClass name = createNewName();
-                axioms.add(getSCA(name, desc.getFiller().accept(this)));
-                return ldf.getOWLObjectMaxCardinality(desc.getCardinality(),
-                        desc.getProperty(), name);
+                axioms.add(getSCA(name, ce.getFiller().accept(this)));
+                return ldf.getOWLObjectMaxCardinality(ce.getCardinality(),
+                        ce.getProperty(), name);
             } else {
-                return desc;
+                return ce;
             }
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectMinCardinality desc) {
-            if (signature.containsAll(desc.getFiller().getSignature())) {
+        public OWLClassExpression visit(OWLObjectMinCardinality ce) {
+            if (signature.containsAll(ce.getFiller().getSignature())) {
                 OWLClass name = createNewName();
-                axioms.add(getSCA(name, desc.getFiller().accept(this)));
-                return ldf.getOWLObjectMinCardinality(desc.getCardinality(),
-                        desc.getProperty(), name);
+                axioms.add(getSCA(name, ce.getFiller().accept(this)));
+                return ldf.getOWLObjectMinCardinality(ce.getCardinality(),
+                        ce.getProperty(), name);
             } else {
-                return desc;
+                return ce;
             }
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectOneOf desc) {
-            if (desc.getIndividuals().size() > 1) {
+        public OWLClassExpression visit(OWLObjectOneOf ce) {
+            if (ce.getIndividuals().size() > 1) {
                 throw new IllegalStateException(
                         "ObjectOneOf with more than one individual!");
             }
-            return desc;
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectHasSelf desc) {
-            return desc;
+        public OWLClassExpression visit(OWLObjectHasSelf ce) {
+            return ce;
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectSomeValuesFrom desc) {
-            if (desc.getFiller().isAnonymous()) {
+        public OWLClassExpression visit(OWLObjectSomeValuesFrom ce) {
+            if (ce.getFiller().isAnonymous()) {
                 OWLClass name = createNewName();
-                axioms.add(getSCA(name, desc.getFiller().accept(this)));
-                return ldf.getOWLObjectSomeValuesFrom(desc.getProperty(), name);
+                axioms.add(getSCA(name, ce.getFiller().accept(this)));
+                return ldf.getOWLObjectSomeValuesFrom(ce.getProperty(), name);
             } else {
-                return desc;
+                return ce;
             }
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectUnionOf desc) {
+        public OWLClassExpression visit(OWLObjectUnionOf ce) {
             Set<OWLClassExpression> descs = new HashSet<OWLClassExpression>();
-            for (OWLClassExpression op : desc.getOperands()) {
+            for (OWLClassExpression op : ce.getOperands()) {
                 OWLClassExpression flatOp = op.accept(this);
                 if (flatOp.isAnonymous()
                         || signature.contains(flatOp.asOWLClass())) {
@@ -318,8 +319,8 @@ public class StructuralTransformation {
         }
 
         @Override
-        public OWLClassExpression visit(OWLObjectHasValue desc) {
-            return desc;
+        public OWLClassExpression visit(OWLObjectHasValue ce) {
+            return ce;
         }
     }
 
@@ -329,7 +330,7 @@ public class StructuralTransformation {
      */
     private class AxiomRewriter implements OWLAxiomVisitorEx<Set<OWLAxiom>> {
 
-        public AxiomRewriter() {}
+        AxiomRewriter() {}
 
         @Nonnull
         private Set<OWLAxiom> subClassOf(@Nonnull OWLClassExpression sub,
@@ -339,10 +340,9 @@ public class StructuralTransformation {
                     .getNNF()));
         }
 
-        @SuppressWarnings("null")
         @Nonnull
-        private Set<OWLAxiom> toSet(OWLAxiom ax) {
-            return Collections.singleton(ax);
+        private Set<OWLAxiom> toSet(@Nonnull OWLAxiom ax) {
+            return CollectionFactory.createSet(ax);
         }
 
         @Override
@@ -581,11 +581,9 @@ public class StructuralTransformation {
             return toSet(axiom);
         }
 
-        @SuppressWarnings("null")
         @Override
-        public Set<OWLAxiom> visit(
-                @SuppressWarnings("unused") OWLSameIndividualAxiom axiom) {
-            return Collections.emptySet();
+        public Set<OWLAxiom> visit(OWLSameIndividualAxiom axiom) {
+            return CollectionFactory.emptySet();
         }
 
         @Override

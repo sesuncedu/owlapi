@@ -25,17 +25,6 @@ import javax.annotation.Nonnull;
  */
 public class XMLWriterFactory {
 
-    @Nonnull
-    private static XMLWriterFactory instance = new XMLWriterFactory();
-
-    private XMLWriterFactory() {}
-
-    /** @return the one and only instance of the {@code XMLWriterFactory} */
-    @Nonnull
-    public static XMLWriterFactory getInstance() {
-        return instance;
-    }
-
     /**
      * Creates an XMLWriter.
      * 
@@ -48,7 +37,7 @@ public class XMLWriterFactory {
      * @return xml writer
      */
     @Nonnull
-    public XMLWriter createXMLWriter(@Nonnull Writer writer,
+    public static XMLWriter createXMLWriter(@Nonnull Writer writer,
             @Nonnull XMLWriterNamespaceManager xmlWriterNamespaceManager,
             @Nonnull String xmlBase) {
         return new XMLWriterImpl(writer, xmlWriterNamespaceManager, xmlBase);

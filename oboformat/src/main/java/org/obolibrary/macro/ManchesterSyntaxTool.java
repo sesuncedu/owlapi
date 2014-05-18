@@ -48,16 +48,27 @@ import org.slf4j.LoggerFactory;
 public class ManchesterSyntaxTool {
 
     private static final Logger log = LoggerFactory
-            .getLogger(ManchesterSyntaxTool.class.getName());
+            .getLogger(ManchesterSyntaxTool.class);
     @Nonnull
-    protected IRIShortFormProvider iriShortFormProvider;
+    protected IRIShortFormProvider iriShortFormProvider = new SimpleIRIShortFormProvider();
     @Nonnull
-    private OWLDataFactory dataFactory;
+    private final OWLDataFactory dataFactory;
     @Nonnull
-    private final OWLEntityChecker entityChecker;
+    private final AdvancedEntityChecker entityChecker;
     @Nonnull
-    private ShortFormProvider shortFormProvider;
-    private AtomicBoolean disposed = new AtomicBoolean(false);
+    private final ShortFormProvider shortFormProvider = new ShortFormProvider() {
+
+        @Override
+        public void dispose() {
+            // do nothing
+        }
+
+        @Override
+        public String getShortForm(@Nonnull OWLEntity entity) {
+            return iriShortFormProvider.getShortForm(entity.getIRI());
+        }
+    };
+    private final AtomicBoolean disposed = new AtomicBoolean(false);
 
     /**
      * Create a new parser instance for the given ontology. By default, this
@@ -68,7 +79,7 @@ public class ManchesterSyntaxTool {
      *        inputOntology
      */
     public ManchesterSyntaxTool(@Nonnull OWLOntology inputOntology) {
-        this(inputOntology, null, true);
+        this(inputOntology, null);
     }
 
     /**
@@ -82,60 +93,21 @@ public class ManchesterSyntaxTool {
      *        set of additional ontologies or null
      */
     public ManchesterSyntaxTool(@Nonnull OWLOntology inputOntology,
-            Collection<OWLOntology> auxiliaryOntologies) {
-        this(inputOntology, auxiliaryOntologies, true);
-    }
-
-    /**
-     * Create a new parser instance for the given ontologies.
-     * 
-     * @param inputOntology
-     *        inputOntology
-     * @param auxiliaryOntologies
-     *        set of additional ontologies or null
-     * @param resolveEntities
-     *        set to true, to enable resolution of OWLObjects via their
-     *        identifier or rdfs:label
-     */
-    public ManchesterSyntaxTool(@Nonnull OWLOntology inputOntology,
-            @Nullable Collection<OWLOntology> auxiliaryOntologies,
-            boolean resolveEntities) {
-        super();
+            @Nullable Collection<OWLOntology> auxiliaryOntologies) {
         OWLOntologyManager manager = inputOntology.getOWLOntologyManager();
         dataFactory = manager.getOWLDataFactory();
-        Set<OWLOntology> ontologies;
+        Set<OWLOntology> ontologies = new HashSet<OWLOntology>(
+                inputOntology.getImportsClosure());
         if (auxiliaryOntologies != null && !auxiliaryOntologies.isEmpty()) {
-            ontologies = new HashSet<OWLOntology>();
-            ontologies.addAll(inputOntology.getImportsClosure());
             for (OWLOntology auxOnt : auxiliaryOntologies) {
                 ontologies.addAll(auxOnt.getImportsClosure());
             }
-        } else {
-            ontologies = inputOntology.getImportsClosure();
         }
-        // re-use the same short form provider for translation and parsing
-        iriShortFormProvider = new SimpleIRIShortFormProvider();
-        shortFormProvider = new ShortFormProvider() {
-
-            @Override
-            public void dispose() {
-                // do nothing
-            }
-
-            @Override
-            public String getShortForm(@Nonnull OWLEntity owlEntity) {
-                return iriShortFormProvider.getShortForm(owlEntity.getIRI());
-            }
-        };
         ShortFormEntityChecker defaultInstance = new ShortFormEntityChecker(
                 new BidirectionalShortFormProviderAdapter(manager, ontologies,
                         shortFormProvider));
-        if (resolveEntities) {
-            entityChecker = new AdvancedEntityChecker(defaultInstance,
-                    ontologies, inputOntology.getOWLOntologyManager());
-        } else {
-            entityChecker = defaultInstance;
-        }
+        entityChecker = new AdvancedEntityChecker(defaultInstance, ontologies,
+                inputOntology.getOWLOntologyManager());
     }
 
     /**
@@ -150,8 +122,7 @@ public class ManchesterSyntaxTool {
     public Set<OntologyAxiomPair> parseManchesterExpressionFrames(
             @Nonnull String expression) {
         ManchesterOWLSyntaxEditorParser parser = createParser(expression);
-        Set<OntologyAxiomPair> set = parser.parseFrames();
-        return set;
+        return parser.parseFrames();
     }
 
     /**
@@ -166,8 +137,7 @@ public class ManchesterSyntaxTool {
     public OWLClassExpression parseManchesterExpression(
             @Nonnull String expression) {
         ManchesterOWLSyntaxEditorParser parser = createParser(expression);
-        OWLClassExpression ce = parser.parseClassExpression();
-        return ce;
+        return parser.parseClassExpression();
     }
 
     @Nonnull
@@ -229,7 +199,7 @@ public class ManchesterSyntaxTool {
 
         private final OWLEntityChecker defaultInstance;
         private final Set<OWLOntology> ontologies;
-        private OWLOntologyManager manager;
+        private final OWLOntologyManager manager;
 
         /**
          * @param defaultInstance
@@ -241,7 +211,6 @@ public class ManchesterSyntaxTool {
          */
         AdvancedEntityChecker(OWLEntityChecker defaultInstance,
                 Set<OWLOntology> ontologies, OWLOntologyManager manager) {
-            super();
             this.defaultInstance = defaultInstance;
             this.ontologies = ontologies;
             this.manager = manager;
@@ -342,7 +311,6 @@ public class ManchesterSyntaxTool {
          */
         @Nullable
         IRI getIRIByLabel(@Nonnull String label) {
-            IRI iri = null;
             for (OWLOntology o : ontologies) {
                 Set<OWLAnnotationAssertionAxiom> aas = o
                         .getAxioms(AxiomType.ANNOTATION_ASSERTION);
@@ -359,7 +327,7 @@ public class ManchesterSyntaxTool {
                     }
                 }
             }
-            return iri;
+            return null;
         }
 
         /**
@@ -375,7 +343,7 @@ public class ManchesterSyntaxTool {
             for (OWLOntology o : ontologies) {
                 OWLClass c = o.getOWLOntologyManager().getOWLDataFactory()
                         .getOWLClass(iri);
-                if (o.getDeclarationAxioms(c).size() > 0) {
+                if (!o.getDeclarationAxioms(c).isEmpty()) {
                     return c;
                 }
                 if (o.getOWLOntologyManager().getOWLDataFactory()
@@ -397,9 +365,8 @@ public class ManchesterSyntaxTool {
         @Nullable
         OWLNamedIndividual getOWLIndividual(@Nonnull IRI iri) {
             for (OWLOntology o : ontologies) {
-                OWLDataFactory dataFactory = o.getOWLOntologyManager()
-                        .getOWLDataFactory();
-                OWLNamedIndividual c = dataFactory.getOWLNamedIndividual(iri);
+                OWLNamedIndividual c = o.getOWLOntologyManager()
+                        .getOWLDataFactory().getOWLNamedIndividual(iri);
                 for (OWLDeclarationAxiom da : o.getDeclarationAxioms(c)) {
                     if (da.getEntity() instanceof OWLNamedIndividual) {
                         return (OWLNamedIndividual) da.getEntity();
@@ -420,10 +387,9 @@ public class ManchesterSyntaxTool {
         @Nullable
         OWLObjectProperty getOWLObjectProperty(@Nonnull IRI iri) {
             for (OWLOntology o : ontologies) {
-                OWLDataFactory dataFactory = o.getOWLOntologyManager()
-                        .getOWLDataFactory();
-                OWLObjectProperty p = dataFactory.getOWLObjectProperty(iri);
-                if (o.getDeclarationAxioms(p).size() > 0) {
+                OWLObjectProperty p = o.getOWLOntologyManager()
+                        .getOWLDataFactory().getOWLObjectProperty(iri);
+                if (!o.getDeclarationAxioms(p).isEmpty()) {
                     return p;
                 }
             }

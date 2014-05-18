@@ -29,7 +29,7 @@ public class BuilderPropertyChain
         BaseObjectPropertyBuilder<OWLSubPropertyChainOfAxiom, BuilderPropertyChain> {
 
     @Nonnull
-    private List<OWLObjectPropertyExpression> chain = new ArrayList<OWLObjectPropertyExpression>();
+    private final List<OWLObjectPropertyExpression> chain = new ArrayList<OWLObjectPropertyExpression>();
 
     /**
      * builder initialized from an existing object
@@ -80,9 +80,9 @@ public class BuilderPropertyChain
         return this;
     }
 
-    @SuppressWarnings("null")
     @Override
     public OWLSubPropertyChainOfAxiom buildObject() {
-        return df.getOWLSubPropertyChainOfAxiom(chain, property, annotations);
+        return df.getOWLSubPropertyChainOfAxiom(chain, getProperty(),
+                annotations);
     }
 }

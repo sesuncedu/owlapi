@@ -13,10 +13,9 @@ import org.obolibrary.oboformat.model.Frame;
 import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatConstants.OboFormatTag;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class OboEscapeCharsTest extends OboFormatTestBasics {
 
-    @SuppressWarnings("null")
     @Test
     public void testEscapeChars() {
         OBODoc obodoc = parseOBOFile("escape_chars_test.obo");
@@ -42,8 +41,7 @@ public class OboEscapeCharsTest extends OboFormatTestBasics {
         OBODoc oboDoc2 = parseOboToString(oboToString);
         assertNotNull("There was an error during parsing of the obodoc",
                 oboDoc2);
-        OBODocDiffer differ = new OBODocDiffer();
-        List<Diff> diffs = differ.getDiffs(oboDoc, oboDoc2);
+        List<Diff> diffs = OBODocDiffer.getDiffs(oboDoc, oboDoc2);
         assertEquals("Expected no diffs.", 0, diffs.size());
         String original = readResource("escape_chars_test.obo");
         assertEquals(original, oboToString);

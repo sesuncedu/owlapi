@@ -1,7 +1,8 @@
 package org.obolibrary.oboformat;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.obolibrary.obo2owl.OboFormatTestBasics;
 import org.obolibrary.oboformat.model.Clause;
@@ -10,32 +11,30 @@ import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatConstants.OboFormatTag;
 import org.obolibrary.oboformat.parser.XrefExpander;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class XrefExpanderTest extends OboFormatTestBasics {
 
-    @SuppressWarnings("null")
     @Test
     public void testExpand() {
         OBODoc obodoc = parseOBOFile("treat_xrefs_test.obo");
         XrefExpander x = new XrefExpander(obodoc);
         x.expandXrefs();
         OBODoc tdoc = obodoc.getImportedOBODocs().iterator().next();
-        assertTrue(tdoc.getTermFrames().size() > 0);
+        assertTrue(!tdoc.getTermFrames().isEmpty());
         Frame termFrame = tdoc.getTermFrame("ZFA:0001689");
         assert termFrame != null;
-        assertTrue(termFrame.getClauses(OboFormatTag.TAG_INTERSECTION_OF)
-                .size() == 2);
+        Assert.assertEquals(2,
+                termFrame.getClauses(OboFormatTag.TAG_INTERSECTION_OF).size());
         termFrame = tdoc.getTermFrame("EHDAA:571");
         assert termFrame != null;
-        assertTrue(termFrame.getClause(OboFormatTag.TAG_IS_A).getValue()
-                .equals("UBERON:0002539"));
+        Assert.assertEquals("UBERON:0002539",
+                termFrame.getClause(OboFormatTag.TAG_IS_A).getValue());
         termFrame = tdoc.getTermFrame("UBERON:0006800");
         assert termFrame != null;
-        assertTrue(termFrame.getClause(OboFormatTag.TAG_IS_A).getValue()
-                .equals("CARO:0000008"));
+        Assert.assertEquals("CARO:0000008",
+                termFrame.getClause(OboFormatTag.TAG_IS_A).getValue());
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testExpandIntoSeparateBridges() {
         OBODoc obodoc = parseOBOFile("treat_xrefs_test.obo");
@@ -48,33 +47,36 @@ public class XrefExpanderTest extends OboFormatTestBasics {
                 continue;
             }
             Clause impClause = hf.getClause(OboFormatTag.TAG_ONTOLOGY);
-            if (impClause == null) {
-                continue;
-            }
+            // if (impClause == null) {
+            // continue;
+            // }
             String tid = impClause.getValue(String.class)
                     .replace("bridge-", "");
             if (tid.equals("zfa")) {
-                assertTrue(tdoc.getTermFrame("ZFA:0001689")
-                        .getClauses(OboFormatTag.TAG_INTERSECTION_OF).size() == 2);
+                Assert.assertEquals(2, tdoc.getTermFrame("ZFA:0001689")
+                        .getClauses(OboFormatTag.TAG_INTERSECTION_OF).size());
                 Frame pf = tdoc.getTypedefFrame("part_of");
-                assertTrue(pf.getClause(OboFormatTag.TAG_XREF).getValue()
-                        .toString().equals("BFO:0000050"));
+                Assert.assertEquals("BFO:0000050",
+                        pf.getClause(OboFormatTag.TAG_XREF).getValue()
+                                .toString());
                 n++;
             }
             if (tid.equals("ehdaa")) {
-                assertTrue(tdoc.getTermFrame("EHDAA:571")
-                        .getClause(OboFormatTag.TAG_IS_A).getValue()
-                        .equals("UBERON:0002539"));
+                Assert.assertEquals(
+                        "UBERON:0002539",
+                        tdoc.getTermFrame("EHDAA:571")
+                                .getClause(OboFormatTag.TAG_IS_A).getValue());
                 n++;
             }
             if (tid.equals("caro")) {
-                assertTrue(tdoc.getTermFrame("UBERON:0006800")
-                        .getClause(OboFormatTag.TAG_IS_A).getValue()
-                        .equals("CARO:0000008"));
+                Assert.assertEquals(
+                        "CARO:0000008",
+                        tdoc.getTermFrame("UBERON:0006800")
+                                .getClause(OboFormatTag.TAG_IS_A).getValue());
                 n++;
             }
         }
-        assertTrue(n == 3);
+        assertEquals(3, n);
         // assertTrue(frame.getClause("name").getValue().equals("x1"));
     }
     /*

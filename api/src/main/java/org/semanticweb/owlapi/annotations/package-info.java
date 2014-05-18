@@ -10,26 +10,6 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
-package org.semanticweb.owlapi.rdf;
+/**Annotation classes.*/
+package org.semanticweb.owlapi.annotations;
 
-import javax.annotation.Nonnull;
-
-import org.semanticweb.owlapi.model.IRI;
-
-/**
- * @author Matthew Horridge, The University Of Manchester, Bio-Health
- *         Informatics Group
- * @since 2.0.0
- */
-@SuppressWarnings("javadoc")
-public class TestUtils {
-
-    private static int uriCounter = 0;
-
-    @Nonnull
-    public static IRI createIRI() {
-        uriCounter++;
-        return IRI.create("http://org.semanticweb.owlapi/tests#", "uri"
-                + uriCounter);
-    }
-}

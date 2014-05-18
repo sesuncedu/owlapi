@@ -33,15 +33,8 @@ import org.semanticweb.owlapi.io.OWLOntologyLoaderMetaData;
 public abstract class OWLOntologyFormat implements Serializable {
 
     private static final long serialVersionUID = 40000L;
-    private Map<Object, Object> paramaterMap;
+    private Map<Serializable, Serializable> parameterMap = new HashMap<Serializable, Serializable>();
     private OWLOntologyLoaderMetaData loaderMetaData = new NullLoaderMetaData();
-
-    private Map<Object, Object> getParameterMap() {
-        if (paramaterMap == null) {
-            paramaterMap = new HashMap<Object, Object>();
-        }
-        return paramaterMap;
-    }
 
     /**
      * @param key
@@ -49,8 +42,8 @@ public abstract class OWLOntologyFormat implements Serializable {
      * @param value
      *        value for the new entry
      */
-    public void setParameter(Object key, Object value) {
-        getParameterMap().put(key, value);
+    public void setParameter(Serializable key, Serializable value) {
+        parameterMap.put(key, value);
     }
 
     /**
@@ -60,8 +53,9 @@ public abstract class OWLOntologyFormat implements Serializable {
      *        value for the new entry
      * @return the value
      */
-    public Object getParameter(Object key, Object defaultValue) {
-        Object val = getParameterMap().get(key);
+    public Serializable
+            getParameter(Serializable key, Serializable defaultValue) {
+        Serializable val = parameterMap.get(key);
         if (val != null) {
             return val;
         } else {
@@ -154,7 +148,7 @@ public abstract class OWLOntologyFormat implements Serializable {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return getKey();
     }
 
@@ -163,6 +157,6 @@ public abstract class OWLOntologyFormat implements Serializable {
 
         private static final long serialVersionUID = 40000L;
 
-        public NullLoaderMetaData() {}
+        NullLoaderMetaData() {}
     }
 }

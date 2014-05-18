@@ -14,7 +14,6 @@ package org.semanticweb.owlapi.change;
 
 import javax.annotation.Nonnull;
 
-
 import org.semanticweb.owlapi.model.AddOntologyAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -33,7 +32,7 @@ public class AddOntologyAnnotationData extends OntologyAnnotationChangeData {
     private static final long serialVersionUID = 40000L;
 
     /**
-     * Constructs an {@link AddOntologyAnnotationData} object that describes an
+     * Constructs an {@code AddOntologyAnnotationData} object that describes an
      * {@link AddOntologyAnnotation} change for the {@link OWLAnnotation}
      * specified by the {@code annotation} parameter.
      * 

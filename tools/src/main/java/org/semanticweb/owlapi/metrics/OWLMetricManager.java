@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-
 import org.semanticweb.owlapi.model.OWLOntology;
 
 /**
@@ -64,7 +63,7 @@ public class OWLMetricManager {
         StringBuilder sb = new StringBuilder();
         for (OWLMetric<?> m : metrics) {
             sb.append(m);
-            sb.append("\n");
+            sb.append('\n');
         }
         return sb.toString();
     }

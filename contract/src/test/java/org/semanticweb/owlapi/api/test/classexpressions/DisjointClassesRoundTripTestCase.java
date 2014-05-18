@@ -25,7 +25,6 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
 @SuppressWarnings("javadoc")
 public class DisjointClassesRoundTripTestCase extends TestBase {
@@ -42,12 +41,11 @@ public class DisjointClassesRoundTripTestCase extends TestBase {
     }
 
     @Test
-    public void shouldRoundTrip() throws OWLOntologyCreationException,
-            OWLOntologyStorageException {
+    public void shouldRoundTrip() throws Exception {
         String NS = "http://ns.owl";
         OWLOntology ontology = buildOntology(NS);
         PrefixOWLOntologyFormat format = new ManchesterOWLSyntaxOntologyFormat();
-        format.setPrefix("piz", NS + "#");
+        format.setPrefix("piz", NS + '#');
         OWLOntology roundtripped = roundTrip(ontology, format);
         assertEquals(ontology.getLogicalAxioms(),
                 roundtripped.getLogicalAxioms());

@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.util;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +45,7 @@ public class OntologyIRIShortFormProvider implements IRIShortFormProvider {
     private static final String[] EXTENSIONS = { OWL_EXTENSION, RDF_EXTENSION,
             XML_EXTENSION, OBO_EXTENSION };
     private static final Map<IRI, String> wellKnownShortForms = initWellKnownShortForms();
+    private static final long serialVersionUID = 40000L;
 
     private static Map<IRI, String> initWellKnownShortForms() {
         Map<IRI, String> map = new HashMap<IRI, String>();
@@ -56,7 +59,7 @@ public class OntologyIRIShortFormProvider implements IRIShortFormProvider {
             }
             assert iri != null;
             map.put(IRI.create(iri), ns.getPrefixName().toLowerCase());
-            map.put(IRI.create(iri + "/"), ns.getPrefixName().toLowerCase());
+            map.put(IRI.create(iri + '/'), ns.getPrefixName().toLowerCase());
         }
         return Collections.unmodifiableMap(map);
     }
@@ -66,11 +69,10 @@ public class OntologyIRIShortFormProvider implements IRIShortFormProvider {
      *        ontology to use
      * @return short form of the ontology IRI
      */
-    @SuppressWarnings("null")
     public String getShortForm(OWLOntology ont) {
         OWLOntologyID ontologyID = ont.getOntologyID();
         if (ontologyID.getOntologyIRI().isPresent()) {
-            return getShortForm(ontologyID.getOntologyIRI().get());
+            return getShortForm(verifyNotNull(ontologyID.getOntologyIRI().get()));
         } else {
             return ontologyID.toString();
         }
@@ -86,7 +88,7 @@ public class OntologyIRIShortFormProvider implements IRIShortFormProvider {
         URI uri = iri.toURI();
         String path = uri.getPath();
         String shortForm = null;
-        if (path != null && path.length() > 0) {
+        if (path != null && !path.isEmpty()) {
             StringTokenizer tokenizer = new StringTokenizer(path, "/", false);
             String candidatePathElement = "";
             while (tokenizer.hasMoreTokens()) {

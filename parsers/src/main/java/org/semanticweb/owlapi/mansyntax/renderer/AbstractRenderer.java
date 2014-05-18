@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,6 +23,7 @@ import javax.annotation.Nullable;
 import org.semanticweb.owlapi.io.OWLRendererException;
 import org.semanticweb.owlapi.io.OWLRendererIOException;
 import org.semanticweb.owlapi.mansyntax.parser.ManchesterOWLSyntax;
+import org.semanticweb.owlapi.model.OWLRuntimeException;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 /**
@@ -36,7 +36,7 @@ public class AbstractRenderer {
     private ShortFormProvider shortFormProvider;
     private int lastNewLinePos = -1;
     private int currentPos;
-    private Writer writer;
+    private final Writer writer;
     private final List<Integer> tabs = new ArrayList<Integer>();
     private boolean useTabbing = true;
     private boolean useWrapping = true;
@@ -133,30 +133,12 @@ public class AbstractRenderer {
         try {
             writer.write(s);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new OWLRuntimeException(e);
         }
     }
 
     protected void write(char ch) {
         write(Character.toString(ch));
-    }
-
-    protected void write(String s, int lineLen) {
-        StringTokenizer tokenizer = new StringTokenizer(s, " \n\t-", true);
-        int currentLineLength = 0;
-        while (tokenizer.hasMoreTokens()) {
-            String curToken = tokenizer.nextToken();
-            write(curToken);
-            if (curToken.equals("\n")) {
-                writeTab();
-            }
-            currentLineLength += curToken.length();
-            if (currentLineLength > lineLen && curToken.trim().length() != 0
-                    && tokenizer.hasMoreTokens()) {
-                writeNewLine();
-                currentLineLength = 0;
-            }
-        }
     }
 
     protected void writeSpace() {

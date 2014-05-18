@@ -205,14 +205,13 @@ public enum PARSER_OWLXMLVocabulary implements HasIRI {
      * @return element handler
      */
     @Nonnull
-    public OWLElementHandler<?> createHandler(
+    OWLElementHandler<?> createHandler(
             @SuppressWarnings("unused") @Nonnull OWLXMLParserHandler handler) {
         throw new OWLRuntimeException(shortName
                 + " vocabulary element does not have a handler");
     }
 }
 
-@SuppressWarnings("unused")
 abstract class OWLElementHandler<O> {
 
     @Nonnull
@@ -270,7 +269,7 @@ abstract class OWLElementHandler<O> {
      *        element handler
      */
     void setParentHandler(@Nonnull OWLElementHandler<?> handler) {
-        this.parentHandler = handler;
+        parentHandler = handler;
     }
 
     @Nonnull
@@ -285,6 +284,7 @@ abstract class OWLElementHandler<O> {
      * @param value
      *        attribute value
      */
+    @SuppressWarnings("unused")
     void attribute(@Nonnull String localName, @Nonnull String value) {}
 
     /**
@@ -303,96 +303,112 @@ abstract class OWLElementHandler<O> {
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull AbstractOWLAxiomElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull AbstractClassExpressionElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull AbstractOWLDataRangeHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull AbstractOWLObjectPropertyElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLDataPropertyElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLIndividualElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLLiteralElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLAnnotationElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLSubObjectPropertyChainElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLDatatypeFacetRestrictionElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLAnnotationPropertyElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull OWLAnonymousIndividualElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull AbstractIRIElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull SWRLVariableElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull SWRLAtomElementHandler h) {}
 
     /**
      * @param h
      *        element handler
      */
+    @SuppressWarnings("unused")
     void handleChild(@Nonnull SWRLAtomListElementHandler h) {}
 
     void ensureNotNull(@Nullable Object element, String message) {
@@ -669,7 +685,6 @@ abstract class AbstractOWLAxiomElementHandler extends
         this.axiom = axiom;
     }
 
-    @SuppressWarnings("unused")
     @Override
     void startElement(String name) {
         annotations.clear();
@@ -1203,11 +1218,6 @@ class OWLAnnotationElementHandler extends OWLElementHandler<OWLAnnotation> {
     OWLAnnotation getOWLObject() {
         return df.getOWLAnnotation(verifyNotNull(property),
                 verifyNotNull(object), annotations);
-    }
-
-    @Override
-    boolean isTextContentPossible() {
-        return false;
     }
 }
 
@@ -2386,8 +2396,8 @@ class OWLObjectIntersectionOfElementHandler extends
 
     @Override
     OWLClassExpression createClassExpression(
-            @Nonnull Set<OWLClassExpression> ops) {
-        return df.getOWLObjectIntersectionOf(ops);
+            @Nonnull Set<OWLClassExpression> expressions) {
+        return df.getOWLObjectIntersectionOf(expressions);
     }
 }
 
@@ -2560,8 +2570,9 @@ class OWLObjectUnionOfElementHandler extends
     }
 
     @Override
-    OWLClassExpression createClassExpression(Set<OWLClassExpression> ops) {
-        return df.getOWLObjectUnionOf(ops);
+    OWLClassExpression
+            createClassExpression(Set<OWLClassExpression> expressions) {
+        return df.getOWLObjectUnionOf(expressions);
     }
 }
 
@@ -2923,13 +2934,13 @@ class SWRLDataPropertyAtomElementHandler extends SWRLAtomElementHandler {
     }
 
     @Override
-    void handleChild(@Nonnull OWLIndividualElementHandler _handler) {
-        arg0 = df.getSWRLIndividualArgument(_handler.getOWLObject());
+    void handleChild(@Nonnull OWLIndividualElementHandler h) {
+        arg0 = df.getSWRLIndividualArgument(h.getOWLObject());
     }
 
     @Override
-    void handleChild(@Nonnull OWLAnonymousIndividualElementHandler _handler) {
-        arg0 = df.getSWRLIndividualArgument(_handler.getOWLObject());
+    void handleChild(@Nonnull OWLAnonymousIndividualElementHandler h) {
+        arg0 = df.getSWRLIndividualArgument(h.getOWLObject());
     }
 
     @Override
@@ -2950,8 +2961,8 @@ class SWRLDataRangeAtomElementHandler extends SWRLAtomElementHandler {
     }
 
     @Override
-    void handleChild(@Nonnull AbstractOWLDataRangeHandler _handler) {
-        prop = _handler.getOWLObject();
+    void handleChild(@Nonnull AbstractOWLDataRangeHandler h) {
+        prop = h.getOWLObject();
     }
 
     @Override
@@ -3140,20 +3151,19 @@ class OWLOntologyHandler extends OWLElementHandler<OWLOntology> {
         super(handler);
     }
 
-    @SuppressWarnings("unused")
     @Override
     void startElement(String name) {}
 
     @Override
-    void attribute(@Nonnull String name, String value) {
-        if (name.equals("ontologyIRI")) {
+    void attribute(@Nonnull String localName, String value) {
+        if (localName.equals("ontologyIRI")) {
             OWLOntologyID newID = new OWLOntologyID(Optional.of(IRI
                     .create(value)), handler.getOntology().getOntologyID()
                     .getVersionIRI());
             handler.getOWLOntologyManager().applyChange(
                     new SetOntologyID(handler.getOntology(), newID));
         }
-        if (name.equals("versionIRI")) {
+        if (localName.equals("versionIRI")) {
             OWLOntologyID newID = new OWLOntologyID(handler.getOntology()
                     .getOntologyID().getOntologyIRI(), Optional.of(IRI
                     .create(value)));
@@ -3172,11 +3182,9 @@ class OWLOntologyHandler extends OWLElementHandler<OWLOntology> {
         }
     }
 
-    @SuppressWarnings("unused")
     @Override
     void handleChild(AbstractOWLDataRangeHandler h) {}
 
-    @SuppressWarnings("unused")
     @Override
     void handleChild(AbstractClassExpressionElementHandler h) {}
 
@@ -3195,7 +3203,6 @@ class OWLOntologyHandler extends OWLElementHandler<OWLOntology> {
         return handler.getOntology();
     }
 
-    @SuppressWarnings("unused")
     @Override
     void setParentHandler(OWLElementHandler<?> handler) {}
 }

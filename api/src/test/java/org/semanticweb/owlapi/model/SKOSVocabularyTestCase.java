@@ -27,13 +27,15 @@ import org.junit.runners.Parameterized;
 import org.semanticweb.owlapi.vocab.Namespaces;
 import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 
-@SuppressWarnings("javadoc")
-/** @author Matthew Horridge, Stanford University, Bio-Medical Informatics
- *         Research Group Date: 18/02/2014 */
+/**
+ * @author Matthew Horridge, Stanford University, Bio-Medical Informatics
+ *         Research Group Date: 18/02/2014
+ */
 @RunWith(Parameterized.class)
+@SuppressWarnings("javadoc")
 public class SKOSVocabularyTestCase {
 
-    private SKOSVocabulary vocabulary;
+    private final SKOSVocabulary vocabulary;
 
     public SKOSVocabularyTestCase(SKOSVocabulary vocabulary) {
         this.vocabulary = vocabulary;

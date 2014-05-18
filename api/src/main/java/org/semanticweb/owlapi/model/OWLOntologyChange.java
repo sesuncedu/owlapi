@@ -14,10 +14,10 @@ package org.semanticweb.owlapi.model;
 
 import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.semanticweb.owlapi.change.OWLOntologyChangeData;
 import org.semanticweb.owlapi.change.OWLOntologyChangeRecord;
@@ -29,8 +29,10 @@ import org.semanticweb.owlapi.change.OWLOntologyChangeRecord;
  * @param <T>
  *        change type
  */
-public abstract class OWLOntologyChange<T> implements HasSignature {
+public abstract class OWLOntologyChange<T> implements HasSignature,
+        Serializable {
 
+    private static final long serialVersionUID = 40000L;
     @Nonnull
     private final OWLOntology ont;
 
@@ -74,11 +76,12 @@ public abstract class OWLOntologyChange<T> implements HasSignature {
      * method obtains the axiom.
      * 
      * @return The Axiom if this change is an axiom change
-     * @throws UnsupportedOperationException
-     *         If the change is not an axiom change (check with the
+     * @throws IllegalStateException
+     *         if the change has no axiom; UnsupportedOperationException If the
+     *         change is not an axiom change (check with the
      *         {@code isAxiomChange} method first).
      */
-    @Nullable
+    @Nonnull
     public abstract OWLAxiom getAxiom();
 
     /**
@@ -105,19 +108,19 @@ public abstract class OWLOntologyChange<T> implements HasSignature {
      * change.
      * 
      * @return The {@link OWLOntologyChangeData} associated with this
-     *         {@link OWLOntologyChange}.
+     *         {@code OWLOntologyChange}.
      */
     @Nonnull
     public abstract OWLOntologyChangeData<T> getChangeData();
 
     /**
      * Gets a {@link OWLOntologyChangeRecord} that is derived from this
-     * {@link OWLOntologyChange}'s {@link OWLOntologyID} and it's
+     * {@code OWLOntologyChange}'s {@link OWLOntologyID} and it's
      * {@link OWLOntologyChangeData}.
      * 
      * @return An {@link OWLOntologyChangeRecord} containing an
      *         {@link OWLOntologyID} equal to the {@link OWLOntologyID} of this
-     *         {@link OWLOntologyChange}'s {@link OWLOntology}. Not {@code null}
+     *         {@code OWLOntologyChange}'s {@link OWLOntology}. Not {@code null}
      *         .
      */
     @Nonnull

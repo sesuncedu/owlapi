@@ -136,7 +136,7 @@ public class OWLLiteralImplDouble extends OWLObjectImpl implements OWLLiteral {
     }
 
     @Override
-    public boolean hasLang(@SuppressWarnings("unused") String l) {
+    public boolean hasLang(String lang) {
         return false;
     }
 

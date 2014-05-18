@@ -12,7 +12,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package uk.ac.manchester.cs.owl.owlapi;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,7 +61,7 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
     @Nonnull
     private final OWLDatatype datatype;
     @Nonnull
-    private final String lang;
+    private final String language;
     private final int hashcode;
 
     @Override
@@ -83,8 +83,8 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
             @Nullable OWLDatatype datatype) {
         this.literal = new LiteralWrapper(checkNotNull(literal,
                 "literal cannot be null"));
-        if (lang == null || lang.length() == 0) {
-            this.lang = "";
+        if (lang == null || lang.isEmpty()) {
+            language = "";
             if (datatype == null) {
                 this.datatype = RDF_PLAIN_LITERAL;
             } else {
@@ -98,7 +98,7 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
                         "Error: cannot build a literal with type: "
                                 + datatype.getIRI() + " and language: " + lang);
             }
-            this.lang = lang;
+            language = lang;
             this.datatype = RDF_PLAIN_LITERAL;
         }
         hashcode = getHashCode();
@@ -117,7 +117,7 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
 
     @Override
     public boolean hasLang() {
-        return !lang.equals("");
+        return !language.isEmpty();
     }
 
     @Override
@@ -174,16 +174,15 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
 
     @Override
     public String getLang() {
-        return lang;
+        return language;
     }
 
     @Override
-    public boolean hasLang(String _l) {
-        String l = _l;
-        if (l == null) {
-            return lang.isEmpty();
+    public boolean hasLang(String lang) {
+        if (lang == null) {
+            return language.isEmpty();
         }
-        return lang.equalsIgnoreCase(l.trim());
+        return language.equalsIgnoreCase(lang.trim());
     }
 
     @Override
@@ -199,7 +198,7 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
     private int getHashCode() {
         int hashCode = 277;
         hashCode = hashCode * 37 + getDatatype().hashCode();
-        hashCode = hashCode * 37;
+        hashCode *= 37;
         if (literal.l != null) {
             hashCode += literal.l.hashCode();
         } else {
@@ -220,7 +219,7 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
             OWLLiteral other = (OWLLiteral) obj;
             return literal.get().equals(other.getLiteral())
                     && datatype.equals(other.getDatatype())
-                    && lang.equals(other.getLang());
+                    && language.equals(other.getLang());
         }
         return false;
     }
@@ -256,7 +255,7 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
         if (diff != 0) {
             return diff;
         }
-        return lang.compareTo(other.getLang());
+        return language.compareTo(other.getLang());
     }
 
     @Override
@@ -269,8 +268,8 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
         return visitor.visit(this);
     }
 
-    // Literal Wraper
-    private static final class LiteralWrapper implements Serializable {
+    // Literal Wrapper
+    private static class LiteralWrapper implements Serializable {
 
         private static final long serialVersionUID = 40000L;
         String l;
@@ -292,11 +291,10 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
             }
         }
 
-        @SuppressWarnings("null")
         @Nonnull
         String get() {
             if (l != null) {
-                return l;
+                return verifyNotNull(l);
             }
             try {
                 return decompress(bytes);
@@ -310,8 +308,7 @@ public class OWLLiteralImpl extends OWLObjectImpl implements OWLLiteral {
         @Nonnull
         static byte[] compress(String s) throws IOException {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            GZIPOutputStream zipout;
-            zipout = new GZIPOutputStream(out);
+            GZIPOutputStream zipout = new GZIPOutputStream(out);
             Writer writer = new OutputStreamWriter(zipout, COMPRESSED_ENCODING);
             writer.write(s);
             writer.flush();

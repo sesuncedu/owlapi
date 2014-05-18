@@ -18,10 +18,9 @@ import static org.semanticweb.owlapi.apibinding.OWLFunctionalSyntaxFactory.Liter
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLLiteral;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class OWLLiteralCorruptionTestCase {
 
-    @SuppressWarnings("null")
     @Test
     public void testmain() {
         String TEST_STRING;
@@ -30,7 +29,7 @@ public class OWLLiteralCorruptionTestCase {
         while (count-- > 0) {
             sb.append("200 \u00B5Liters + character above U+0FFFF = ");
             sb.appendCodePoint(0x10192);  // happens to be "ROMAN SEMUNCIA SIGN"
-            sb.append("\n");
+            sb.append('\n');
         }
         TEST_STRING = sb.toString();
         OWLLiteral literal = Literal(TEST_STRING);

@@ -16,7 +16,6 @@ import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +34,7 @@ import org.semanticweb.owlapi.profiles.OWL2DLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfile;
 import org.semanticweb.owlapi.profiles.OWLProfileReport;
 import org.semanticweb.owlapi.profiles.OWLProfileViolation;
+import org.semanticweb.owlapi.util.CollectionFactory;
 
 /**
  * Base builder class, providing annotations storage
@@ -42,18 +42,17 @@ import org.semanticweb.owlapi.profiles.OWLProfileViolation;
  * @author ignazio
  * @param <T>
  *        built type
- * @param <Type>
+ * @param <B>
  *        builder type
  */
-public abstract class BaseBuilder<T extends OWLObject, Type> implements
-        Builder<T> {
+public abstract class BaseBuilder<T extends OWLObject, B> implements Builder<T> {
 
     @Nonnull
     protected final OWLDataFactory df;
     @Nonnull
     protected Set<OWLAnnotation> annotations = new HashSet<OWLAnnotation>();
     @Nonnull
-    private OWLProfile profile = new OWL2DLProfile();
+    private final OWLProfile profile = new OWL2DLProfile();
 
     /**
      * @param df
@@ -71,9 +70,9 @@ public abstract class BaseBuilder<T extends OWLObject, Type> implements
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withAnnotation(OWLAnnotation arg) {
+    public B withAnnotation(OWLAnnotation arg) {
         annotations.add(arg);
-        return (Type) this;
+        return (B) this;
     }
 
     /**
@@ -83,22 +82,20 @@ public abstract class BaseBuilder<T extends OWLObject, Type> implements
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withAnnotations(@Nonnull Collection<OWLAnnotation> arg) {
+    public B withAnnotations(@Nonnull Collection<OWLAnnotation> arg) {
         annotations.addAll(arg);
-        return (Type) this;
+        return (B) this;
     }
 
     @Override
     public abstract T buildObject();
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
-    public final List<OWLOntologyChange<?>>
-            applyChanges(@Nonnull OWLOntology o) {
+    public List<OWLOntologyChange<?>> applyChanges(@Nonnull OWLOntology o) {
         T object = buildObject();
         if (!(object instanceof OWLAxiom)) {
-            return Collections.emptyList();
+            return CollectionFactory.emptyList();
         }
         // create and apply the new change
         AddAxiom change = new AddAxiom(o, (OWLAxiom) object);

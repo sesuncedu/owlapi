@@ -26,7 +26,6 @@ import org.semanticweb.owlapi.io.OWLOntologyDocumentSource;
 import org.semanticweb.owlapi.io.OWLParserException;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyChangeException;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
 import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 
@@ -35,7 +34,7 @@ import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
  *         Informatics Group
  * @since 4.0.0
  */
-@HasPriority(value = 9)
+@HasPriority(9)
 public class DLSyntaxOWLParser extends AbstractOWLParser {
 
     private static final long serialVersionUID = 40000L;
@@ -54,7 +53,7 @@ public class DLSyntaxOWLParser extends AbstractOWLParser {
     @Override
     public OWLOntologyFormat parse(OWLOntologyDocumentSource documentSource,
             OWLOntology ontology, OWLOntologyLoaderConfiguration configuration)
-            throws IOException, OWLOntologyChangeException {
+            throws IOException {
         Reader reader = null;
         InputStream is = null;
         try {

@@ -13,7 +13,7 @@
 package org.semanticweb.owlapi.rdf.rdfxml.parser;
 
 import static org.semanticweb.owlapi.rdf.rdfxml.parser.RDFConstants.*;
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
@@ -55,14 +55,13 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
     protected static final Locator s_nullDocumentLocator = new LocatorImpl();
     protected static final SAXParserFactory s_parserFactory = SAXParsers
             .initFactory();
-    private Map<String, String> resolvedIRIs = new HashMap<String, String>();
+    private final Map<String, String> resolvedIRIs = new HashMap<String, String>();
     protected Map<String, IRI> uriCache = new HashMap<String, IRI>();
     /** Registered error handler. */
     protected ErrorHandler m_errorHandler = new ErrorHandler() {
 
         @Override
-        public void warning(
-                @SuppressWarnings("unused") SAXParseException exception) {}
+        public void warning(SAXParseException exception) {}
 
         @Override
         public void fatalError(SAXParseException exception) throws SAXException {
@@ -70,12 +69,11 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
         }
 
         @Override
-        public void error(
-                @SuppressWarnings("unused") SAXParseException exception) {}
+        public void error(SAXParseException exception) {}
     };
     /** Stack of base IRIs. */
     protected LinkedList<IRI> m_baseIRIs = new LinkedList<IRI>();
-    private Map<IRI, URI> m_baseURICache = new HashMap<IRI, URI>();
+    private final Map<IRI, URI> m_baseURICache = new HashMap<IRI, URI>();
     /** IRI of the document being parsed. */
     protected IRI baseIRI;
     /** The stack of languages. */
@@ -92,20 +90,15 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
     /** Document locator. */
     protected Locator documentLocator;
 
-    @SuppressWarnings("null")
     @Nonnull
     protected IRI getBaseIRI() {
-        if (baseIRI == null) {
-            throw new IllegalStateException("base IRI has not been set yet");
-        }
-        return baseIRI;
+        return verifyNotNull(baseIRI, "base IRI has not been set yet");
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     protected Locator getDocumentLocator() {
         if (documentLocator != null) {
-            return documentLocator;
+            return verifyNotNull(documentLocator);
         }
         return s_nullDocumentLocator;
     }
@@ -143,7 +136,7 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
             throw new SAXException("Parser configuration exception", e);
         } catch (URISyntaxException e) {
             throw new SAXException("Invalid SystemID '" + systemID
-                    + "'of the supplied input source.");
+                    + "'of the supplied input source.", e);
         } finally {
             state = null;
             m_states.clear();
@@ -195,25 +188,25 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
 
     @SuppressWarnings("null")
     @Override
-    public void startElement(String namespaceIRI, String localName,
-            String qName, Attributes atts) throws SAXException {
-        processXMLBase(atts);
-        processXMLLanguage(atts);
-        state.startElement(namespaceIRI, localName, qName, atts);
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) throws SAXException {
+        processXMLBase(attributes);
+        processXMLLanguage(attributes);
+        state.startElement(uri, localName, qName, attributes);
     }
 
     @Override
-    public void endElement(String namespaceIRI, String localName, String qName)
+    public void endElement(String uri, String localName, String qName)
             throws SAXException {
-        state.endElement(namespaceIRI, localName, qName);
+        state.endElement(uri, localName, qName);
         baseIRI = m_baseIRIs.remove(0);
         m_language = m_languages.remove(0);
     }
 
     @Override
-    public void characters(char[] data, int start, int length)
+    public void characters(char[] ch, int start, int length)
             throws SAXException {
-        state.characters(data, start, length);
+        state.characters(ch, start, length);
     }
 
     @Override
@@ -324,7 +317,7 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
     @Nonnull
     public String resolveIRI(@Nonnull String uri) {
         checkNotNull(uri, "uri cannot be null");
-        if (uri.length() == 0) {
+        if (uri.isEmpty()) {
             // MH - Fix for resolving a "This document" reference against base
             // IRIs.
             String namespace = getBaseIRI().getNamespace();
@@ -332,7 +325,7 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
                 return namespace.substring(0, namespace.length() - 1);
             }
             String base = getBaseIRI().toString();
-            int hashIndex = base.indexOf("#");
+            int hashIndex = base.indexOf('#');
             if (hashIndex != -1) {
                 return base.substring(0, hashIndex);
             } else {
@@ -450,7 +443,6 @@ public class RDFParser extends DefaultHandler implements IRIProvider {
         }
     }
 
-    @SuppressWarnings("null")
     @Override
     @Nonnull
     public IRI getIRI(@Nonnull String s) {

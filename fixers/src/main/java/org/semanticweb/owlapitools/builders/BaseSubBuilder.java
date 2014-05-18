@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapitools.builders;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -24,18 +26,18 @@ import org.semanticweb.owlapi.model.OWLObject;
  * 
  * @param <T>
  *        type built
- * @param <Type>
+ * @param <B>
  *        builder type
- * @param <Item>
+ * @param <I>
  *        contained items type
  */
-public abstract class BaseSubBuilder<T extends OWLObject, Type, Item> extends
-        BaseBuilder<T, Type> {
+public abstract class BaseSubBuilder<T extends OWLObject, B, I> extends
+        BaseBuilder<T, B> {
 
     @Nullable
-    protected Item sub = null;
+    private I sub = null;
     @Nullable
-    protected Item sup = null;
+    private I sup = null;
 
     /**
      * @param df
@@ -53,9 +55,9 @@ public abstract class BaseSubBuilder<T extends OWLObject, Type, Item> extends
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withSub(Item arg) {
+    public B withSub(I arg) {
         sub = arg;
-        return (Type) this;
+        return (B) this;
     }
 
     /**
@@ -65,8 +67,24 @@ public abstract class BaseSubBuilder<T extends OWLObject, Type, Item> extends
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withSup(Item arg) {
+    public B withSup(I arg) {
         sup = arg;
-        return (Type) this;
+        return (B) this;
+    }
+
+    /**
+     * @return the sub
+     */
+    @Nonnull
+    public I getSub() {
+        return verifyNotNull(sub);
+    }
+
+    /**
+     * @return the sup
+     */
+    @Nonnull
+    public I getSup() {
+        return verifyNotNull(sup);
     }
 }

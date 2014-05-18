@@ -18,10 +18,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -34,19 +32,18 @@ import javax.annotation.Nullable;
  * @param <N>
  *        type of elements
  */
+@SuppressWarnings("null")
 public class MutableTree<N> implements Tree<N> {
 
     private final N userObject;
     @Nullable
     private MutableTree<N> parent;
     private final List<MutableTree<N>> children = new ArrayList<MutableTree<N>>();
-    private final Map<Tree<N>, Object> child2EdgeMap = new HashMap<Tree<N>, Object>();
     private NodeRenderer<N> toStringRenderer = new NodeRenderer<N>() {
 
-        @SuppressWarnings("null")
         @Override
-        public String render(@Nonnull Tree<N> object) {
-            return object.toString();
+        public String render(@Nonnull Tree<N> node) {
+            return node.toString();
         }
     };
 
@@ -60,7 +57,6 @@ public class MutableTree<N> implements Tree<N> {
         this.userObject = checkNotNull(userObject, "userObject cannot be null");
     }
 
-    @SuppressWarnings("null")
     @Override
     public N getUserObject() {
         return userObject;
@@ -84,18 +80,11 @@ public class MutableTree<N> implements Tree<N> {
         child.parent = null;
     }
 
-    @SuppressWarnings("null")
-    @Override
-    public Object getEdge(@Nonnull Tree<N> child) {
-        return child2EdgeMap.get(child);
-    }
-
     @Override
     public void sortChildren(@Nonnull Comparator<Tree<N>> comparator) {
         Collections.sort(children, comparator);
     }
 
-    @SuppressWarnings("null")
     @Override
     public Tree<N> getParent() {
         return parent;
@@ -121,7 +110,6 @@ public class MutableTree<N> implements Tree<N> {
         return children.isEmpty();
     }
 
-    @SuppressWarnings("null")
     @Override
     public Tree<N> getRoot() {
         if (parent == null) {
@@ -145,7 +133,7 @@ public class MutableTree<N> implements Tree<N> {
     @Override
     public List<N> getUserObjectPathToRoot() {
         List<N> path = new ArrayList<N>();
-        path.add(0, this.getUserObject());
+        path.add(0, getUserObject());
         Tree<N> par = parent;
         while (par != null) {
             path.add(0, par.getUserObject());
@@ -175,26 +163,18 @@ public class MutableTree<N> implements Tree<N> {
         dump(writer, 0);
     }
 
-    @SuppressWarnings("null")
     @Override
     public void dump(PrintWriter writer, int indent) {
         int depth = getPathToRoot().size();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < depth + indent; i++) {
-            sb.append("\t");
+            sb.append('\t');
         }
-        writer.print(sb.toString());
+        writer.print(sb);
         String ren = toStringRenderer.render(this);
         ren = ren.replace("\n", "\n" + sb);
         writer.println(ren);
         for (Tree<N> child : getChildren()) {
-            Object edge = getEdge(child);
-            if (edge != null) {
-                writer.print(sb.toString());
-                writer.print("--- ");
-                writer.print(edge);
-                writer.print(" ---\n\n");
-            }
             child.dump(writer, indent);
         }
         writer.flush();
@@ -202,7 +182,7 @@ public class MutableTree<N> implements Tree<N> {
 
     @Override
     public void setNodeRenderer(@Nonnull NodeRenderer<N> renderer) {
-        this.toStringRenderer = renderer;
+        toStringRenderer = renderer;
         for (Tree<N> child : children) {
             child.setNodeRenderer(renderer);
         }

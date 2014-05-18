@@ -1,6 +1,6 @@
 package org.obolibrary.obo2owl;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 
@@ -20,7 +20,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
  * @author cjm see 5.9.3 and 8.2.2 of spec See
  *         http://code.google.com/p/oboformat/issues/detail?id=13
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class LogicalDefinitionPropertyViewTest extends OboFormatTestBasics {
 
     @Test
@@ -45,11 +45,10 @@ public class LogicalDefinitionPropertyViewTest extends OboFormatTestBasics {
         }
         assertTrue(ok);
         // reverse translation
-        OBODoc obodoc = this.convert(owlOntology);
+        OBODoc obodoc = convert(owlOntology);
         Frame fr = obodoc.getTermFrame("X:1");
-        @SuppressWarnings("null")
         Collection<Clause> clauses = fr
                 .getClauses(OboFormatTag.TAG_INTERSECTION_OF);
-        assertTrue(clauses.size() == 2);
+        assertEquals(2, clauses.size());
     }
 }

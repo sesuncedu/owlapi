@@ -15,7 +15,7 @@ import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatConstants.OboFormatTag;
 import org.obolibrary.oboformat.parser.OBOFormatParser;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class TagTest extends OboFormatTestBasics {
 
     @Test
@@ -35,7 +35,6 @@ public class TagTest extends OboFormatTestBasics {
         assertEquals(1, obodoc.getTypedefFrames().size());
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testParseOBODoc() {
         OBODoc obodoc = parseOBODoc("[Term]\nid: x\nname: foo\n\n\n[Term]\nid: y\nname: y");
@@ -73,12 +72,11 @@ public class TagTest extends OboFormatTestBasics {
         assertEquals(OboFormatTag.TAG_CREATION_DATE.getTag(), cl.getTag());
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testParseNameTag() {
         Clause cl = parseLine("name: a b c");
-        assertTrue(cl.getTag().equals(OboFormatTag.TAG_NAME.getTag()));
-        assertTrue(cl.getValue().equals("a b c"));
+        assertEquals(cl.getTag(), OboFormatTag.TAG_NAME.getTag());
+        assertEquals("a b c", cl.getValue());
     }
 
     @Test
@@ -88,12 +86,11 @@ public class TagTest extends OboFormatTestBasics {
         assertEquals("a b c", cl.getValue());
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testParseNamespaceTag() {
         Clause cl = parseLine("namespace: foo");
-        assertTrue(cl.getTag().equals(OboFormatTag.TAG_NAMESPACE.getTag()));
-        assertTrue(cl.getValue().equals("foo"));
+        assertEquals(cl.getTag(), OboFormatTag.TAG_NAMESPACE.getTag());
+        assertEquals("foo", cl.getValue());
     }
 
     @Test

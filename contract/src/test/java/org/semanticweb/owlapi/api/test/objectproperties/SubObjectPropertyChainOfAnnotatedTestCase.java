@@ -35,11 +35,10 @@ import com.google.common.collect.Lists;
  *         Management Group
  * @since 3.0.0
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class SubObjectPropertyChainOfAnnotatedTestCase extends
         AbstractAnnotatedAxiomRoundTrippingTestCase {
 
-    @SuppressWarnings("null")
     @Override
     protected OWLAxiom getMainAxiom(Set<OWLAnnotation> annos) {
         List<OWLObjectProperty> props = Arrays.asList(
@@ -47,7 +46,6 @@ public class SubObjectPropertyChainOfAnnotatedTestCase extends
         return SubPropertyChainOf(props, ObjectProperty(getIRI("r")), annos);
     }
 
-    @SuppressWarnings("null")
     @Test
     public void testCompareRoleChains() {
         OWLObjectPropertyExpression p = df.getOWLObjectProperty(IRI.create(
@@ -62,8 +60,8 @@ public class SubObjectPropertyChainOfAnnotatedTestCase extends
                 Lists.newArrayList(p, p), r);
         assertNotEquals("role chains should not be equal", ax1, ax2);
         int comparisonResult = ax1.compareTo(ax2);
-        assertNotEquals("role chain comparision:\n " + ax1.toString()
-                + " should not compare to\n " + ax2.toString() + " as 0\n", 0,
+        assertNotEquals("role chain comparision:\n " + ax1
+                + " should not compare to\n " + ax2 + " as 0\n", 0,
                 comparisonResult);
     }
 }

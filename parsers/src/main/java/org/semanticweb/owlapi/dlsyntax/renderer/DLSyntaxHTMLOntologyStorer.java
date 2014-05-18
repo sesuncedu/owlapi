@@ -27,7 +27,6 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyFormat;
-import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.util.SimpleShortFormProvider;
 
 /**
@@ -40,7 +39,7 @@ public class DLSyntaxHTMLOntologyStorer extends DLSyntaxOntologyStorerBase {
 
     private static final long serialVersionUID = 40000L;
     @Nonnull
-    protected ShortFormProvider sfp = new SimpleShortFormProvider();
+    protected SimpleShortFormProvider sfp = new SimpleShortFormProvider();
 
     @Override
     public boolean canStoreOntology(OWLOntologyFormat ontologyFormat) {
@@ -69,14 +68,13 @@ public class DLSyntaxHTMLOntologyStorer extends DLSyntaxOntologyStorerBase {
 
             @Override
             protected void write(DLSyntax keyword) {
-                super.write(XMLUtils.escapeXML(checkNotNull(keyword,
+                write(XMLUtils.escapeXML(checkNotNull(keyword,
                         "keyword cannot be null").toString()));
             }
         };
         ren.setFocusedObject(subject);
         ren.setShortFormProvider(sfp);
-        String rendering = ren.render(axiom);
-        return rendering;
+        return ren.render(axiom);
     }
 
     @Override
@@ -85,7 +83,7 @@ public class DLSyntaxHTMLOntologyStorer extends DLSyntaxOntologyStorerBase {
         checkNotNull(ontology, "ontology cannot be null");
         checkNotNull(writer, "writer cannot be null").println(
                 "<html>\n<body>\n<h1>Ontology: ");
-        writer.print(ontology.getOntologyID().toString());
+        writer.print(ontology.getOntologyID());
         writer.println("</h1>");
     }
 
@@ -121,18 +119,16 @@ public class DLSyntaxHTMLOntologyStorer extends DLSyntaxOntologyStorerBase {
         checkNotNull(writer, "writer cannot be null").print("<h2><a name=\"");
         writer.print(sfp.getShortForm(subject));
         writer.print("\">");
-        writer.print(subject.getIRI().toString());
+        writer.print(subject.getIRI());
         writer.println("</a></h2>\n<div class=\"entitybox\">");
     }
 
-    @SuppressWarnings("unused")
     @Override
     protected void endWritingAxioms(OWLEntity subject,
             Set<? extends OWLAxiom> axioms, @Nonnull PrintWriter writer) {
         writer.println("</div>");
     }
 
-    @SuppressWarnings("unused")
     @Override
     protected void beginWritingGeneralAxioms(Set<? extends OWLAxiom> axioms,
             PrintWriter writer) {

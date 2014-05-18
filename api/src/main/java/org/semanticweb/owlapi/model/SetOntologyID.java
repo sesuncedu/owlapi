@@ -14,7 +14,6 @@ package org.semanticweb.owlapi.model;
 
 import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -31,6 +30,7 @@ import com.google.common.base.Optional;
  */
 public class SetOntologyID extends OWLOntologyChange<OWLOntologyID> {
 
+    private static final long serialVersionUID = 40000L;
     @Nonnull
     private final OWLOntologyID ontologyID;
     @Nonnull
@@ -75,7 +75,7 @@ public class SetOntologyID extends OWLOntologyChange<OWLOntologyID> {
     @Override
     public Set<OWLEntity> getSignature() {
         return CollectionFactory
-                .getCopyOnRequestSetFromImmutableCollection(Collections
+                .getCopyOnRequestSetFromImmutableCollection(CollectionFactory
                         .<OWLEntity> emptySet());
     }
 
@@ -96,7 +96,8 @@ public class SetOntologyID extends OWLOntologyChange<OWLOntologyID> {
 
     @Override
     public OWLAxiom getAxiom() {
-        throw new UnsupportedOperationException("Not an axiom change");
+        throw new UnsupportedOperationException(
+                "This is an ontology id change, not an axiom change: " + this);
     }
 
     /**
@@ -130,14 +131,8 @@ public class SetOntologyID extends OWLOntologyChange<OWLOntologyID> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SetOntologyID(");
-        sb.append(getNewOntologyID().toString());
-        sb.append(" OntologyID(");
-        sb.append(getOntology().getOntologyID());
-        sb.append(")");
-        sb.append(")");
-        return sb.toString();
+        return String.format("SetOntologyID(%s OntologyID(%s))", newOntologyID,
+                ontologyID);
     }
 
     @Override
@@ -154,7 +149,7 @@ public class SetOntologyID extends OWLOntologyChange<OWLOntologyID> {
             return false;
         }
         SetOntologyID change = (SetOntologyID) obj;
-        return change.getOriginalOntologyID().equals(ontologyID)
-                && change.getNewOntologyID().equals(getNewOntologyID());
+        return change.ontologyID.equals(ontologyID)
+                && change.newOntologyID.equals(newOntologyID);
     }
 }

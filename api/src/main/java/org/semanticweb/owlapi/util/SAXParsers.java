@@ -22,11 +22,13 @@ import org.semanticweb.owlapi.model.OWLRuntimeException;
  */
 public class SAXParsers {
 
+    private SAXParsers() {}
+
     /**
      * @return a new factory, set up to be namespace aware, non validating and
      *         not loading external dtds.
      */
-    public static final SAXParserFactory initFactory() {
+    public static SAXParserFactory initFactory() {
         System.setProperty("entityExpansionLimit", "100000000");
         System.setProperty("jdk.xml.entityExpansionLimit", "100000000");
         SAXParserFactory factory = SAXParserFactory.newInstance();

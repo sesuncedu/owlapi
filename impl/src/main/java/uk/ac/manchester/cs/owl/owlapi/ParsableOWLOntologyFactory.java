@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package uk.ac.manchester.cs.owl.owlapi;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,8 +84,7 @@ public class ParsableOWLOntologyFactory extends AbstractInMemOWLOntologyFactory 
      * @return false
      */
     @Override
-    public boolean canCreateFromDocumentIRI(
-            @SuppressWarnings("unused") IRI documentIRI) {
+    public boolean canCreateFromDocumentIRI(IRI documentIRI) {
         return false;
     }
 
@@ -120,9 +121,9 @@ public class ParsableOWLOntologyFactory extends AbstractInMemOWLOntologyFactory 
     }
 
     @Override
-    public OWLOntology loadOWLOntology(OWLOntologyManager m,
+    public OWLOntology loadOWLOntology(OWLOntologyManager manager,
             OWLOntologyDocumentSource documentSource,
-            OWLOntologyCreationHandler mediator,
+            OWLOntologyCreationHandler handler,
             OWLOntologyLoaderConfiguration configuration)
             throws OWLOntologyCreationException {
         // Attempt to parse the ontology by looping through the parsers. If the
@@ -139,49 +140,49 @@ public class ParsableOWLOntologyFactory extends AbstractInMemOWLOntologyFactory 
         // we throw an exception if someone tries to create an ontology directly
         OWLOntology existingOntology = null;
         IRI iri = documentSource.getDocumentIRI();
-        if (m.contains(iri)) {
-            existingOntology = m.getOntology(iri);
+        if (manager.contains(iri)) {
+            existingOntology = manager.getOntology(iri);
         }
         OWLOntologyID ontologyID = new OWLOntologyID();
-        OWLOntology ont = super.createOWLOntology(m, ontologyID,
-                documentSource.getDocumentIRI(), mediator);
+        OWLOntology ont = createOWLOntology(manager, ontologyID,
+                documentSource.getDocumentIRI(), handler);
         // Now parse the input into the empty ontology that we created
         // select a parser if the input source has format information and MIME
         // information
         PriorityCollection<OWLParser> parsers = getParsers(documentSource,
-                m.getOntologyParsers());
+                manager.getOntologyParsers());
         for (OWLParser parser : parsers) {
             try {
                 if (existingOntology == null && !ont.isEmpty()) {
                     // Junk from a previous parse. We should clear the ont
-                    m.removeOntology(ont);
-                    ont = super.createOWLOntology(m, ontologyID,
-                            documentSource.getDocumentIRI(), mediator);
+                    manager.removeOntology(ont);
+                    ont = createOWLOntology(manager, ontologyID,
+                            documentSource.getDocumentIRI(), handler);
                 }
                 OWLOntologyFormat format = parser.parse(documentSource, ont,
                         configuration);
-                mediator.setOntologyFormat(ont, format);
+                handler.setOntologyFormat(ont, format);
                 return ont;
             } catch (IOException e) {
                 // No hope of any parsers working?
                 // First clean up
-                m.removeOntology(ont);
+                manager.removeOntology(ont);
                 throw new OWLOntologyCreationIOException(e);
             } catch (UnloadableImportException e) {
                 // First clean up
-                m.removeOntology(ont);
+                manager.removeOntology(ont);
                 throw e;
             } catch (OWLParserException e) {
                 // Record this attempts and continue trying to parse.
                 exceptions.put(parser, e);
             } catch (RuntimeException e) {
                 // Clean up and rethrow
-                m.removeOntology(ont);
+                manager.removeOntology(ont);
                 throw e;
             }
         }
         if (existingOntology == null) {
-            m.removeOntology(ont);
+            manager.removeOntology(ont);
         }
         // We haven't found a parser that could parse the ontology properly.
         // Throw an
@@ -222,7 +223,6 @@ public class ParsableOWLOntologyFactory extends AbstractInMemOWLOntologyFactory 
      *        parsers
      * @return candidate parsers
      */
-    @SuppressWarnings("null")
     private static PriorityCollection<OWLParser> getParsersByFormat(
             OWLOntologyDocumentSource documentSource,
             PriorityCollection<OWLParser> parsers) {
@@ -232,7 +232,7 @@ public class ParsableOWLOntologyFactory extends AbstractInMemOWLOntologyFactory 
         PriorityCollection<OWLParser> candidateParsers = new PriorityCollection<OWLParser>();
         for (OWLParser parser : parsers) {
             if (parser.getSupportedFormatClasses().contains(
-                    documentSource.getFormat().getClass())) {
+                    verifyNotNull(documentSource.getFormat()).getClass())) {
                 candidateParsers.add(parser);
             }
         }
@@ -252,7 +252,6 @@ public class ParsableOWLOntologyFactory extends AbstractInMemOWLOntologyFactory 
      *        parsers
      * @return candidate parsers
      */
-    @SuppressWarnings("null")
     private static PriorityCollection<OWLParser> getParserCandidatesByMIME(
             OWLOntologyDocumentSource documentSource,
             PriorityCollection<OWLParser> parsers) {
@@ -260,7 +259,7 @@ public class ParsableOWLOntologyFactory extends AbstractInMemOWLOntologyFactory 
             return parsers;
         }
         PriorityCollection<OWLParser> candidateParsers = parsers
-                .getByMIMEType(documentSource.getMIMEType());
+                .getByMIMEType(verifyNotNull(documentSource.getMIMEType()));
         if (candidateParsers.size() == 0) {
             // if no parsers match the MIME type, ignore it
             return parsers;

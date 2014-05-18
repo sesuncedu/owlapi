@@ -12,8 +12,9 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.util;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +34,9 @@ import org.semanticweb.owlapi.vocab.Namespaces;
  *         Informatics Group
  * @since 2.0.0
  */
-public class NamespaceUtil {
+public class NamespaceUtil implements Serializable {
 
+    private static final long serialVersionUID = 40000L;
     private final Map<String, String> namespace2PrefixMap = new HashMap<String, String>();
     private final Map<String, String> standardNamespacePrefixMappings = new HashMap<String, String>();
     private final AtomicInteger candidateIndex = new AtomicInteger(1);
@@ -90,7 +92,6 @@ public class NamespaceUtil {
      * @return The generated prefix. Note that this method will not store the
      *         namespace to prefix mapping.
      */
-    @SuppressWarnings("null")
     @Nonnull
     private String generatePrefix(@Nonnull String namespace) {
         checkNotNull(namespace, "namespace cannot be null");
@@ -136,7 +137,7 @@ public class NamespaceUtil {
                         .containsValue(candidatePrefix)) {
             candidatePrefix = computedPrefix + candidateIndex.getAndIncrement();
         }
-        return candidatePrefix;
+        return verifyNotNull(candidatePrefix);
     }
 
     /**

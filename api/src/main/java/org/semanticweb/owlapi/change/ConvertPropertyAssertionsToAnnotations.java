@@ -75,6 +75,7 @@ import org.semanticweb.owlapi.model.RemoveAxiom;
 public class ConvertPropertyAssertionsToAnnotations extends
         AbstractCompositeOntologyChange {
 
+    private static final long serialVersionUID = 40000L;
     @Nonnull
     private final Set<OWLOntology> ontologies;
 
@@ -183,9 +184,7 @@ public class ConvertPropertyAssertionsToAnnotations extends
         OWLAnnotation anno = df.getOWLAnnotation(
                 df.getOWLAnnotationProperty(ax.getProperty()
                         .asOWLDataProperty().getIRI()), ax.getObject());
-        OWLAnnotationAssertionAxiom annoAx = df.getOWLAnnotationAssertionAxiom(
-                ind.getIRI(), anno);
-        return annoAx;
+        return df.getOWLAnnotationAssertionAxiom(ind.getIRI(), anno);
     }
 
     @Nonnull

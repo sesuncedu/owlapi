@@ -13,14 +13,12 @@
 package org.semanticweb.owlapi.debugging;
 
 import static org.semanticweb.owlapi.model.parameters.Imports.INCLUDED;
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -76,15 +74,11 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
     private final OWLReasonerFactory reasonerFactory;
     @Nonnull
     private final Set<OWLAxiom> temporaryAxioms = new HashSet<OWLAxiom>();
-    @Nonnull
-    private final Map<OWLAxiom, OWLAxiom> expandedAxiomMap = new HashMap<OWLAxiom, OWLAxiom>();
     private static final int DEFAULT_INITIAL_EXPANSION_LIMIT = 50;
-    private int initialExpansionLimit = DEFAULT_INITIAL_EXPANSION_LIMIT;
+    private final int initialExpansionLimit = DEFAULT_INITIAL_EXPANSION_LIMIT;
     private int expansionLimit = initialExpansionLimit;
-    private double expansionFactor = 1.25;
     private static final int DEFAULT_FAST_PRUNING_WINDOW_SIZE = 10;
     private int fastPruningWindowSize = 0;
-    private boolean performRepeatedFastPruning = false;
 
     /**
      * Instantiates a new black box owl debugger.
@@ -118,7 +112,6 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
         expandedWithDefiningAxioms.clear();
         expandedWithReferencingAxioms.clear();
         temporaryAxioms.clear();
-        expandedAxiomMap.clear();
         expansionLimit = initialExpansionLimit;
     }
 
@@ -162,7 +155,7 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
     }
 
     @Override
-    public Set<OWLAxiom> getSOSForIncosistentClass(OWLClassExpression cls)
+    public Set<OWLAxiom> getSOSForInconsistentClass(OWLClassExpression cls)
             throws OWLException {
         reset();
         currentClass = setupDebuggingClass(cls);
@@ -188,6 +181,7 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
         // Keep track of the number of axioms that have been added
         int axiomsAdded = 0;
         int remainingSpace = expansionLimit;
+        double expansionFactor = 1.25;
         for (OWLAxiom ax : new ArrayList<OWLAxiom>(debuggingAxioms)) {
             if (expandedWithDefiningAxioms.contains(ax)) {
                 // Skip if already done
@@ -199,7 +193,7 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
                 if (!objectsExpandedWithDefiningAxioms.contains(curObj)) {
                     int added = expandWithDefiningAxioms(curObj, remainingSpace);
                     axiomsAdded += added;
-                    remainingSpace = remainingSpace - added;
+                    remainingSpace -= added;
                     if (remainingSpace == 0) {
                         expansionLimit *= expansionFactor;
                         return axiomsAdded;
@@ -377,6 +371,11 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
     // Creation of debugging ontology and satisfiability testing
     private int satTestCount = 0;
 
+    @Nonnull
+    protected OWLOntology getDebuggingOntology() {
+        return verifyNotNull(debuggingOntology);
+    }
+
     /**
      * Tests the satisfiability of the test class. The ontology is recreated
      * before the test is performed.
@@ -385,18 +384,16 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
      * @throws OWLException
      *         the oWL exception
      */
-    @SuppressWarnings("null")
     private boolean isSatisfiable() throws OWLException {
         createDebuggingOntology();
         OWLReasoner reasoner = reasonerFactory
-                .createNonBufferingReasoner(debuggingOntology);
+                .createNonBufferingReasoner(getDebuggingOntology());
         satTestCount++;
-        boolean sat = reasoner.isSatisfiable(currentClass);
+        boolean sat = reasoner.isSatisfiable(verifyNotNull(currentClass));
         reasoner.dispose();
         return sat;
     }
 
-    @SuppressWarnings("null")
     private void createDebuggingOntology() throws OWLException {
         if (debuggingOntology != null) {
             owlOntologyManager.removeOntology(debuggingOntology);
@@ -408,17 +405,19 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
         owlOntologyManager.getIRIMappers().remove(mapper);
         List<AddAxiom> changes = new ArrayList<AddAxiom>();
         for (OWLAxiom ax : debuggingAxioms) {
-            changes.add(new AddAxiom(debuggingOntology, ax));
+            assert ax != null;
+            changes.add(new AddAxiom(getDebuggingOntology(), ax));
         }
         for (OWLAxiom ax : temporaryAxioms) {
-            changes.add(new AddAxiom(debuggingOntology, ax));
+            assert ax != null;
+            changes.add(new AddAxiom(getDebuggingOntology(), ax));
         }
         // Ensure the ontology contains the signature of the class which is
         // being debugged
         OWLDataFactory factory = owlOntologyManager.getOWLDataFactory();
-        OWLAxiom ax = factory.getOWLSubClassOfAxiom(currentClass,
-                factory.getOWLThing());
-        changes.add(new AddAxiom(debuggingOntology, ax));
+        OWLAxiom ax = factory.getOWLSubClassOfAxiom(
+                verifyNotNull(currentClass), factory.getOWLThing());
+        changes.add(new AddAxiom(getDebuggingOntology(), ax));
         owlOntologyManager.applyChanges(changes);
     }
 
@@ -451,39 +450,12 @@ public class BlackBoxOWLDebugger extends AbstractOWLDebugger {
         LOGGER.info("FOUND CLASH! Pruning {} axioms...", debuggingAxioms.size());
         resetSatisfiabilityTestCounter();
         LOGGER.info("Fast pruning...");
-        if (performRepeatedFastPruning) {
-            // Base the initial fast pruning window size on the number of axioms
-            fastPruningWindowSize = debuggingAxioms.size() / 10;
-            if (fastPruningWindowSize < DEFAULT_FAST_PRUNING_WINDOW_SIZE) {
-                fastPruningWindowSize = DEFAULT_FAST_PRUNING_WINDOW_SIZE;
-            }
-            LOGGER.info("    Initial fast prunung window size: {}",
-                    fastPruningWindowSize);
-            int fastPruningCounter = 0;
-            while (fastPruningWindowSize != 1) {
-                LOGGER.info("    Round: {} (axioms to prune: {})",
-                        fastPruningCounter, debuggingAxioms.size());
-                fastPruningCounter++;
-                performFastPruning();
-                fastPruningWindowSize = fastPruningWindowSize / 3;
-                if (fastPruningWindowSize < 1) {
-                    fastPruningWindowSize = 1;
-                }
-            }
-            LOGGER.info("... end of fast pruning. Axioms remaining: {}",
-                    debuggingAxioms.size());
-            LOGGER.info(
-                    "Performed {} satisfiability tests during fast pruning",
-                    satTestCount);
-        } else {
-            fastPruningWindowSize = DEFAULT_FAST_PRUNING_WINDOW_SIZE;
-            performFastPruning();
-            LOGGER.info("... end of fast pruning. Axioms remaining: {}",
-                    debuggingAxioms.size());
-            LOGGER.info(
-                    "Performed {} satisfiability tests during fast pruning",
-                    satTestCount);
-        }
+        fastPruningWindowSize = DEFAULT_FAST_PRUNING_WINDOW_SIZE;
+        performFastPruning();
+        LOGGER.info("... end of fast pruning. Axioms remaining: {}",
+                debuggingAxioms.size());
+        LOGGER.info("Performed {} satisfiability tests during fast pruning",
+                satTestCount);
         int totalSatTests = satTestCount;
         resetSatisfiabilityTestCounter();
         LOGGER.info("Slow pruning...");

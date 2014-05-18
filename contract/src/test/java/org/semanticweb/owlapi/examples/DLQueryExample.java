@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -41,6 +40,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.BidirectionalShortFormProviderAdapter;
+import org.semanticweb.owlapi.util.CollectionFactory;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 import org.semanticweb.owlapi.util.SimpleShortFormProvider;
 
@@ -57,10 +57,11 @@ import org.semanticweb.owlapi.util.SimpleShortFormProvider;
  *         Informatics Group
  * @since 3.1.0
  */
+@SuppressWarnings({ "javadoc", "null" })
 public class DLQueryExample {
 
     @Nonnull
-    private final static String koala = "<?xml version=\"1.0\"?>\n"
+    private static final String koala = "<?xml version=\"1.0\"?>\n"
             + "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:owl=\"http://www.w3.org/2002/07/owl#\" xmlns=\"http://protege.stanford.edu/plugins/owl/owl-library/koala.owl#\" xml:base=\"http://protege.stanford.edu/plugins/owl/owl-library/koala.owl\">\n"
             + "  <owl:Ontology rdf:about=\"\"/>\n"
             + "  <owl:Class rdf:ID=\"Female\"><owl:equivalentClass><owl:Restriction><owl:onProperty><owl:FunctionalProperty rdf:about=\"#hasGender\"/></owl:onProperty><owl:hasValue><Gender rdf:ID=\"female\"/></owl:hasValue></owl:Restriction></owl:equivalentClass></owl:Class>\n"
@@ -88,7 +89,8 @@ public class DLQueryExample {
             + "  <owl:FunctionalProperty rdf:ID=\"isHardWorking\"><rdfs:range rdf:resource=\"http://www.w3.org/2001/XMLSchema#boolean\"/><rdfs:domain rdf:resource=\"#Person\"/><rdf:type rdf:resource=\"http://www.w3.org/2002/07/owl#DatatypeProperty\"/></owl:FunctionalProperty>\n"
             + "  <Degree rdf:ID=\"MA\"/>\n</rdf:RDF>";
 
-    @SuppressWarnings("javadoc")
+    private DLQueryExample() {}
+
     public static void main(String[] args) {
         try {
             // Load an example ontology. In this case, we'll just load the pizza
@@ -123,7 +125,6 @@ public class DLQueryExample {
         }
     }
 
-    @SuppressWarnings("null")
     private static void doQueryLoop(@Nonnull DLQueryPrinter dlQueryPrinter)
             throws IOException {
         while (true) {
@@ -184,7 +185,7 @@ class DLQueryEngine {
      * @param shortFormProvider
      *        A short form provider.
      */
-    public DLQueryEngine(@Nonnull OWLReasoner reasoner,
+    DLQueryEngine(@Nonnull OWLReasoner reasoner,
             @Nonnull ShortFormProvider shortFormProvider) {
         this.reasoner = reasoner;
         OWLOntology rootOntology = reasoner.getRootOntology();
@@ -201,12 +202,11 @@ class DLQueryEngine {
      * @return The superclasses of the specified class expression If there was a
      *         problem parsing the class expression.
      */
-    @SuppressWarnings("null")
     @Nonnull
     public Set<OWLClass> getSuperClasses(@Nonnull String classExpressionString,
             boolean direct) {
-        if (classExpressionString.trim().length() == 0) {
-            return Collections.emptySet();
+        if (classExpressionString.trim().isEmpty()) {
+            return CollectionFactory.emptySet();
         }
         OWLClassExpression classExpression = parser
                 .parseClassExpression(classExpressionString);
@@ -223,12 +223,11 @@ class DLQueryEngine {
      * @return The equivalent classes of the specified class expression If there
      *         was a problem parsing the class expression.
      */
-    @SuppressWarnings("null")
     @Nonnull
     public Set<OWLClass> getEquivalentClasses(
             @Nonnull String classExpressionString) {
-        if (classExpressionString.trim().length() == 0) {
-            return Collections.emptySet();
+        if (classExpressionString.trim().isEmpty()) {
+            return CollectionFactory.emptySet();
         }
         OWLClassExpression classExpression = parser
                 .parseClassExpression(classExpressionString);
@@ -254,12 +253,11 @@ class DLQueryEngine {
      * @return The subclasses of the specified class expression If there was a
      *         problem parsing the class expression.
      */
-    @SuppressWarnings("null")
     @Nonnull
     public Set<OWLClass> getSubClasses(@Nonnull String classExpressionString,
             boolean direct) {
-        if (classExpressionString.trim().length() == 0) {
-            return Collections.emptySet();
+        if (classExpressionString.trim().isEmpty()) {
+            return CollectionFactory.emptySet();
         }
         OWLClassExpression classExpression = parser
                 .parseClassExpression(classExpressionString);
@@ -278,12 +276,11 @@ class DLQueryEngine {
      * @return The instances of the specified class expression If there was a
      *         problem parsing the class expression.
      */
-    @SuppressWarnings("null")
     @Nonnull
     public Set<OWLNamedIndividual> getInstances(
             @Nonnull String classExpressionString, boolean direct) {
-        if (classExpressionString.trim().length() == 0) {
-            return Collections.emptySet();
+        if (classExpressionString.trim().isEmpty()) {
+            return CollectionFactory.emptySet();
         }
         OWLClassExpression classExpression = parser
                 .parseClassExpression(classExpressionString);
@@ -311,7 +308,7 @@ class DLQueryParser {
      *        A short form provider to be used for mapping back and forth
      *        between entities and their short names (renderings).
      */
-    public DLQueryParser(@Nonnull OWLOntology rootOntology,
+    DLQueryParser(@Nonnull OWLOntology rootOntology,
             @Nonnull ShortFormProvider shortFormProvider) {
         this.rootOntology = rootOntology;
         OWLOntologyManager manager = rootOntology.getOWLOntologyManager();
@@ -361,8 +358,7 @@ class DLQueryPrinter {
      * @param shortFormProvider
      *        the short form provider
      */
-    public DLQueryPrinter(DLQueryEngine engine,
-            ShortFormProvider shortFormProvider) {
+    DLQueryPrinter(DLQueryEngine engine, ShortFormProvider shortFormProvider) {
         this.shortFormProvider = shortFormProvider;
         dlQueryEngine = engine;
     }
@@ -372,14 +368,14 @@ class DLQueryPrinter {
      *        the class expression to use for interrogation
      */
     public void askQuery(@Nonnull String classExpression) {
-        if (classExpression.length() == 0) {
+        if (classExpression.isEmpty()) {
             System.out.println("No class expression specified");
         } else {
             StringBuilder sb = new StringBuilder();
             sb.append("\n--------------------------------------------------------------------------------\n");
             sb.append("QUERY:   ");
             sb.append(classExpression);
-            sb.append("\n");
+            sb.append('\n');
             sb.append("--------------------------------------------------------------------------------\n\n");
             // Ask for the subclasses, superclasses etc. of the specified
             // class expression. Print out the results.
@@ -395,7 +391,7 @@ class DLQueryPrinter {
             Set<OWLNamedIndividual> individuals = dlQueryEngine.getInstances(
                     classExpression, true);
             printEntities("Instances", individuals, sb);
-            System.out.println(sb.toString());
+            System.out.println(sb);
         }
     }
 
@@ -405,19 +401,19 @@ class DLQueryPrinter {
         sb.append(name);
         int length = 50 - name.length();
         for (int i = 0; i < length; i++) {
-            sb.append(".");
+            sb.append('.');
         }
         sb.append("\n\n");
         if (!entities.isEmpty()) {
             for (OWLEntity entity : entities) {
                 assert entity != null;
-                sb.append("\t");
+                sb.append('\t');
                 sb.append(shortFormProvider.getShortForm(entity));
-                sb.append("\n");
+                sb.append('\n');
             }
         } else {
             sb.append("\t[NONE]\n");
         }
-        sb.append("\n");
+        sb.append('\n');
     }
 }

@@ -15,7 +15,6 @@ package org.semanticweb.owlapi.util;
 import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -67,22 +66,23 @@ public class InferredOntologyGenerator {
         this(reasoner, generators());
     }
 
+    @SuppressWarnings("unchecked")
     @Nonnull
-    @SuppressWarnings({ "unchecked", "null" })
     private static List<InferredAxiomGenerator<? extends OWLAxiom>>
             generators() {
-        return Arrays.<InferredAxiomGenerator<? extends OWLAxiom>> asList(
-                new InferredClassAssertionAxiomGenerator(),
-                new InferredDataPropertyCharacteristicAxiomGenerator(),
-                new InferredEquivalentClassAxiomGenerator(),
-                new InferredEquivalentDataPropertiesAxiomGenerator(),
-                new InferredEquivalentObjectPropertyAxiomGenerator(),
-                new InferredInverseObjectPropertiesAxiomGenerator(),
-                new InferredObjectPropertyCharacteristicAxiomGenerator(),
-                new InferredPropertyAssertionGenerator(),
-                new InferredSubClassAxiomGenerator(),
-                new InferredSubDataPropertyAxiomGenerator(),
-                new InferredSubObjectPropertyAxiomGenerator());
+        return CollectionFactory
+                .<InferredAxiomGenerator<? extends OWLAxiom>> list(
+                        new InferredClassAssertionAxiomGenerator(),
+                        new InferredDataPropertyCharacteristicAxiomGenerator(),
+                        new InferredEquivalentClassAxiomGenerator(),
+                        new InferredEquivalentDataPropertiesAxiomGenerator(),
+                        new InferredEquivalentObjectPropertyAxiomGenerator(),
+                        new InferredInverseObjectPropertiesAxiomGenerator(),
+                        new InferredObjectPropertyCharacteristicAxiomGenerator(),
+                        new InferredPropertyAssertionGenerator(),
+                        new InferredSubClassAxiomGenerator(),
+                        new InferredSubDataPropertyAxiomGenerator(),
+                        new InferredSubObjectPropertyAxiomGenerator());
     }
 
     /** @return the axiom generators */
@@ -128,7 +128,7 @@ public class InferredOntologyGenerator {
      *         specified ontology.
      */
     public void fillOntology(@Nonnull OWLDataFactory df,
-            @Nonnull OWLOntology ontology) throws OWLOntologyChangeException {
+            @Nonnull OWLOntology ontology) {
         checkNotNull(df, "df cannot be null");
         checkNotNull(ontology, "ontology cannot be null");
         List<AddAxiom> changes = new ArrayList<AddAxiom>();

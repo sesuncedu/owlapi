@@ -27,7 +27,8 @@ import org.semanticweb.owlapi.model.OWLOntologyIRIMapper;
  */
 public class SimpleIRIMapper implements OWLOntologyIRIMapper {
 
-    private final IRI ontologyIRI;
+    private static final long serialVersionUID = 40000L;
+    private final IRI iri;
     private final IRI documentIRI;
 
     /**
@@ -37,16 +38,15 @@ public class SimpleIRIMapper implements OWLOntologyIRIMapper {
      *        document IRI
      */
     public SimpleIRIMapper(@Nonnull IRI ontologyIRI, @Nonnull IRI documentIRI) {
-        this.ontologyIRI = checkNotNull(ontologyIRI,
-                "ontologyIRI cannot be null");
+        iri = checkNotNull(ontologyIRI, "ontologyIRI cannot be null");
         this.documentIRI = checkNotNull(documentIRI,
                 "documentIRI cannot be null");
     }
 
     @Nullable
     @Override
-    public IRI getDocumentIRI(IRI iri) {
-        if (ontologyIRI.equals(iri)) {
+    public IRI getDocumentIRI(IRI ontologyIRI) {
+        if (iri.equals(ontologyIRI)) {
             return documentIRI;
         } else {
             return null;

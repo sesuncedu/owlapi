@@ -35,7 +35,7 @@ public class OBOFormatParser {
 
     // TODO use this to validate date strings for OboFormatTag.TAG_CREATION_DATE
     @Nonnull
-    protected SimpleDateFormat getISODateFormat() {
+    protected static SimpleDateFormat getISODateFormat() {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     }
 
@@ -117,14 +117,11 @@ public class OBOFormatParser {
 
         public boolean eof() {
             prepare();
-            if (line == null) {
-                return true;
-            }
-            return false;
+            return line == null;
         }
 
         @Nonnull
-        public String getTag() {
+        public static String getTag() {
             return "";
         }
 
@@ -176,7 +173,6 @@ public class OBOFormatParser {
     }
 
     protected OBOFormatParser(MyStream s) {
-        super();
         stream = s;
     }
 
@@ -292,10 +288,10 @@ public class OBOFormatParser {
                 if (location instanceof URL) {
                     URL url = (URL) location;
                     String p = url.toString();
-                    int index = p.lastIndexOf("/");
+                    int index = p.lastIndexOf('/');
                     path = p.substring(0, index + 1) + path;
                 } else {
-                    File f = new File(location + "");
+                    File f = new File(location.toString());
                     f = new File(f.getParent(), path);
                     path = f.toURI().toString();
                 }
@@ -361,7 +357,7 @@ public class OBOFormatParser {
         obodoc.setHeaderFrame(h);
         parseHeaderFrame(h);
         parseZeroOrMoreWsOptCmtNl();
-        while (stream.eof() == false) {
+        while (!stream.eof()) {
             parseEntityFrame(obodoc);
             parseZeroOrMoreWsOptCmtNl();
         }
@@ -1051,7 +1047,7 @@ public class OBOFormatParser {
         // check if there is a third value to parse
         parseZeroOrMoreWs();
         String s = getParseUntil(" !{");
-        if (s.length() > 0) {
+        if (!s.isEmpty()) {
             cl.addValue(s);
         }
     }
@@ -1116,10 +1112,10 @@ public class OBOFormatParser {
             String syn = getParseUntilAdv("\"");
             cl.setValue(syn);
             parseZeroOrMoreWs();
-            if (stream.peekCharIs('[') == false) {
+            if (!stream.peekCharIs('[')) {
                 parseIdRef(cl, true);
                 parseZeroOrMoreWs();
-                if (stream.peekCharIs('[') == false) {
+                if (!stream.peekCharIs('[')) {
                     parseIdRef(cl, true);
                     parseZeroOrMoreWs();
                 }
@@ -1162,7 +1158,7 @@ public class OBOFormatParser {
         if (stream.consume("[")) {
             parseZeroOrMoreXrefs(cl);
             parseZeroOrMoreWs();
-            if (stream.consume("]") == false) {
+            if (!stream.consume("]")) {
                 error("Missing closing ']' for xref list at pos: " + stream.pos);
             }
         } else if (!optional) {
@@ -1207,7 +1203,7 @@ public class OBOFormatParser {
         String id = getParseUntil("\",]!{", true);
         id = id.trim();
         if (id.contains(" ")) {
-            warn("accepting bad xref with spaces:<" + id + ">");
+            warn("accepting bad xref with spaces:<" + id + '>');
         }
         id = id.replaceAll(" +\\Z", "");
         @SuppressWarnings("null")
@@ -1245,7 +1241,7 @@ public class OBOFormatParser {
         parseZeroOrMoreWs();
         String rest = stream.rest();
         assert rest != null;
-        if (rest.contains("=") == false) {
+        if (!rest.contains("=")) {
             error("Missing '=' in trailing qualifier block. This might happen for not properly escaped '{', '}' chars in comments.");
         }
         String q = getParseUntilAdv("=");
@@ -1256,9 +1252,9 @@ public class OBOFormatParser {
         } else {
             v = getParseUntil(" ,}");
             warn("qualifier values should be enclosed in quotes. You have: "
-                    + q + "=" + stream.rest());
+                    + q + '=' + stream.rest());
         }
-        if (v.length() == 0) {
+        if (v.isEmpty()) {
             warn("Empty value for qualifier in trailing qualifier block.");
             v = "";
         }
@@ -1290,7 +1286,7 @@ public class OBOFormatParser {
         Clause cl = new Clause(t);
         f.addClause(cl);
         String id = getParseUntil(" !{");
-        if (id.length() == 0) {
+        if (id.isEmpty()) {
             error("Could not find an valid id, id is empty.");
         }
         cl.addValue(id);
@@ -1506,13 +1502,6 @@ public class OBOFormatParser {
     }
 
     private void warn(String message) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("LINE: ");
-        sb.append(stream.lineNo);
-        sb.append("  ");
-        sb.append(message);
-        sb.append("  LINE:\n");
-        sb.append(stream.line);
-        LOG.warn(sb.toString());
+        LOG.warn("LINE: {} {}  LINE:\n{}", stream.lineNo, message, stream.line);
     }
 }

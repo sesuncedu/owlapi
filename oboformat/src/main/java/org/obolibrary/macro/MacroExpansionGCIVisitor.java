@@ -34,12 +34,12 @@ public class MacroExpansionGCIVisitor {
 
     protected static final Logger log = LoggerFactory
             .getLogger(MacroExpansionGCIVisitor.class);
-    private OWLOntology inputOntology;
-    private OWLOntologyManager outputManager;
+    private final OWLOntology inputOntology;
+    private final OWLOntologyManager outputManager;
     @Nonnull
-    private OWLOntology outputOntology;
+    private final OWLOntology outputOntology;
     protected ManchesterSyntaxTool manchesterSyntaxTool;
-    private GCIVisitor visitor;
+    private final GCIVisitor visitor;
 
     /**
      * @param inputOntology
@@ -49,7 +49,6 @@ public class MacroExpansionGCIVisitor {
      */
     public MacroExpansionGCIVisitor(@Nonnull OWLOntology inputOntology,
             @Nonnull OWLOntologyManager outputManager) {
-        super();
         this.inputOntology = inputOntology;
         visitor = new GCIVisitor(inputOntology);
         manchesterSyntaxTool = new ManchesterSyntaxTool(inputOntology);
@@ -139,8 +138,7 @@ public class MacroExpansionGCIVisitor {
 
         @Nullable
         @Override
-        protected OWLClassExpression expandOWLObjHasVal(
-                @SuppressWarnings("unused") OWLObjectHasValue desc,
+        protected OWLClassExpression expandOWLObjHasVal(OWLObjectHasValue desc,
                 @Nonnull OWLIndividual filler,
                 @Nonnull OWLObjectPropertyExpression p) {
             OWLClassExpression gciRHS = expandObject(filler, p);

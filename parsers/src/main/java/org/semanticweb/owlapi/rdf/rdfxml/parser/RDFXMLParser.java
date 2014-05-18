@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
  *         Informatics Group
  * @since 2.0.0
  */
-@HasPriority(value = 0)
+@HasPriority(0)
 public class RDFXMLParser extends AbstractOWLParser {
 
     private static final long serialVersionUID = 40000L;
@@ -58,18 +58,19 @@ public class RDFXMLParser extends AbstractOWLParser {
             RDFParser parser = new RDFParser() {
 
                 @Override
-                public void startPrefixMapping(String prefix, String iri)
+                public void startPrefixMapping(String prefix, String uri)
                         throws SAXException {
                     assert prefix != null;
-                    assert iri != null;
-                    super.startPrefixMapping(prefix, iri);
-                    format.setPrefix(prefix, iri);
+                    assert uri != null;
+                    super.startPrefixMapping(prefix, uri);
+                    format.setPrefix(prefix, uri);
                 }
 
                 @Override
-                public void startElement(String namespaceIRI, String localName,
-                        String qName, Attributes atts) throws SAXException {
-                    super.startElement(namespaceIRI, localName, qName, atts);
+                public void startElement(String uri, String localName,
+                        String qName, Attributes attributes)
+                        throws SAXException {
+                    super.startElement(uri, localName, qName, attributes);
                 }
             };
             OWLRDFConsumer consumer = new OWLRDFConsumer(ontology,

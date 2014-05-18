@@ -20,8 +20,6 @@ import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.model.vocabulary.OWL;
 import org.openrdf.model.vocabulary.RDF;
 import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.RDFParser;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.Rio;
@@ -30,6 +28,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.rio.RioManchesterSyntaxParserFactory;
 import org.semanticweb.owlapi.rio.RioNTriplesOntologyStorerFactory;
 import org.semanticweb.owlapi.rio.RioRDFXMLOntologyStorerFactory;
 import org.semanticweb.owlapi.rio.RioRenderer;
@@ -38,20 +37,17 @@ import org.semanticweb.owlapi.rio.RioTurtleOntologyStorerFactory;
 /**
  * @author Peter Ansell p_ansell@yahoo.com
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class RioRendererTest {
 
     private ValueFactory vf;
-    private OWLOntologyManager testManager;
-    @SuppressWarnings("null")
     @Nonnull
     private OWLOntology testOntologyEmpty;
-    @SuppressWarnings("null")
     @Nonnull
     private OWLOntology testOntologyKoala;
     private Statement testOntologyEmptyStatement;
     @Nonnull
-    private IRI testOntologyUri1 = IRI.create("urn:test:ontology:uri:1");
+    private final IRI testOntologyUri1 = IRI.create("urn:test:ontology:uri:1");
     private StatementCollector testHandlerStatementCollector;
     private StringWriter testRdfXmlStringWriter;
     private RDFWriter testRdfXmlRioWriter;
@@ -60,7 +56,6 @@ public class RioRendererTest {
     private StringWriter testNTriplesStringWriter;
     private RDFWriter testNTriplesRioWriter;
 
-    @SuppressWarnings("null")
     @Before
     public void setUp() throws Exception {
         vf = new ValueFactoryImpl();
@@ -74,14 +69,15 @@ public class RioRendererTest {
         // .createOWLOntologyManager(
         // OWLOntologyManagerFactoryRegistry.getOWLDataFactory(),
         // storerRegistry, parserRegistry);
-        testManager = OWLManager.createOWLOntologyManager();
+        OWLOntologyManager testManager = OWLManager.createOWLOntologyManager();
         testManager.getOntologyStorers().set(
                 new RioNTriplesOntologyStorerFactory().get(),
                 new RioRDFXMLOntologyStorerFactory().get(),
                 new RioTurtleOntologyStorerFactory().get());
         testOntologyEmpty = testManager.createOntology(testOntologyUri1);
-        testOntologyKoala = testManager.loadOntologyFromOntologyDocument(this
-                .getClass().getResourceAsStream("/koala.owl"));
+        testOntologyKoala = testManager
+                .loadOntologyFromOntologyDocument(getClass()
+                        .getResourceAsStream("/koala.owl"));
         assertEquals(70, testOntologyKoala.getAxiomCount());
         testHandlerStatementCollector = new StatementCollector();
         testOntologyEmptyStatement = vf
@@ -190,8 +186,7 @@ public class RioRendererTest {
      * {@link org.semanticweb.owlapi.rio.RioRenderer#render(org.semanticweb.owlapi.io.RDFResource)}
      */
     @Test
-    public void testRenderKoalaRdfXmlWriter() throws IOException,
-            RDFParseException, RDFHandlerException {
+    public void testRenderKoalaRdfXmlWriter() throws Exception {
         RioRenderer testRenderer = new RioRenderer(testOntologyKoala,
                 testRdfXmlRioWriter, null);
         testRenderer.render();
@@ -227,8 +222,7 @@ public class RioRendererTest {
      * {@link org.semanticweb.owlapi.rio.RioRenderer#render(org.semanticweb.owlapi.io.RDFResource)}
      */
     @Test
-    public void testRenderKoalaTurtleWriter() throws IOException,
-            RDFParseException, RDFHandlerException {
+    public void testRenderKoalaTurtleWriter() throws Exception {
         RioRenderer testRenderer = new RioRenderer(testOntologyKoala,
                 testTurtleRioWriter, null);
         testRenderer.render();
@@ -258,8 +252,7 @@ public class RioRendererTest {
      * {@link org.semanticweb.owlapi.rio.RioRenderer#render(org.semanticweb.owlapi.io.RDFResource)}
      */
     @Test
-    public void testRenderKoalaNTriplesWriter() throws IOException,
-            RDFParseException, RDFHandlerException {
+    public void testRenderKoalaNTriplesWriter() throws Exception {
         RioRenderer testRenderer = new RioRenderer(testOntologyKoala,
                 testNTriplesRioWriter, null);
         testRenderer.render();
@@ -286,5 +279,37 @@ public class RioRendererTest {
                 testHandlerStatementCollector.getStatements());
         assertEquals("Duplicate statements were emitted", 171,
                 resultStatements.size());
+    }
+
+    @Test
+    public void testRioOWLRDFParser() throws Exception {
+        RDFParser parser = new RioManchesterSyntaxParserFactory().getParser();
+        String inputManSyntax = "Prefix: owl: <http://www.w3.org/2002/07/owl#>\n"
+                + "Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+                + "Prefix: xml: <http://www.w3.org/XML/1998/namespace>\n"
+                + "Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>\n"
+                + "Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+                + "Ontology: <http://www.owl-ontologies.com/Ontology1307394066.owl>\n"
+                + "Datatype: xsd:decimal\n"
+                + "Datatype: xsd:int\n"
+                + "Datatype: xsd:dateTime\n"
+                + "DataProperty: <http://www.owl-ontologies.com/Ontology1307394066.owl#hasAge>\n"
+                + "    Characteristics: \n"
+                + "        Functional\n"
+                + "    Range: \n"
+                + "        xsd:int\n"
+                + "DataProperty: <http://www.owl-ontologies.com/Ontology1307394066.owl#hasDate>\n"
+                + "    Range: \n"
+                + "        xsd:dateTime\n"
+                + "Class: <http://www.owl-ontologies.com/Ontology1307394066.owl#Person>\n"
+                + "Individual: <http://www.owl-ontologies.com/Ontology1307394066.owl#p1>\n"
+                + "    Types: \n"
+                + "        <http://www.owl-ontologies.com/Ontology1307394066.owl#Person>\n"
+                + "Rule: \n"
+                + "    xsd:decimal(?x), <http://www.owl-ontologies.com/Ontology1307394066.owl#hasAge>(?p, ?x) -> <http://www.owl-ontologies.com/Ontology1307394066.owl#Person>(?p)";
+        parser.setRDFHandler(testHandlerStatementCollector);
+        parser.parse(new StringReader(inputManSyntax),
+                "http://www.owl-ontologies.com/Ontology1307394066.owl");
+        assertEquals(36, testHandlerStatementCollector.getStatements().size());
     }
 }

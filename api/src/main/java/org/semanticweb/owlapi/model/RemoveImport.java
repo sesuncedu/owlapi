@@ -12,7 +12,6 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.model;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -26,6 +25,8 @@ import org.semanticweb.owlapi.util.CollectionFactory;
  * @since 3.0.0
  */
 public class RemoveImport extends ImportChange {
+
+    private static final long serialVersionUID = 40000L;
 
     /**
      * @param ont
@@ -47,7 +48,7 @@ public class RemoveImport extends ImportChange {
     @Override
     public Set<OWLEntity> getSignature() {
         return CollectionFactory
-                .getCopyOnRequestSetFromImmutableCollection(Collections
+                .getCopyOnRequestSetFromImmutableCollection(CollectionFactory
                         .<OWLEntity> emptySet());
     }
 
@@ -71,11 +72,7 @@ public class RemoveImport extends ImportChange {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("RemoveImport(");
-        sb.append(getImportDeclaration().toString());
-        sb.append(")");
-        return sb.toString();
+        return String.format("RemoveImport(%s)", getImportDeclaration());
     }
 
     @Override

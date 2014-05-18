@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapitools.builders;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -27,14 +29,14 @@ import org.semanticweb.owlapi.model.PrefixManager;
  * @author ignazio
  * @param <T>
  *        OWL type
- * @param <Type>
- *        buolder type
+ * @param <B>
+ *        builder type
  */
-public abstract class BaseEntityBuilder<T extends OWLEntity, Type> extends
-        BaseBuilder<T, Type> {
+public abstract class BaseEntityBuilder<T extends OWLEntity, B> extends
+        BaseBuilder<T, B> {
 
     @Nullable
-    protected IRI iri = null;
+    private IRI iri = null;
     @Nullable
     protected String string = null;
     @Nullable
@@ -56,9 +58,9 @@ public abstract class BaseEntityBuilder<T extends OWLEntity, Type> extends
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withIRI(IRI arg) {
+    public B withIRI(IRI arg) {
         iri = arg;
-        return (Type) this;
+        return (B) this;
     }
 
     /**
@@ -68,9 +70,9 @@ public abstract class BaseEntityBuilder<T extends OWLEntity, Type> extends
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withPrefixManager(PrefixManager arg) {
+    public B withPrefixManager(PrefixManager arg) {
         pm = arg;
-        return (Type) this;
+        return (B) this;
     }
 
     /**
@@ -80,8 +82,30 @@ public abstract class BaseEntityBuilder<T extends OWLEntity, Type> extends
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withPrefixedIRI(String arg) {
+    public B withPrefixedIRI(String arg) {
         string = arg;
-        return (Type) this;
+        return (B) this;
+    }
+
+    /** @return iri */
+    @Nonnull
+    public IRI getIRI() {
+        return verifyNotNull(iri);
+    }
+
+    /**
+     * @return string
+     */
+    @Nonnull
+    public String getString() {
+        return verifyNotNull(string);
+    }
+
+    /**
+     * @return prefix manager
+     */
+    @Nonnull
+    public PrefixManager getPM() {
+        return verifyNotNull(pm);
     }
 }

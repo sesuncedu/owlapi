@@ -19,6 +19,8 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import org.semanticweb.owlapi.util.CollectionFactory;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -131,10 +133,7 @@ public class AxiomType<C extends OWLAxiom> implements Serializable {
             @Nonnull Set<OWLAxiom> sourceAxioms,
             @Nonnull AxiomType<?>... axiomTypes) {
         Set<OWLAxiom> result = new HashSet<OWLAxiom>();
-        Set<AxiomType<?>> disallowed = new HashSet<AxiomType<?>>();
-        for (AxiomType<?> t : axiomTypes) {
-            disallowed.add(t);
-        }
+        Set<AxiomType<?>> disallowed = Sets.newHashSet(axiomTypes);
         for (OWLAxiom ax : sourceAxioms) {
             if (!disallowed.contains(ax.getAxiomType())) {
                 result.add(ax);
@@ -160,10 +159,7 @@ public class AxiomType<C extends OWLAxiom> implements Serializable {
             @Nonnull Set<OWLAxiom> sourceAxioms,
             @Nonnull AxiomType<?>... axiomTypes) {
         Set<OWLAxiom> result = new HashSet<OWLAxiom>();
-        Set<AxiomType<?>> allowed = new HashSet<AxiomType<?>>();
-        for (AxiomType<?> t : axiomTypes) {
-            allowed.add(t);
-        }
+        Set<AxiomType<?>> allowed = Sets.newHashSet(axiomTypes);
         for (OWLAxiom ax : sourceAxioms) {
             if (allowed.contains(ax.getAxiomType())) {
                 result.add(ax);
@@ -193,7 +189,7 @@ public class AxiomType<C extends OWLAxiom> implements Serializable {
      *         or {@code false} if there is no axiom type with the specified
      *         name.
      */
-    public boolean isAxiomType(String _name) {
+    public static boolean isAxiomType(String _name) {
         return NAME_TYPE_MAP.containsKey(_name);
     }
 
@@ -222,7 +218,7 @@ public class AxiomType<C extends OWLAxiom> implements Serializable {
     /** AsymmetricObjectProperty */         @Nonnull public static final AxiomType<OWLAsymmetricObjectPropertyAxiom>         ASYMMETRIC_OBJECT_PROPERTY          = getInstance(18, "AsymmetricObjectProperty",        true, true, true);
     /** TransitiveObjectProperty */         @Nonnull public static final AxiomType<OWLTransitiveObjectPropertyAxiom>         TRANSITIVE_OBJECT_PROPERTY          = getInstance(19, "TransitiveObjectProperty",        false, false, true);
     /** ReflexiveObjectProperty */          @Nonnull public static final AxiomType<OWLReflexiveObjectPropertyAxiom>          REFLEXIVE_OBJECT_PROPERTY           = getInstance(20, "ReflexiveObjectProperty",         true, true, true);
-    /** IrrefexiveObjectProperty */         @Nonnull public static final AxiomType<OWLIrreflexiveObjectPropertyAxiom>        IRREFLEXIVE_OBJECT_PROPERTY         = getInstance(21, "IrrefexiveObjectProperty",        true, true, true);
+    /** IrreflexiveObjectProperty */        @Nonnull public static final AxiomType<OWLIrreflexiveObjectPropertyAxiom>        IRREFLEXIVE_OBJECT_PROPERTY         = getInstance(21, "IrrefexiveObjectProperty",        true, true, true);
     /** ObjectPropertyDomain */             @Nonnull public static final AxiomType<OWLObjectPropertyDomainAxiom>             OBJECT_PROPERTY_DOMAIN              = getInstance(22, "ObjectPropertyDomain",            false, false, true);
     /** ObjectPropertyRange */              @Nonnull public static final AxiomType<OWLObjectPropertyRangeAxiom>              OBJECT_PROPERTY_RANGE               = getInstance(23, "ObjectPropertyRange",             false, false, true);
     /** DisjointObjectProperties */         @Nonnull public static final AxiomType<OWLDisjointObjectPropertiesAxiom>         DISJOINT_OBJECT_PROPERTIES          = getInstance(24, "DisjointObjectProperties",        true, true, true);
@@ -247,25 +243,28 @@ public class AxiomType<C extends OWLAxiom> implements Serializable {
     /** AnnotationPropertyDomain */         @Nonnull public static final AxiomType<OWLAnnotationPropertyDomainAxiom>         ANNOTATION_PROPERTY_DOMAIN          = getInstance(37, "AnnotationPropertyDomain",        true, true, false);
   //@formatter:on
     /** axiom types */
-    @SuppressWarnings("null")
     @Nonnull
-    public static final Set<AxiomType<?>> AXIOM_TYPES = Sets.newHashSet(
-            SUBCLASS_OF, EQUIVALENT_CLASSES, DISJOINT_CLASSES, CLASS_ASSERTION,
-            SAME_INDIVIDUAL, DIFFERENT_INDIVIDUALS, OBJECT_PROPERTY_ASSERTION,
-            NEGATIVE_OBJECT_PROPERTY_ASSERTION, DATA_PROPERTY_ASSERTION,
-            NEGATIVE_DATA_PROPERTY_ASSERTION, OBJECT_PROPERTY_DOMAIN,
-            OBJECT_PROPERTY_RANGE, DISJOINT_OBJECT_PROPERTIES,
-            SUB_OBJECT_PROPERTY, EQUIVALENT_OBJECT_PROPERTIES,
-            INVERSE_OBJECT_PROPERTIES, SUB_PROPERTY_CHAIN_OF,
-            FUNCTIONAL_OBJECT_PROPERTY, INVERSE_FUNCTIONAL_OBJECT_PROPERTY,
-            SYMMETRIC_OBJECT_PROPERTY, ASYMMETRIC_OBJECT_PROPERTY,
-            TRANSITIVE_OBJECT_PROPERTY, REFLEXIVE_OBJECT_PROPERTY,
-            IRREFLEXIVE_OBJECT_PROPERTY, DATA_PROPERTY_DOMAIN,
-            DATA_PROPERTY_RANGE, DISJOINT_DATA_PROPERTIES, SUB_DATA_PROPERTY,
-            EQUIVALENT_DATA_PROPERTIES, FUNCTIONAL_DATA_PROPERTY,
-            DATATYPE_DEFINITION, DISJOINT_UNION, DECLARATION, SWRL_RULE,
-            ANNOTATION_ASSERTION, SUB_ANNOTATION_PROPERTY_OF,
-            ANNOTATION_PROPERTY_DOMAIN, ANNOTATION_PROPERTY_RANGE, HAS_KEY);
+    public static final Set<AxiomType<?>> AXIOM_TYPES = CollectionFactory
+            .createSet(SUBCLASS_OF, EQUIVALENT_CLASSES, DISJOINT_CLASSES,
+                    CLASS_ASSERTION, SAME_INDIVIDUAL, DIFFERENT_INDIVIDUALS,
+                    OBJECT_PROPERTY_ASSERTION,
+                    NEGATIVE_OBJECT_PROPERTY_ASSERTION,
+                    DATA_PROPERTY_ASSERTION, NEGATIVE_DATA_PROPERTY_ASSERTION,
+                    OBJECT_PROPERTY_DOMAIN, OBJECT_PROPERTY_RANGE,
+                    DISJOINT_OBJECT_PROPERTIES, SUB_OBJECT_PROPERTY,
+                    EQUIVALENT_OBJECT_PROPERTIES, INVERSE_OBJECT_PROPERTIES,
+                    SUB_PROPERTY_CHAIN_OF, FUNCTIONAL_OBJECT_PROPERTY,
+                    INVERSE_FUNCTIONAL_OBJECT_PROPERTY,
+                    SYMMETRIC_OBJECT_PROPERTY, ASYMMETRIC_OBJECT_PROPERTY,
+                    TRANSITIVE_OBJECT_PROPERTY, REFLEXIVE_OBJECT_PROPERTY,
+                    IRREFLEXIVE_OBJECT_PROPERTY, DATA_PROPERTY_DOMAIN,
+                    DATA_PROPERTY_RANGE, DISJOINT_DATA_PROPERTIES,
+                    SUB_DATA_PROPERTY, EQUIVALENT_DATA_PROPERTIES,
+                    FUNCTIONAL_DATA_PROPERTY, DATATYPE_DEFINITION,
+                    DISJOINT_UNION, DECLARATION, SWRL_RULE,
+                    ANNOTATION_ASSERTION, SUB_ANNOTATION_PROPERTY_OF,
+                    ANNOTATION_PROPERTY_DOMAIN, ANNOTATION_PROPERTY_RANGE,
+                    HAS_KEY);
     private static final Map<String, AxiomType<?>> NAME_TYPE_MAP = Maps
             .uniqueIndex(AXIOM_TYPES, new Function<AxiomType<?>, String>() {
 
@@ -276,34 +275,33 @@ public class AxiomType<C extends OWLAxiom> implements Serializable {
                 }
             });
     /** set of tbox axiom types */
-    @SuppressWarnings("null")
     @Nonnull
-    public static final Set<AxiomType<?>> TBoxAxiomTypes = Sets.newHashSet(
-            (AxiomType<?>) SUBCLASS_OF, EQUIVALENT_CLASSES, DISJOINT_CLASSES,
-            OBJECT_PROPERTY_DOMAIN, OBJECT_PROPERTY_RANGE,
-            INVERSE_OBJECT_PROPERTIES, FUNCTIONAL_OBJECT_PROPERTY,
-            INVERSE_FUNCTIONAL_OBJECT_PROPERTY, SYMMETRIC_OBJECT_PROPERTY,
-            ASYMMETRIC_OBJECT_PROPERTY, REFLEXIVE_OBJECT_PROPERTY,
-            IRREFLEXIVE_OBJECT_PROPERTY, DATA_PROPERTY_DOMAIN,
-            DATA_PROPERTY_RANGE, FUNCTIONAL_DATA_PROPERTY, DATATYPE_DEFINITION,
-            DISJOINT_UNION, HAS_KEY);
+    public static final Set<AxiomType<?>> TBoxAxiomTypes = CollectionFactory
+            .createSet((AxiomType<?>) SUBCLASS_OF, EQUIVALENT_CLASSES,
+                    DISJOINT_CLASSES, OBJECT_PROPERTY_DOMAIN,
+                    OBJECT_PROPERTY_RANGE, INVERSE_OBJECT_PROPERTIES,
+                    FUNCTIONAL_OBJECT_PROPERTY,
+                    INVERSE_FUNCTIONAL_OBJECT_PROPERTY,
+                    SYMMETRIC_OBJECT_PROPERTY, ASYMMETRIC_OBJECT_PROPERTY,
+                    REFLEXIVE_OBJECT_PROPERTY, IRREFLEXIVE_OBJECT_PROPERTY,
+                    DATA_PROPERTY_DOMAIN, DATA_PROPERTY_RANGE,
+                    FUNCTIONAL_DATA_PROPERTY, DATATYPE_DEFINITION,
+                    DISJOINT_UNION, HAS_KEY);
     /** set of abox axiom types */
-    @SuppressWarnings("null")
     @Nonnull
-    public static final Set<AxiomType<?>> ABoxAxiomTypes = Sets.newHashSet(
-            (AxiomType<?>) CLASS_ASSERTION, SAME_INDIVIDUAL,
-            DIFFERENT_INDIVIDUALS, OBJECT_PROPERTY_ASSERTION,
-            NEGATIVE_OBJECT_PROPERTY_ASSERTION, DATA_PROPERTY_ASSERTION,
-            NEGATIVE_DATA_PROPERTY_ASSERTION);
+    public static final Set<AxiomType<?>> ABoxAxiomTypes = CollectionFactory
+            .createSet((AxiomType<?>) CLASS_ASSERTION, SAME_INDIVIDUAL,
+                    DIFFERENT_INDIVIDUALS, OBJECT_PROPERTY_ASSERTION,
+                    NEGATIVE_OBJECT_PROPERTY_ASSERTION,
+                    DATA_PROPERTY_ASSERTION, NEGATIVE_DATA_PROPERTY_ASSERTION);
     /** set of rbox axiom types */
-    @SuppressWarnings("null")
     @Nonnull
-    public static final Set<AxiomType<?>> RBoxAxiomTypes = Sets.newHashSet(
-            (AxiomType<?>) TRANSITIVE_OBJECT_PROPERTY,
-            DISJOINT_DATA_PROPERTIES, SUB_DATA_PROPERTY,
-            EQUIVALENT_DATA_PROPERTIES, DISJOINT_OBJECT_PROPERTIES,
-            SUB_OBJECT_PROPERTY, EQUIVALENT_OBJECT_PROPERTIES,
-            SUB_PROPERTY_CHAIN_OF);
+    public static final Set<AxiomType<?>> RBoxAxiomTypes = CollectionFactory
+            .createSet((AxiomType<?>) TRANSITIVE_OBJECT_PROPERTY,
+                    DISJOINT_DATA_PROPERTIES, SUB_DATA_PROPERTY,
+                    EQUIVALENT_DATA_PROPERTIES, DISJOINT_OBJECT_PROPERTIES,
+                    SUB_OBJECT_PROPERTY, EQUIVALENT_OBJECT_PROPERTIES,
+                    SUB_PROPERTY_CHAIN_OF);
     /** set of tbox and rbox axiom types */
     @SuppressWarnings("null")
     @Nonnull

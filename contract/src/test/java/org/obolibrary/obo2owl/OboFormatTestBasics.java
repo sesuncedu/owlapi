@@ -20,7 +20,6 @@ import javax.annotation.Nullable;
 
 import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatParser;
-import org.obolibrary.oboformat.parser.OBOFormatParserException;
 import org.obolibrary.oboformat.writer.OBOFormatWriter;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.OWLXMLOntologyFormat;
@@ -39,15 +38,14 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLRuntimeException;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class OboFormatTestBasics {
 
     @Nonnull
-    protected OBODoc parseOBOURL(String fn) throws IOException,
-            OBOFormatParserException {
+    protected OBODoc parseOBOURL(String fn) throws IOException {
         OBOFormatParser p = new OBOFormatParser();
         OBODoc obodoc = p.parseURL(fn);
-        assertTrue(obodoc.getTermFrames().size() > 0);
+        assertTrue(!obodoc.getTermFrames().isEmpty());
         return obodoc;
     }
 
@@ -66,7 +64,7 @@ public class OboFormatTestBasics {
             obodoc = p.parse(new BufferedReader(new InputStreamReader(
                     inputStream)));
             assertNotNull("The obodoc should not be null", obodoc);
-            if (obodoc.getTermFrames().size() == 0 && !allowEmptyFrames) {
+            if (obodoc.getTermFrames().isEmpty() && !allowEmptyFrames) {
                 fail("Term frames should not be empty.");
             }
             return obodoc;
@@ -77,11 +75,11 @@ public class OboFormatTestBasics {
 
     @Nonnull
     protected OBODoc parseOBOFile(@Nonnull Reader fn, boolean allowEmptyFrames)
-            throws IOException, OBOFormatParserException {
+            throws IOException {
         OBOFormatParser p = new OBOFormatParser();
         OBODoc obodoc = p.parse(new BufferedReader(fn));
         assertNotNull("The obodoc should not be null", obodoc);
-        if (obodoc.getTermFrames().size() == 0 && !allowEmptyFrames) {
+        if (obodoc.getTermFrames().isEmpty() && !allowEmptyFrames) {
             fail("Term frames should not be empty.");
         }
         return obodoc;
@@ -112,12 +110,9 @@ public class OboFormatTestBasics {
     }
 
     @Nonnull
-    protected OBODoc parseOBOFile(@Nonnull File file) throws IOException,
-            OBOFormatParserException {
+    protected OBODoc parseOBOFile(@Nonnull File file) throws IOException {
         OBOFormatParser p = new OBOFormatParser();
-        @SuppressWarnings("null")
-        OBODoc obodoc = p.parse(file.getCanonicalPath());
-        return obodoc;
+        return p.parse(file.getCanonicalPath());
     }
 
     @Nonnull
@@ -125,9 +120,7 @@ public class OboFormatTestBasics {
             throws OWLOntologyCreationException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         // TODO replace
-        OWLOntology ontology = manager
-                .loadOntologyFromOntologyDocument(getInputStream(fn));
-        return ontology;
+        return manager.loadOntologyFromOntologyDocument(getInputStream(fn));
     }
 
     @Nonnull
@@ -160,11 +153,9 @@ public class OboFormatTestBasics {
         OWLAPIOwl2Obo bridge = new OWLAPIOwl2Obo(
                 OWLManager.createOWLOntologyManager());
         bridge.setStrictConversion(strictness);
-        OBODoc doc = bridge.convert(ontology);
-        return doc;
+        return bridge.convert(ontology);
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     protected String writeOBO(@Nonnull OBODoc obodoc) throws IOException {
         StringWriter target = new StringWriter();
@@ -193,7 +184,6 @@ public class OboFormatTestBasics {
         return target;
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     protected static String renderOboToString(@Nonnull OBODoc oboDoc)
             throws IOException {
@@ -208,7 +198,7 @@ public class OboFormatTestBasics {
 
     @Nonnull
     protected static OBODoc parseOboToString(@Nonnull String oboString)
-            throws IOException, OBOFormatParserException {
+            throws IOException {
         OBOFormatParser p = new OBOFormatParser();
         BufferedReader reader = new BufferedReader(new StringReader(oboString));
         OBODoc parsedOboDoc = p.parse(reader);
@@ -260,7 +250,6 @@ public class OboFormatTestBasics {
         return null;
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     protected String readResource(String resource) throws IOException {
         InputStream inputStream = getInputStream(resource);

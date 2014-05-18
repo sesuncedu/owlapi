@@ -31,11 +31,10 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
  * @author Matthew Horridge, Stanford University, Bio-Medical Informatics
  *         Research Group, Date: 01/04/2014
  */
+@SuppressWarnings({ "javadoc", "null" })
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings("javadoc")
 public class ManchesterOWLSyntaxParserErrorsTestCase {
 
-    @SuppressWarnings("null")
     @Mock
     @Nonnull
     protected OWLEntityChecker entityChecker;
@@ -581,7 +580,7 @@ public class ManchesterOWLSyntaxParserErrorsTestCase {
         } catch (ParserException e) {
             assertEquals(index, e.getStartPos());
             assertEquals(currentToken, e.getCurrentToken());
-            assertTrue(e.getTokenSequence().size() > 0);
+            assertTrue(!e.getTokenSequence().isEmpty());
             assertEquals(currentToken, e.getTokenSequence().get(0));
         }
     }
@@ -596,7 +595,7 @@ public class ManchesterOWLSyntaxParserErrorsTestCase {
 
     private class ParserWrapper {
 
-        public ParserWrapper() {}
+        ParserWrapper() {}
 
         public void parse(@Nonnull String input) {
             OWLDataFactory dataFactory = new OWLDataFactoryImpl();

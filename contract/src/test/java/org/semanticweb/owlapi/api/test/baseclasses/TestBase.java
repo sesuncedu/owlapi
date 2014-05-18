@@ -48,14 +48,13 @@ import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 import org.semanticweb.owlapi.model.OWLRuntimeException;
-import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
 
 /**
  * @author Matthew Horridge, The University Of Manchester, Bio-Health
  *         Informatics Group
  * @since 2.2.0
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public abstract class TestBase {
 
     @Nonnull
@@ -75,7 +74,6 @@ public abstract class TestBase {
     @Nonnull
     protected OWLOntologyManager m1 = OWLManager.createOWLOntologyManager();
 
-    @SuppressWarnings("null")
     @Nonnull
     protected <S> Set<S> singleton(S s) {
         return Collections.singleton(s);
@@ -110,7 +108,7 @@ public abstract class TestBase {
                         leftOnly.add(ax);
                         sb.append("Rem axiom: ");
                         sb.append(ax);
-                        sb.append("\n");
+                        sb.append('\n');
                         counter++;
                     }
                 }
@@ -121,7 +119,7 @@ public abstract class TestBase {
                         rightOnly.add(ax);
                         sb.append("Add axiom: ");
                         sb.append(ax);
-                        sb.append("\n");
+                        sb.append('\n');
                         counter++;
                     }
                 }
@@ -132,9 +130,9 @@ public abstract class TestBase {
                 boolean fixed = !verifyErrorIsDueToBlankNodesId(leftOnly,
                         rightOnly);
                 if (fixed) {
-                    String x = this.getClass().getSimpleName()
+                    String x = getClass().getSimpleName()
                             + " roundTripOntology() Failing to match axioms: \n"
-                            + sb.toString() + topOfStackTrace();
+                            + sb + topOfStackTrace();
                     System.out.println(x);
                     fail(x);
                     return false;
@@ -152,8 +150,7 @@ public abstract class TestBase {
     @Nonnull
     private static String topOfStackTrace() {
         StackTraceElement[] elements = new RuntimeException().getStackTrace();
-        return elements[1].toString() + "\n" + elements[2].toString() + "\n"
-                + elements[3].toString();
+        return elements[1] + "\n" + elements[2] + '\n' + elements[3];
     }
 
     /**
@@ -201,13 +198,12 @@ public abstract class TestBase {
     }
 
     @Nonnull
-    private String uriBase = "http://www.semanticweb.org/owlapi/test";
+    private final String uriBase = "http://www.semanticweb.org/owlapi/test";
 
-    @SuppressWarnings("null")
     @Nonnull
     public OWLOntology getOWLOntology(String name) {
         try {
-            IRI iri = IRI(uriBase + "/" + name);
+            IRI iri = IRI(uriBase + '/' + name);
             if (m.contains(iri)) {
                 return m.getOntology(iri);
             } else {
@@ -218,10 +214,9 @@ public abstract class TestBase {
         }
     }
 
-    @SuppressWarnings("null")
     public OWLOntology loadOntology(String fileName) {
         try {
-            URL url = getClass().getResource("/" + fileName);
+            URL url = getClass().getResource('/' + fileName);
             return m.loadOntologyFromOntologyDocument(
                     new IRIDocumentSource(IRI.create(url), null, null),
                     new OWLOntologyLoaderConfiguration()
@@ -234,7 +229,7 @@ public abstract class TestBase {
 
     @Nonnull
     public IRI getIRI(String name) {
-        return IRI(uriBase + "#" + name);
+        return IRI(uriBase + '#' + name);
     }
 
     public void addAxiom(@Nonnull OWLOntology ont, @Nonnull OWLAxiom ax) {
@@ -300,7 +295,7 @@ public abstract class TestBase {
         ax2.add(df.getOWLDataPropertyAssertionAxiom(t,
                 df.getOWLAnonymousIndividual(), df.getOWLLiteral("test2")));
         assertFalse(ax1.equals(ax2));
-        assertTrue(TestBase.verifyErrorIsDueToBlankNodesId(ax1, ax2));
+        assertTrue(verifyErrorIsDueToBlankNodesId(ax1, ax2));
     }
 
     @SuppressWarnings("unused")
@@ -317,10 +312,9 @@ public abstract class TestBase {
     @Nonnull
     protected OWLOntology loadOntologyFromString(@Nonnull String input)
             throws OWLOntologyCreationException {
-        OWLOntology ontology = OWLManager.createOWLOntologyManager()
+        return OWLManager.createOWLOntologyManager()
                 .loadOntologyFromOntologyDocument(
                         new StringDocumentSource(input));
-        return ontology;
     }
 
     @Nonnull
@@ -340,32 +334,29 @@ public abstract class TestBase {
     protected OWLOntology loadOntologyFromString(
             @Nonnull StringDocumentSource input)
             throws OWLOntologyCreationException {
-        OWLOntology ontology = OWLManager.createOWLOntologyManager()
+        return OWLManager.createOWLOntologyManager()
                 .loadOntologyFromOntologyDocument(input);
-        return ontology;
     }
 
     @Nonnull
     protected OWLOntology loadOntologyFromString(
             @Nonnull StringDocumentTarget input)
             throws OWLOntologyCreationException {
-        OWLOntology ontology = OWLManager.createOWLOntologyManager()
+        return OWLManager.createOWLOntologyManager()
                 .loadOntologyFromOntologyDocument(
                         new StringDocumentSource(input));
-        return ontology;
     }
 
     @Nonnull
     protected OWLOntology loadOntologyFromString(
             @Nonnull StringDocumentTarget input, OWLOntologyFormat f)
             throws OWLOntologyCreationException {
-        OWLOntology ontology = OWLManager.createOWLOntologyManager()
+        return OWLManager.createOWLOntologyManager()
                 .loadOntologyFromOntologyDocument(
                         new StringDocumentSource(input.toString(),
                                 OWLOntologyDocumentSourceBase
                                         .getNextDocumentIRI("string:ontology"),
                                 f, null));
-        return ontology;
     }
 
     @Nonnull
@@ -385,10 +376,9 @@ public abstract class TestBase {
                 new StringDocumentSource(o), c);
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     protected StringDocumentTarget saveOntology(@Nonnull OWLOntology o)
-            throws UnknownOWLOntologyException, OWLOntologyStorageException {
+            throws OWLOntologyStorageException {
         return saveOntology(o, o.getOWLOntologyManager().getOntologyFormat(o));
     }
 
@@ -418,8 +408,7 @@ public abstract class TestBase {
 
     @Nonnull
     protected OWLOntology roundTrip(@Nonnull OWLOntology o)
-            throws UnknownOWLOntologyException, OWLOntologyCreationException,
-            OWLOntologyStorageException {
+            throws OWLOntologyCreationException, OWLOntologyStorageException {
         return loadOntologyFromString(saveOntology(o));
     }
 }

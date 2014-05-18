@@ -30,7 +30,7 @@ import org.semanticweb.owlapi.util.AbstractOWLOntologyStorer;
  *         Group
  * @since 2.0.0
  */
-@HasPriority(value = -1)
+@HasPriority(-1)
 @SupportsFormat(OWLTutorialSyntaxOntologyFormat.class)
 public class OWLTutorialSyntaxOntologyStorer extends AbstractOWLOntologyStorer {
 
@@ -43,8 +43,7 @@ public class OWLTutorialSyntaxOntologyStorer extends AbstractOWLOntologyStorer {
 
     @Override
     protected void storeOntology(@Nonnull OWLOntology ontology,
-            @Nonnull Writer writer,
-            @SuppressWarnings("unused") OWLOntologyFormat format)
+            @Nonnull Writer writer, OWLOntologyFormat format)
             throws OWLOntologyStorageException {
         try {
             OWLTutorialSyntaxRenderer renderer = new OWLTutorialSyntaxRenderer();

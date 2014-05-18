@@ -15,6 +15,7 @@ package org.semanticweb.owlapi.model;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +40,7 @@ import org.semanticweb.owlapi.util.PriorityCollection;
  */
 public interface OWLOntologyManager extends OWLOntologySetProvider,
         HasDataFactory, HasGetOntologyById, HasApplyChanges, HasAddAxioms,
-        HasContainsOntology {
+        HasContainsOntology, Serializable {
 
     /**
      * Gets a data factory which can be used to create OWL API objects such as
@@ -257,8 +258,7 @@ public interface OWLOntologyManager extends OWLOntologySetProvider,
     @Nonnull
     @Override
     List<OWLOntologyChange<?>> applyChanges(
-            @Nonnull List<? extends OWLOntologyChange<?>> changes)
-            throws OWLOntologyRenameException;
+            @Nonnull List<? extends OWLOntologyChange<?>> changes);
 
     /**
      * A convenience method that adds a set of axioms to an ontology. The
@@ -347,8 +347,7 @@ public interface OWLOntologyManager extends OWLOntologySetProvider,
      */
     @Nonnull
     List<OWLOntologyChange<?>>
-            applyChange(@Nonnull OWLOntologyChange<?> change)
-                    throws OWLOntologyRenameException;
+            applyChange(@Nonnull OWLOntologyChange<?> change);
 
     // Ontology creation
     /**
@@ -1195,8 +1194,7 @@ public interface OWLOntologyManager extends OWLOntologySetProvider,
      *         thrown.
      */
     void makeLoadImportRequest(@Nonnull OWLImportsDeclaration declaration,
-            @Nonnull OWLOntologyLoaderConfiguration configuration)
-            throws UnloadableImportException;
+            @Nonnull OWLOntologyLoaderConfiguration configuration);
 
     /**
      * In the case where silent missing imports handling is enabled, a listener

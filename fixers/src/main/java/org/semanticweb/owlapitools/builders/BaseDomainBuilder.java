@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapitools.builders;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -25,18 +27,18 @@ import org.semanticweb.owlapi.model.OWLObject;
  * 
  * @param <T>
  *        type built
- * @param <Type>
+ * @param <B>
  *        builder type
- * @param <Property>
+ * @param <P>
  *        contained items type
  */
-public abstract class BaseDomainBuilder<T extends OWLObject, Type, Property>
-        extends BaseBuilder<T, Type> {
+public abstract class BaseDomainBuilder<T extends OWLObject, B, P> extends
+        BaseBuilder<T, B> {
 
     @Nullable
-    protected Property property = null;
+    private P property = null;
     @Nullable
-    protected OWLClassExpression domain = null;
+    private OWLClassExpression domain = null;
 
     /**
      * @param df
@@ -54,9 +56,9 @@ public abstract class BaseDomainBuilder<T extends OWLObject, Type, Property>
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withDomain(OWLClassExpression arg) {
+    public B withDomain(OWLClassExpression arg) {
         domain = arg;
-        return (Type) this;
+        return (B) this;
     }
 
     /**
@@ -66,8 +68,24 @@ public abstract class BaseDomainBuilder<T extends OWLObject, Type, Property>
      */
     @Nonnull
     @SuppressWarnings("unchecked")
-    public Type withProperty(Property arg) {
+    public B withProperty(P arg) {
         property = arg;
-        return (Type) this;
+        return (B) this;
+    }
+
+    /**
+     * @return the property
+     */
+    @Nonnull
+    public P getProperty() {
+        return verifyNotNull(property);
+    }
+
+    /**
+     * @return the domain
+     */
+    @Nonnull
+    public OWLClassExpression getDomain() {
+        return verifyNotNull(domain);
     }
 }

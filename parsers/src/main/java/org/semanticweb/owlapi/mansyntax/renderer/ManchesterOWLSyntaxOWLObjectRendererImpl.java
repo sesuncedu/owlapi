@@ -37,7 +37,7 @@ public class ManchesterOWLSyntaxOWLObjectRendererImpl implements
     @Nonnull
     private ManchesterOWLSyntaxObjectRenderer ren;
     @Nonnull
-    private WriterDelegate writerDelegate;
+    private final WriterDelegate writerDelegate;
 
     /** default constructor */
     public ManchesterOWLSyntaxOWLObjectRendererImpl() {
@@ -66,7 +66,7 @@ public class ManchesterOWLSyntaxOWLObjectRendererImpl implements
         private StringWriter delegate;
 
         /** default constructor */
-        public WriterDelegate() {}
+        WriterDelegate() {}
 
         protected void reset() {
             delegate = new StringWriter();

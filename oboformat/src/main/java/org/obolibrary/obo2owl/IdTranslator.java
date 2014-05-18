@@ -18,9 +18,9 @@ import org.semanticweb.owlapi.model.IRI;
 public class IdTranslator {
 
     @Nonnull
-    String OBO_IRI_PREFIX = "http://purl.obolibrary.org/obo/";
+    static final String OBO_IRI_PREFIX = "http://purl.obolibrary.org/obo/";
     @Nonnull
-    private Map<String, String> idspaceMap = new HashMap<String, String>();
+    private final Map<String, String> idspaceMap = new HashMap<String, String>();
 
     /**
      * @param iri
@@ -28,7 +28,7 @@ public class IdTranslator {
      * @return string for iri
      */
     @Nullable
-    public String translateIRI(@SuppressWarnings("unused") IRI iri) {
+    public static String translateIRI(@SuppressWarnings("unused") IRI iri) {
         return null;
     }
 
@@ -44,11 +44,10 @@ public class IdTranslator {
         }
         if (id.contains(":")) {
             // PREFIXED ID
-            int p = id.lastIndexOf(":");
+            int p = id.lastIndexOf(':');
             String prefix = id.substring(0, p);
             String localId = id.substring(p + 1);
-            if (localId.length() > 0
-                    && localId.replaceAll("[0-9]", "").length() == 0) {
+            if (!localId.isEmpty() && localId.replaceAll("[0-9]", "").isEmpty()) {
                 // CANONICAL
                 return expandPrefix(prefix) + localId;
             }
@@ -64,7 +63,7 @@ public class IdTranslator {
      *        id
      * @return boolean
      */
-    public boolean isURI(@Nonnull String id) {
+    public static boolean isURI(@Nonnull String id) {
         if (id.startsWith("http:") || id.startsWith("ftp:")
                 || id.startsWith("https:")) {
             return true;
@@ -85,6 +84,6 @@ public class IdTranslator {
         if (idspaceMap.containsKey(prefix)) {
             return idspaceMap.get(prefix);
         }
-        return OBO_IRI_PREFIX + prefix + "_";
+        return OBO_IRI_PREFIX + prefix + '_';
     }
 }

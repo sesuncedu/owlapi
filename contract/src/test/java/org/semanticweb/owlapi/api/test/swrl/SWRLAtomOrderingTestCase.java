@@ -6,10 +6,11 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.SWRLAtom;
+import org.semanticweb.owlapi.util.CollectionFactory;
 
 import uk.ac.manchester.cs.owl.owlapi.SWRLRuleImpl;
 
@@ -30,11 +32,17 @@ import uk.ac.manchester.cs.owl.owlapi.SWRLRuleImpl;
 public class SWRLAtomOrderingTestCase {
 
     @Mock
-    protected SWRLAtom atomA, atomB, atomC, atomD;
+    protected SWRLAtom atomA;
+    @Mock
+    protected SWRLAtom atomB;
+    @Mock
+    protected SWRLAtom atomC;
+    @Mock
+    protected SWRLAtom atomD;
     private SWRLRuleImpl rule;
-    private Set<SWRLAtom> body;
+    @Nonnull
+    private final Set<SWRLAtom> body = new LinkedHashSet<SWRLAtom>();
 
-    @SuppressWarnings("null")
     @Before
     public void setUp() {
         when(atomA.compareTo(atomB)).thenReturn(-1);
@@ -46,14 +54,13 @@ public class SWRLAtomOrderingTestCase {
         when(atomA.compareTo(atomA)).thenReturn(0);
         when(atomB.compareTo(atomB)).thenReturn(0);
         when(atomC.compareTo(atomC)).thenReturn(0);
-        body = new LinkedHashSet<SWRLAtom>();
         body.add(atomC);
         body.add(atomB);
         body.add(atomA);
         Set<SWRLAtom> head = new LinkedHashSet<SWRLAtom>();
         head.add(atomD);
         rule = new SWRLRuleImpl(body, head,
-                Collections.<OWLAnnotation> emptySet());
+                CollectionFactory.<OWLAnnotation> emptySet());
     }
 
     @Test

@@ -13,7 +13,6 @@
 package org.semanticweb.owlapi.owlxml.parser;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,7 +37,7 @@ import org.xml.sax.SAXException;
  *         Informatics Group
  * @since 2.0.0
  */
-@HasPriority(value = 1)
+@HasPriority(1)
 public class OWLXMLParser extends AbstractOWLParser {
 
     private static final long serialVersionUID = 40000L;
@@ -54,7 +53,6 @@ public class OWLXMLParser extends AbstractOWLParser {
         return OWLXMLOntologyFormat.class;
     }
 
-    @SuppressWarnings("null")
     @Override
     public OWLOntologyFormat parse(OWLOntologyDocumentSource documentSource,
             OWLOntology ontology, OWLOntologyLoaderConfiguration configuration)
@@ -68,11 +66,7 @@ public class OWLXMLParser extends AbstractOWLParser {
             OWLXMLParserHandler handler = new OWLXMLParserHandler(ontology,
                     configuration);
             parser.parse(isrc, handler);
-            Map<String, String> prefix2NamespaceMap = handler
-                    .getPrefixName2PrefixMap();
-            for (Map.Entry<String, String> e : prefix2NamespaceMap.entrySet()) {
-                format.setPrefix(e.getKey(), e.getValue());
-            }
+            format.copyPrefixesFrom(handler.getPrefixName2PrefixMap());
             return format;
         } catch (ParserConfigurationException e) {
             throw new OWLRuntimeException(e);

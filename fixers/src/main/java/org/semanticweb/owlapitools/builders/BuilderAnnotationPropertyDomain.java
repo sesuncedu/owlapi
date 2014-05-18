@@ -12,6 +12,8 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapitools.builders;
 
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -23,7 +25,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 /** Builder class for OWLAnnotationPropertyDomainAxiom */
 public class BuilderAnnotationPropertyDomain
         extends
-        BaseAnnotationtPropertyBuilder<OWLAnnotationPropertyDomainAxiom, BuilderAnnotationPropertyDomain> {
+        BaseAnnotationPropertyBuilder<OWLAnnotationPropertyDomainAxiom, BuilderAnnotationPropertyDomain> {
 
     @Nullable
     private IRI domain = null;
@@ -64,10 +66,17 @@ public class BuilderAnnotationPropertyDomain
         return this;
     }
 
-    @SuppressWarnings("null")
     @Override
     public OWLAnnotationPropertyDomainAxiom buildObject() {
-        return df.getOWLAnnotationPropertyDomainAxiom(property, domain,
-                annotations);
+        return df.getOWLAnnotationPropertyDomainAxiom(getProperty(),
+                getDomain(), annotations);
+    }
+
+    /**
+     * @return domain
+     */
+    @Nonnull
+    public IRI getDomain() {
+        return verifyNotNull(domain);
     }
 }

@@ -18,7 +18,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -27,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.semanticweb.owlapi.io.XMLUtils;
+import org.semanticweb.owlapi.util.CollectionFactory;
 import org.semanticweb.owlapi.vocab.Namespaces;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
@@ -53,14 +53,7 @@ public class IRI implements OWLAnnotationSubject, OWLAnnotationValue,
     @SuppressWarnings("null")
     @Nonnull
     public URI toURI() {
-        if (!remainder.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(prefix);
-            sb.append(remainder);
-            return URI.create(sb.toString());
-        } else {
-            return URI.create(prefix);
-        }
+        return URI.create(prefix + remainder);
     }
 
     /**
@@ -113,9 +106,9 @@ public class IRI implements OWLAnnotationSubject, OWLAnnotationValue,
         // extra URI object
         URI uri = URI.create(s);
         if (uri.isAbsolute() || uri.isOpaque()) {
-            return IRI.create(uri);
+            return create(uri);
         }
-        return IRI.create(toURI().resolve(uri).toString());
+        return create(toURI().resolve(uri));
     }
 
     /**
@@ -145,7 +138,7 @@ public class IRI implements OWLAnnotationSubject, OWLAnnotationValue,
      *         {@code false}
      */
     public boolean isThing() {
-        return remainder.equals("Thing") && Namespaces.OWL.inNamespace(prefix);
+        return equals(OWLRDFVocabulary.OWL_THING.getIRI());
     }
 
     /**
@@ -191,7 +184,7 @@ public class IRI implements OWLAnnotationSubject, OWLAnnotationValue,
      */
     @Nonnull
     public String toQuotedString() {
-        return "<" + prefix + remainder + ">";
+        return '<' + prefix + remainder + '>';
     }
 
     /**
@@ -324,13 +317,12 @@ public class IRI implements OWLAnnotationSubject, OWLAnnotationValue,
 
     @SuppressWarnings("null")
     @Nonnull
-    private static final String cache(String s) {
+    private static String cache(@Nonnull String s) {
         try {
             return prefixCache.get(s);
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            return s;
         }
-        return s;
     }
 
     @Nonnull
@@ -409,71 +401,62 @@ public class IRI implements OWLAnnotationSubject, OWLAnnotationValue,
         return visitor.visit(this);
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLClass> getClassesInSignature() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLDataProperty> getDataPropertiesInSignature() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLNamedIndividual> getIndividualsInSignature() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLObjectProperty> getObjectPropertiesInSignature() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLEntity> getSignature() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
     @Override
-    public boolean containsEntityInSignature(
-            @SuppressWarnings("unused") OWLEntity owlEntity) {
+    public boolean containsEntityInSignature(OWLEntity owlEntity) {
         return false;
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLAnonymousIndividual> getAnonymousIndividuals() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLDatatype> getDatatypesInSignature() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
     public Set<OWLClassExpression> getNestedClassExpressions() {
-        return Collections.emptySet();
+        return CollectionFactory.emptySet();
     }
 
     @Override
     public int compareTo(OWLObject o) {
-        if (o == this) {
+        if (o == this || this.equals(o)) {
             return 0;
         }
         if (!(o instanceof IRI)) {

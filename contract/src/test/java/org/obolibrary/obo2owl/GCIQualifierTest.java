@@ -15,24 +15,21 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 /** @author cjm see 5.9.3 and 8.2.2 of spec */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class GCIQualifierTest extends OboFormatTestBasics {
 
     @Test
     public void testConvert() {
         // PARSE TEST FILE, CONVERT TO OWL, AND WRITE TO OWL FILE
         OWLOntology ontology = convert(parseOBOFile("gci_qualifier_test.obo"));
-        if (true) {
-            Set<OWLSubClassOfAxiom> scas = ontology
-                    .getAxioms(AxiomType.SUBCLASS_OF);
-            boolean ok = !scas.isEmpty();
-            assertTrue(ok);
-        }
+        Set<OWLSubClassOfAxiom> scas = ontology
+                .getAxioms(AxiomType.SUBCLASS_OF);
+        boolean ok = !scas.isEmpty();
+        assertTrue(ok);
         // CONVERT BACK TO OBO
         OBODoc obodoc = convert(ontology);
         // test that relation IDs are converted back to symbolic form
         Frame tf = obodoc.getTermFrame("X:1");
-        @SuppressWarnings("null")
         Collection<Clause> clauses = tf
                 .getClauses(OboFormatTag.TAG_RELATIONSHIP);
         assertEquals(2, clauses.size());

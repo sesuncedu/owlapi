@@ -70,14 +70,11 @@ public class RDFTranslator extends
     protected RDFResourceBlankNode getAnonymousNode(Object key) {
         checkNotNull(key, "key cannot be null");
         if (key instanceof OWLAnonymousIndividual) {
-            RDFResourceBlankNode toReturn = new RDFResourceBlankNode(
+            return new RDFResourceBlankNode(
                     System.identityHashCode(((OWLAnonymousIndividual) key)
                             .getID().getID()));
-            return toReturn;
         }
-        RDFResourceBlankNode toReturn = new RDFResourceBlankNode(
-                System.identityHashCode(key));
-        return toReturn;
+        return new RDFResourceBlankNode(System.identityHashCode(key));
     }
 
     @Override
@@ -86,13 +83,13 @@ public class RDFTranslator extends
     }
 
     @Override
-    protected RDFResourceIRI getPredicateNode(@Nonnull IRI uri) {
-        return new RDFResourceIRI(uri);
+    protected RDFResourceIRI getPredicateNode(@Nonnull IRI IRI) {
+        return new RDFResourceIRI(IRI);
     }
 
     @Override
-    protected RDFResourceIRI getResourceNode(@Nonnull IRI uri) {
-        return new RDFResourceIRI(uri);
+    protected RDFResourceIRI getResourceNode(@Nonnull IRI IRI) {
+        return new RDFResourceIRI(IRI);
     }
 
     /** clear the graph */

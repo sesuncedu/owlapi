@@ -12,7 +12,7 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.rdf.turtle.renderer;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -59,11 +59,11 @@ import org.semanticweb.owlapi.vocab.XSDVocabulary;
  */
 public class TurtleRenderer extends RDFRendererBase {
 
-    private PrintWriter writer;
-    private PrefixManager pm;
-    private Set<RDFResource> pending;
-    private String base;
-    private OWLOntologyFormat format;
+    private final PrintWriter writer;
+    private final PrefixManager pm;
+    private final Set<RDFResource> pending;
+    private final String base;
+    private final OWLOntologyFormat format;
 
     /**
      * @param ontology
@@ -85,7 +85,7 @@ public class TurtleRenderer extends RDFRendererBase {
                     .getOntologyIRI().get().toString();
             String defaultPrefix = ontologyIRIString;
             if (!ontologyIRIString.endsWith("/")) {
-                defaultPrefix = ontologyIRIString + "#";
+                defaultPrefix = ontologyIRIString + '#';
             }
             pm.setDefaultPrefix(defaultPrefix);
         }
@@ -225,7 +225,6 @@ public class TurtleRenderer extends RDFRendererBase {
         }
     }
 
-    @SuppressWarnings("null")
     private void write(@Nonnull RDFResource node) {
         if (!node.isAnonymous()) {
             write(node.getIRI());
@@ -242,7 +241,7 @@ public class TurtleRenderer extends RDFRendererBase {
                 write(" ");
                 pushTab();
                 for (Iterator<RDFNode> it = list.iterator(); it.hasNext();) {
-                    write(it.next());
+                    write(verifyNotNull(it.next()));
                     if (it.hasNext()) {
                         writeNewLine();
                     }

@@ -17,10 +17,9 @@ import org.obolibrary.oboformat.model.Frame.FrameType;
 import org.obolibrary.oboformat.model.OBODoc;
 import org.obolibrary.oboformat.parser.OBOFormatConstants.OboFormatTag;
 
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class PropertyValueTest extends OboFormatTestBasics {
 
-    @SuppressWarnings("null")
     @Test
     public void testExpand() {
         OBODoc obodoc = parseOBOFile("property_value_test.obo");
@@ -36,8 +35,7 @@ public class PropertyValueTest extends OboFormatTestBasics {
         OBODoc doc = createPVDoc();
         String oboString = renderOboToString(doc);
         OBODoc doc2 = parseOboToString(oboString);
-        OBODocDiffer dd = new OBODocDiffer();
-        List<Diff> diffs = dd.getDiffs(doc, doc2);
+        List<Diff> diffs = OBODocDiffer.getDiffs(doc, doc2);
         assertEquals("Expected no diffs", 0, diffs.size());
     }
 

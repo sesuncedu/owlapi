@@ -28,15 +28,13 @@ import org.semanticweb.owlapi.model.OWLOntology;
  *         Research Group
  * @since 3.2.0
  */
-@SuppressWarnings("javadoc")
+@SuppressWarnings({ "javadoc", "null" })
 public class AddOntologyAnnotationDataTestCase {
 
-    @SuppressWarnings("null")
     @Nonnull
-    private OWLAnnotation mockAnnotation = mock(OWLAnnotation.class);
-    @SuppressWarnings("null")
+    private final OWLAnnotation mockAnnotation = mock(OWLAnnotation.class);
     @Nonnull
-    private OWLOntology mockOntology = mock(OWLOntology.class);
+    private final OWLOntology mockOntology = mock(OWLOntology.class);
 
     @Nonnull
     private AddOntologyAnnotationData createData() {

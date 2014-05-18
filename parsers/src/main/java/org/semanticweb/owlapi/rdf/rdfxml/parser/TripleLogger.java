@@ -20,15 +20,15 @@ public class TripleLogger {
 
     private static final Logger log = LoggerFactory
             .getLogger(TripleLogger.class);
-    private final PrefixManager prefixManager;
+    private PrefixManager prefixManager;
     // Debug stuff
-    private AtomicInteger count = new AtomicInteger();
+    private final AtomicInteger count = new AtomicInteger();
 
     /**
      * @param prefixManager
      *        prefix manager
      */
-    public TripleLogger(@Nullable PrefixManager prefixManager) {
+    public void setPrefixManager(@Nullable PrefixManager prefixManager) {
         this.prefixManager = prefixManager;
     }
 
@@ -118,7 +118,7 @@ public class TripleLogger {
         }
         if (prefixManager == null || !(o instanceof IRI)) {
             // quote strings and bnodes
-            return "\"" + o + "\"";
+            return "\"" + o + '"';
         }
         // there is a prefix manager and o is an IRI
         IRI i = (IRI) o;
@@ -145,7 +145,7 @@ public class TripleLogger {
      * @param id
      *        log ontology id
      */
-    public void logOntologyID(OWLOntologyID id) {
+    public static void logOntologyID(OWLOntologyID id) {
         log.debug("Loaded {}", id);
     }
 }

@@ -106,10 +106,10 @@ public abstract class RDFRendererBase {
     protected RDFGraph graph;
     @Nonnull
     protected Set<IRI> prettyPrintedTypes = initPrettyTypes();
-    private OWLOntologyFormat format;
+    private final OWLOntologyFormat format;
 
     @Nonnull
-    protected Set<IRI> initPrettyTypes() {
+    protected static Set<IRI> initPrettyTypes() {
         return new HashSet<IRI>(Arrays.asList(OWL_CLASS.getIRI(),
                 OWL_OBJECT_PROPERTY.getIRI(), OWL_DATA_PROPERTY.getIRI(),
                 OWL_ANNOTATION_PROPERTY.getIRI(), OWL_RESTRICTION.getIRI(),
@@ -758,12 +758,12 @@ public abstract class RDFRendererBase {
     }
 
     /** Comparator that uses IRI ordering to order entities. */
-    private static final class OWLEntityIRIComparator implements
+    private static class OWLEntityIRIComparator implements
             Comparator<OWLEntity>, Serializable {
 
         private static final long serialVersionUID = 40000L;
 
-        public OWLEntityIRIComparator() {}
+        OWLEntityIRIComparator() {}
 
         @Override
         public int compare(OWLEntity o1, OWLEntity o2) {

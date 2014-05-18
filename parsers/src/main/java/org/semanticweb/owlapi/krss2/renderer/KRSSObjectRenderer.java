@@ -230,6 +230,7 @@ import org.semanticweb.owlapi.util.OWLObjectVisitorAdapter;
  * 
  * @author Olaf Noppens, Ulm University, Institute of Artificial Intelligence
  */
+@SuppressWarnings("null")
 public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
 
     @Nonnull
@@ -239,7 +240,7 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
     @Nonnull
     private static final String NEWLINE = "\n";
     @Nonnull
-    protected final OWLOntology ontology;
+    protected final OWLOntology ont;
     @Nonnull
     protected final Writer writer;
     private int pos = 0;
@@ -253,20 +254,21 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
      */
     public KRSSObjectRenderer(@Nonnull OWLOntology ontology,
             @Nonnull Writer writer) {
-        this.ontology = checkNotNull(ontology);
+        ont = checkNotNull(ontology);
         this.writer = new PrintWriter(writer);
     }
 
     @Nonnull
-    protected <T extends OWLObject> List<T>
-            sort(@Nonnull Collection<T> objects) {
+    protected static <T extends OWLObject> List<T> sort(
+            @Nonnull Collection<T> objects) {
         List<T> sortedDescriptions = new ArrayList<T>(objects);
         Collections.sort(sortedDescriptions);
         return sortedDescriptions;
     }
 
     @Nonnull
-    protected <T extends OWLObject> List<T> sort(@Nonnull Iterable<T> objects) {
+    protected static <T extends OWLObject> List<T> sort(
+            @Nonnull Iterable<T> objects) {
         List<T> sortedDescriptions = new ArrayList<T>();
         for (T t : objects) {
             sortedDescriptions.add(t);
@@ -275,19 +277,19 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         return sortedDescriptions;
     }
 
-    protected final void writeOpenBracket() {
+    protected void writeOpenBracket() {
         write(OPEN_BRACKET);
     }
 
-    protected final void writeCloseBracket() {
+    protected void writeCloseBracket() {
         write(CLOSE_BRACKET);
     }
 
-    protected final void write(int i) {
+    protected void write(int i) {
         write(" " + i);
     }
 
-    protected final void write(@Nonnull IRI iri) {
+    protected void write(@Nonnull IRI iri) {
         write(iri.toString());
     }
 
@@ -295,11 +297,11 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         write(v.toString());
     }
 
-    protected final void writeSpace() {
+    protected void writeSpace() {
         write(" ");
     }
 
-    protected final void write(@Nonnull String s) {
+    protected void write(@Nonnull String s) {
         try {
             int newLineIndex = s.indexOf('\n');
             if (newLineIndex != -1) {
@@ -312,41 +314,40 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         }
     }
 
-    protected final int getIndent() {
+    protected int getIndent() {
         return pos - lastNewLinePos - 1;
     }
 
-    protected final void writeIndent(int indent) {
+    protected void writeIndent(int indent) {
         for (int i = 0; i < indent; i++) {
             writeSpace();
         }
     }
 
-    protected final void writeln() {
+    protected void writeln() {
         write(NEWLINE);
     }
 
-    protected final void write(@Nonnull OWLClassExpression obj) {
+    protected void write(@Nonnull OWLClassExpression obj) {
         writeSpace();
         obj.accept(this);
     }
 
-    protected final void write(@Nonnull OWLIndividual ind) {
+    protected void write(@Nonnull OWLIndividual ind) {
         writeSpace();
         ind.accept(this);
     }
 
-    protected final void write(@Nonnull OWLPropertyExpression obj) {
+    protected void write(@Nonnull OWLPropertyExpression obj) {
         writeSpace();
         obj.accept(this);
     }
 
-    protected final void write(@Nonnull OWLDataRange obj) {
+    protected void write(@Nonnull OWLDataRange obj) {
         writeSpace();
         obj.accept(this);
     }
 
-    @SuppressWarnings("null")
     protected void flattenProperties(
             @Nonnull Iterable<OWLObjectPropertyExpression> properties,
             @Nullable KRSSVocabulary junctor) {
@@ -375,7 +376,6 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         }
     }
 
-    @SuppressWarnings("null")
     protected void flatten(@Nonnull Iterable<OWLClassExpression> description,
             @Nonnull KRSSVocabulary junctor) {
         List<OWLClassExpression> descs = sort(description);
@@ -398,42 +398,41 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         writeCloseBracket();
     }
 
-    @SuppressWarnings("null")
     @Override
-    public void visit(@Nonnull OWLOntology ontology1) {
-        Set<OWLClass> classes = ontology1.getClassesInSignature();
-        classes.remove(ontology1.getOWLOntologyManager().getOWLDataFactory()
+    public void visit(@Nonnull OWLOntology ontology) {
+        Set<OWLClass> classes = ontology.getClassesInSignature();
+        classes.remove(ontology.getOWLOntologyManager().getOWLDataFactory()
                 .getOWLThing());
-        classes.remove(ontology1.getOWLOntologyManager().getOWLDataFactory()
+        classes.remove(ontology.getOWLOntologyManager().getOWLDataFactory()
                 .getOWLNothing());
         for (OWLClass eachClass : sort(classes)) {
-            boolean primitive = !isDefined(ontology1, eachClass);
+            boolean primitive = !isDefined(ontology, eachClass);
             if (primitive) {
                 writeOpenBracket();
                 write(DEFINE_PRIMITIVE_CONCEPT);
                 write(eachClass);
                 writeSpace();
                 Iterable<OWLClassExpression> supclasses = sup(
-                        ontology1.getSubClassAxiomsForSubClass(eachClass),
+                        ontology.getSubClassAxiomsForSubClass(eachClass),
                         OWLClassExpression.class);
-                flatten(supclasses, KRSSVocabulary.AND);
+                flatten(supclasses, AND);
                 writeCloseBracket();
                 writeln();
             } else {
                 writeOpenBracket();
                 write(DEFINE_CONCEPT);
                 write(eachClass);
-                Iterable<OWLClassExpression> equivalentClasses = equivalent(ontology1
+                Iterable<OWLClassExpression> equivalentClasses = equivalent(ontology
                         .getEquivalentClassesAxioms(eachClass));
-                flatten(equivalentClasses, KRSSVocabulary.AND);
+                flatten(equivalentClasses, AND);
                 writeCloseBracket();
                 writeln();
             }
         }
-        for (OWLObjectProperty property : sort(ontology1
+        for (OWLObjectProperty property : sort(ontology
                 .getObjectPropertiesInSignature())) {
             writeOpenBracket();
-            Collection<OWLObjectPropertyExpression> properties = equivalent(ontology1
+            Collection<OWLObjectPropertyExpression> properties = equivalent(ontology
                     .getEquivalentObjectPropertiesAxioms(property));
             boolean isDefined = !properties.isEmpty();
             if (isDefined) {
@@ -448,7 +447,7 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
                 write(DEFINE_PRIMITIVE_ROLE);
                 write(property);
                 writeSpace();
-                Collection<OWLAxiom> axioms = ontology1.filterAxioms(
+                Collection<OWLAxiom> axioms = ontology.filterAxioms(
                         Filters.subObjectPropertyWithSub, property, INCLUDED);
                 properties = sup(axioms, OWLObjectPropertyExpression.class);
                 if (!properties.isEmpty()) {
@@ -458,17 +457,16 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
             writeCloseBracket();
             writeln();
         }
-        for (OWLAxiom axiom : ontology1.getAxioms()) {
+        for (OWLAxiom axiom : ontology.getAxioms()) {
             axiom.accept(this);
         }
         try {
             writer.flush();
         } catch (IOException io) {
-            io.printStackTrace();
+            throw new OWLRuntimeException(io);
         }
     }
 
-    @SuppressWarnings("null")
     @Override
     public void visit(@Nonnull OWLDisjointClassesAxiom axiom) {
         List<OWLClassExpression> classes = sort(axiom.getClassExpressions());
@@ -498,7 +496,6 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         writeln();
     }
 
-    @SuppressWarnings("null")
     @Override
     public void visit(@Nonnull OWLDifferentIndividualsAxiom axiom) {
         List<OWLIndividual> individuals = sort(axiom.getIndividuals());
@@ -558,7 +555,6 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         writeln();
     }
 
-    @SuppressWarnings("null")
     @Override
     public void visit(@Nonnull OWLSameIndividualAxiom axiom) {
         List<OWLIndividual> individuals = sort(axiom.getIndividuals());
@@ -579,16 +575,15 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(@Nonnull OWLClass desc) {
-        write(desc.getIRI());
+    public void visit(@Nonnull OWLClass ce) {
+        write(ce.getIRI());
     }
 
-    @SuppressWarnings("null")
     @Override
-    public void visit(@Nonnull OWLObjectIntersectionOf desc) {
+    public void visit(@Nonnull OWLObjectIntersectionOf ce) {
         writeOpenBracket();
         write(AND);
-        List<OWLClassExpression> operands = sort(desc.getOperands());
+        List<OWLClassExpression> operands = sort(ce.getOperands());
         int size = operands.size();
         if (size > 0) {
             int indent = getIndent();
@@ -602,12 +597,11 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
         writeCloseBracket();
     }
 
-    @SuppressWarnings("null")
     @Override
-    public void visit(@Nonnull OWLObjectUnionOf desc) {
+    public void visit(@Nonnull OWLObjectUnionOf ce) {
         writeOpenBracket();
         write(OR);
-        List<OWLClassExpression> operands = sort(desc.getOperands());
+        List<OWLClassExpression> operands = sort(ce.getOperands());
         int size = operands.size();
         if (size > 0) {
             int indent = getIndent();
@@ -622,117 +616,117 @@ public class KRSSObjectRenderer extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectComplementOf desc) {
+    public void visit(@Nonnull OWLObjectComplementOf ce) {
         writeOpenBracket();
         write(NOT);
-        write(desc.getOperand());
+        write(ce.getOperand());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectSomeValuesFrom desc) {
+    public void visit(@Nonnull OWLObjectSomeValuesFrom ce) {
         writeOpenBracket();
         write(SOME);
-        write(desc.getProperty());
-        write(desc.getFiller());
+        write(ce.getProperty());
+        write(ce.getFiller());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectAllValuesFrom desc) {
+    public void visit(@Nonnull OWLObjectAllValuesFrom ce) {
         writeOpenBracket();
         write(ALL);
-        write(desc.getProperty());
-        write(desc.getFiller());
+        write(ce.getProperty());
+        write(ce.getFiller());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectMinCardinality desc) {
+    public void visit(@Nonnull OWLObjectMinCardinality ce) {
         writeOpenBracket();
         write(AT_LEAST);
-        write(desc.getCardinality());
-        write(desc.getProperty());
-        if (desc.isQualified()) {
-            write(desc.getFiller());
+        write(ce.getCardinality());
+        write(ce.getProperty());
+        if (ce.isQualified()) {
+            write(ce.getFiller());
         }
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectExactCardinality desc) {
+    public void visit(@Nonnull OWLObjectExactCardinality ce) {
         writeOpenBracket();
         write(EXACTLY);
-        write(desc.getCardinality());
-        write(desc.getProperty());
-        if (desc.isQualified()) {
-            write(desc.getFiller());
+        write(ce.getCardinality());
+        write(ce.getProperty());
+        if (ce.isQualified()) {
+            write(ce.getFiller());
         }
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLObjectMaxCardinality desc) {
+    public void visit(@Nonnull OWLObjectMaxCardinality ce) {
         writeOpenBracket();
         write(AT_MOST);
-        write(desc.getCardinality());
-        write(desc.getProperty());
-        if (desc.isQualified()) {
-            write(desc.getFiller());
+        write(ce.getCardinality());
+        write(ce.getProperty());
+        if (ce.isQualified()) {
+            write(ce.getFiller());
         }
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLDataSomeValuesFrom desc) {
+    public void visit(@Nonnull OWLDataSomeValuesFrom ce) {
         writeOpenBracket();
         write(SOME);
-        write(desc.getProperty());
-        write(desc.getFiller());
+        write(ce.getProperty());
+        write(ce.getFiller());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLDataAllValuesFrom desc) {
+    public void visit(@Nonnull OWLDataAllValuesFrom ce) {
         writeOpenBracket();
         write(ALL);
-        write(desc.getProperty());
-        write(desc.getFiller());
+        write(ce.getProperty());
+        write(ce.getFiller());
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLDataMinCardinality desc) {
+    public void visit(@Nonnull OWLDataMinCardinality ce) {
         writeOpenBracket();
         write(AT_LEAST);
-        write(desc.getCardinality());
-        write(desc.getProperty());
-        if (desc.isQualified()) {
-            write(desc.getFiller());
+        write(ce.getCardinality());
+        write(ce.getProperty());
+        if (ce.isQualified()) {
+            write(ce.getFiller());
         }
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLDataExactCardinality desc) {
+    public void visit(@Nonnull OWLDataExactCardinality ce) {
         writeOpenBracket();
         write(EXACTLY);
-        write(desc.getCardinality());
-        write(desc.getProperty());
-        if (desc.isQualified()) {
-            write(desc.getFiller());
+        write(ce.getCardinality());
+        write(ce.getProperty());
+        if (ce.isQualified()) {
+            write(ce.getFiller());
         }
         writeCloseBracket();
     }
 
     @Override
-    public void visit(@Nonnull OWLDataMaxCardinality desc) {
+    public void visit(@Nonnull OWLDataMaxCardinality ce) {
         writeOpenBracket();
         write(AT_MOST);
-        write(desc.getCardinality());
-        write(desc.getProperty());
-        if (desc.isQualified()) {
-            write(desc.getFiller());
+        write(ce.getCardinality());
+        write(ce.getProperty());
+        if (ce.isQualified()) {
+            write(ce.getFiller());
         }
         writeCloseBracket();
     }

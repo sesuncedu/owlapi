@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnull;
 
@@ -69,20 +68,27 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Peter Ansell p_ansell@yahoo.com
  */
-@SuppressWarnings("javadoc")
 public class RioRenderer extends RDFRendererBase {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private RDFHandler writer;
-    private DefaultPrefixManager pm;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final RDFHandler writer;
+    private final DefaultPrefixManager pm;
     @Nonnull
-    private Set<RDFResource> pendingNodes = new LinkedHashSet<RDFResource>();
+    private final Set<RDFResource> pendingNodes = new LinkedHashSet<RDFResource>();
     @Nonnull
-    private AtomicInteger renderedTriples = new AtomicInteger(0);
-    @Nonnull
-    private Set<Statement> renderedStatements = new LinkedHashSet<Statement>();
-    private Resource[] contexts;
+    private final Set<RDFTriple> renderedStatements = new LinkedHashSet<RDFTriple>();
+    private final Resource[] contexts;
 
+    /**
+     * @param ontology
+     *        ontology
+     * @param writer
+     *        writer
+     * @param format
+     *        format
+     * @param contexts
+     *        contexts
+     */
     public RioRenderer(@Nonnull final OWLOntology ontology,
             final RDFHandler writer, final OWLOntologyFormat format,
             final Resource... contexts) {
@@ -96,7 +102,7 @@ public class RioRenderer extends RDFRendererBase {
                     .getOntologyIRI().get().toString();
             String defaultPrefix = ontologyIRIString;
             if (!ontologyIRIString.endsWith("/")) {
-                defaultPrefix = ontologyIRIString + "#";
+                defaultPrefix = ontologyIRIString + '#';
             }
             pm.setDefaultPrefix(defaultPrefix);
         }
@@ -114,7 +120,6 @@ public class RioRenderer extends RDFRendererBase {
     protected void beginDocument() throws IOException {
         pendingNodes.clear();
         renderedStatements.clear();
-        renderedTriples.set(0);
         try {
             writer.startRDF();
         } catch (@Nonnull final RDFHandlerException e) {
@@ -134,11 +139,9 @@ public class RioRenderer extends RDFRendererBase {
         }
         if (logger.isTraceEnabled()) {
             logger.trace("pendingNodes={}", pendingNodes.size());
-            logger.trace("renderedTriples={}", renderedTriples.toString());
             logger.trace("renderedStatements={}", renderedStatements.size());
         }
         pendingNodes.clear();
-        renderedTriples.set(0);
         renderedStatements.clear();
     }
 
@@ -168,33 +171,22 @@ public class RioRenderer extends RDFRendererBase {
             }
         }
         for (final RDFTriple triple : triples) {
-            renderedTriples.incrementAndGet();
             try {
-                // HACK: Need to get a statement without any contexts so that
-                // the hashcode will be
-                // the same as equals and both will not be context sensitive and
-                // we can efficiently
-                // check for it without having a custom comparator with a
-                // TreeSet
-                final Statement referenceStatement = RioUtils
-                        .tripleAsStatement(triple);
-                if (!renderedStatements.contains(referenceStatement)) {
-                    renderedStatements.add(referenceStatement);
+                if (!renderedStatements.contains(triple)) {
+                    renderedStatements.add(triple);
                     // then we go back and get context-sensitive statements and
-                    // actually pass those
-                    // to the RDFHandler
-                    final Collection<Statement> statements = RioUtils
-                            .tripleAsStatements(triple, contexts);
-                    for (final Statement statement : statements) {
+                    // actually pass those to the RDFHandler
+                    for (Statement statement : RioUtils.tripleAsStatements(
+                            triple, contexts)) {
                         writer.handleStatement(statement);
                         if (triple.getObject() instanceof RDFResource) {
-                            this.render((RDFResource) triple.getObject());
+                            render((RDFResource) triple.getObject());
                         }
                     }
                 } else if (logger.isTraceEnabled()) {
                     logger.trace(
                             "not printing duplicate statement, or recursing on its object: {}",
-                            referenceStatement);
+                            triple);
                 }
             } catch (@Nonnull final RDFHandlerException e) {
                 throw new IOException(e);
@@ -234,10 +226,6 @@ public class RioRenderer extends RDFRendererBase {
         } catch (@Nonnull final RDFHandlerException e) {
             throw new IOException(e);
         }
-        // write("###  ");
-        // write(comment);
-        // writeNewLine();
-        // writeNewLine();
     }
 
     @Override

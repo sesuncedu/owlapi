@@ -25,7 +25,7 @@ class TokenMgrError extends OWLRuntimeException {
     static final int LOOP_DETECTED = 3;
     int errorCode;
 
-    protected static final String addEscapes(String str) {
+    protected static String addEscapes(String str) {
         StringBuffer retval = new StringBuffer();
         char ch;
         for (int i = 0; i < str.length(); i++) {
@@ -78,10 +78,10 @@ class TokenMgrError extends OWLRuntimeException {
                 + ", column "
                 + errorColumn
                 + ".  Encountered: "
-                + (EOFSeen ? "<EOF> " : "\""
-                        + addEscapes(String.valueOf(curChar)) + "\"" + " ("
+                + (EOFSeen ? "<EOF> " : '"'
+                        + addEscapes(String.valueOf(curChar)) + '"' + " ("
                         + (int) curChar + "), ") + "after : \""
-                + addEscapes(errorAfter) + "\"";
+                + addEscapes(errorAfter) + '"';
     }
 
     TokenMgrError() {}

@@ -10,48 +10,41 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
-package org.semanticweb.owlapitools.builders;
+package org.semanticweb.owlapi.util;
+
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 
-import org.semanticweb.owlapi.model.OWLAnnotationProperty;
-import org.semanticweb.owlapi.model.OWLDataFactory;
-import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAnnotationValueVisitorEx;
+import org.semanticweb.owlapi.model.OWLAnonymousIndividual;
+import org.semanticweb.owlapi.model.OWLLiteral;
 
 /**
- * Builder class for OWLDataAllValuesFrom
+ * Annotation visitor that returns literal's lexical form, or empty string for
+ * IRI and blank nodes.
  * 
- * @param <T>
- *        type built
- * @param <Type>
- *        builder type
+ * @since 4.0.0
  */
-public abstract class BaseAnnotationtPropertyBuilder<T extends OWLObject, Type>
-        extends BaseBuilder<T, Type> {
+public class StringAnnotationVisitor implements
+        OWLAnnotationValueVisitorEx<String>, Serializable {
 
-    @Nullable
-    protected OWLAnnotationProperty property = null;
+    private static final long serialVersionUID = 40000L;
 
-    /**
-     * @param df
-     *        data factory
-     */
-    @Inject
-    public BaseAnnotationtPropertyBuilder(OWLDataFactory df) {
-        super(df);
+    @Override
+    public String visit(IRI iri) {
+        // TODO refactor the short form providers in here
+        return "";
     }
 
-    /**
-     * @param arg
-     *        property
-     * @return builder
-     */
-    @Nonnull
-    @SuppressWarnings("unchecked")
-    public Type withProperty(OWLAnnotationProperty arg) {
-        property = arg;
-        return (Type) this;
+    @Override
+    public String visit(OWLAnonymousIndividual individual) {
+        return "";
+    }
+
+    @Override
+    public String visit(@Nonnull OWLLiteral literal) {
+        return literal.getLiteral();
     }
 }

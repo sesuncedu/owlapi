@@ -14,7 +14,9 @@ package org.semanticweb.owlapi.util;
 
 import static org.semanticweb.owlapi.model.parameters.Imports.EXCLUDED;
 import static org.semanticweb.owlapi.util.DLExpressivityChecker.Construct.*;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -95,8 +97,8 @@ import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
  */
 public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
 
-    private Set<Construct> constructs;
-    private Set<OWLOntology> ontologies;
+    private final Set<Construct> constructs;
+    private final Set<OWLOntology> ontologies;
 
     /** @return ordered constructs */
     public List<Construct> getConstructs() {
@@ -113,14 +115,13 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     /** @return DL name */
-    @SuppressWarnings("null")
     @Nonnull
     public String getDescriptionLogicName() {
         StringBuilder s = new StringBuilder();
         for (Construct c : getOrderedConstructs()) {
             s.append(c);
         }
-        return s.toString();
+        return verifyNotNull(s.toString());
     }
 
     private void pruneConstructs() {
@@ -173,11 +174,13 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     /** A comparator that orders DL constucts to produce a traditional DL name. */
-    private static class ConstructComparator implements Comparator<Construct> {
+    private static class ConstructComparator implements Comparator<Construct>,
+            Serializable {
 
+        private static final long serialVersionUID = 40000L;
         private final List<Construct> order = new ArrayList<Construct>();
 
-        public ConstructComparator() {
+        ConstructComparator() {
             order.add(S);
             order.add(AL);
             order.add(C);
@@ -202,54 +205,54 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
 
     // Property expression
     @Override
-    public void visit(@SuppressWarnings("unused") OWLObjectInverseOf property) {
+    public void visit(OWLObjectInverseOf property) {
         constructs.add(I);
     }
 
     @Override
-    public void visit(@SuppressWarnings("unused") OWLDataProperty property) {
+    public void visit(OWLDataProperty property) {
         constructs.add(D);
     }
 
     // Data stuff
     @Override
-    public void visit(@SuppressWarnings("unused") OWLDataComplementOf node) {
+    public void visit(OWLDataComplementOf node) {
         constructs.add(D);
     }
 
     @Override
-    public void visit(@SuppressWarnings("unused") OWLDataOneOf node) {
+    public void visit(OWLDataOneOf node) {
         constructs.add(D);
     }
 
     @Override
-    public void visit(@SuppressWarnings("unused") OWLDatatypeRestriction node) {
+    public void visit(OWLDatatypeRestriction node) {
         constructs.add(D);
     }
 
     @Override
-    public void visit(@SuppressWarnings("unused") OWLLiteral node) {
+    public void visit(OWLLiteral node) {
         constructs.add(D);
     }
 
     @Override
-    public void visit(@SuppressWarnings("unused") OWLFacetRestriction node) {
+    public void visit(OWLFacetRestriction node) {
         constructs.add(D);
     }
 
     // class expressions
     @Override
-    public void visit(OWLObjectIntersectionOf desc) {
+    public void visit(OWLObjectIntersectionOf ce) {
         constructs.add(AL);
-        for (OWLClassExpression operands : desc.getOperands()) {
+        for (OWLClassExpression operands : ce.getOperands()) {
             operands.accept(this);
         }
     }
 
     @Override
-    public void visit(OWLObjectUnionOf desc) {
+    public void visit(OWLObjectUnionOf ce) {
         constructs.add(U);
-        for (OWLClassExpression operands : desc.getOperands()) {
+        for (OWLClassExpression operands : ce.getOperands()) {
             operands.accept(this);
         }
     }
@@ -273,38 +276,38 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(OWLObjectComplementOf desc) {
-        if (isAtomic(desc)) {
+    public void visit(OWLObjectComplementOf ce) {
+        if (isAtomic(ce)) {
             constructs.add(AL);
         } else {
             constructs.add(C);
         }
-        desc.getOperand().accept(this);
+        ce.getOperand().accept(this);
     }
 
     @Override
-    public void visit(OWLObjectSomeValuesFrom desc) {
-        if (isTop(desc.getFiller())) {
+    public void visit(OWLObjectSomeValuesFrom ce) {
+        if (isTop(ce.getFiller())) {
             constructs.add(AL);
         } else {
             constructs.add(E);
         }
-        desc.getProperty().accept(this);
-        desc.getFiller().accept(this);
+        ce.getProperty().accept(this);
+        ce.getFiller().accept(this);
     }
 
     @Override
-    public void visit(OWLObjectAllValuesFrom desc) {
+    public void visit(OWLObjectAllValuesFrom ce) {
         constructs.add(AL);
-        desc.getProperty().accept(this);
-        desc.getFiller().accept(this);
+        ce.getProperty().accept(this);
+        ce.getFiller().accept(this);
     }
 
     @Override
-    public void visit(OWLObjectHasValue desc) {
+    public void visit(OWLObjectHasValue ce) {
         constructs.add(O);
         constructs.add(E);
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
     }
 
     private void checkCardinality(OWLDataCardinalityRestriction restriction) {
@@ -328,64 +331,64 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(OWLObjectMinCardinality desc) {
-        checkCardinality(desc);
+    public void visit(OWLObjectMinCardinality ce) {
+        checkCardinality(ce);
     }
 
     @Override
-    public void visit(OWLObjectExactCardinality desc) {
-        checkCardinality(desc);
+    public void visit(OWLObjectExactCardinality ce) {
+        checkCardinality(ce);
     }
 
     @Override
-    public void visit(OWLObjectMaxCardinality desc) {
-        checkCardinality(desc);
+    public void visit(OWLObjectMaxCardinality ce) {
+        checkCardinality(ce);
     }
 
     @Override
-    public void visit(OWLObjectHasSelf desc) {
-        desc.getProperty().accept(this);
+    public void visit(OWLObjectHasSelf ce) {
+        ce.getProperty().accept(this);
         constructs.add(R);
     }
 
     @Override
-    public void visit(@SuppressWarnings("unused") OWLObjectOneOf desc) {
+    public void visit(OWLObjectOneOf ce) {
         constructs.add(U);
         constructs.add(O);
     }
 
     @Override
-    public void visit(OWLDataSomeValuesFrom desc) {
+    public void visit(OWLDataSomeValuesFrom ce) {
         constructs.add(E);
-        desc.getFiller().accept(this);
-        desc.getProperty().accept(this);
+        ce.getFiller().accept(this);
+        ce.getProperty().accept(this);
     }
 
     @Override
-    public void visit(OWLDataAllValuesFrom desc) {
-        desc.getFiller().accept(this);
-        desc.getProperty().accept(this);
+    public void visit(OWLDataAllValuesFrom ce) {
+        ce.getFiller().accept(this);
+        ce.getProperty().accept(this);
     }
 
     @Override
-    public void visit(OWLDataHasValue desc) {
+    public void visit(OWLDataHasValue ce) {
         constructs.add(D);
-        desc.getProperty().accept(this);
+        ce.getProperty().accept(this);
     }
 
     @Override
-    public void visit(OWLDataMinCardinality desc) {
-        checkCardinality(desc);
+    public void visit(OWLDataMinCardinality ce) {
+        checkCardinality(ce);
     }
 
     @Override
-    public void visit(OWLDataExactCardinality desc) {
-        checkCardinality(desc);
+    public void visit(OWLDataExactCardinality ce) {
+        checkCardinality(ce);
     }
 
     @Override
-    public void visit(OWLDataMaxCardinality desc) {
-        checkCardinality(desc);
+    public void visit(OWLDataMaxCardinality ce) {
+        checkCardinality(ce);
     }
 
     // Axioms
@@ -449,8 +452,7 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(
-            @SuppressWarnings("unused") OWLDifferentIndividualsAxiom axiom) {
+    public void visit(OWLDifferentIndividualsAxiom axiom) {
         constructs.add(U);
         constructs.add(O);
         constructs.add(C);
@@ -566,8 +568,7 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(
-            @SuppressWarnings("unused") OWLSubDataPropertyOfAxiom axiom) {
+    public void visit(OWLSubDataPropertyOfAxiom axiom) {
         constructs.add(H);
         constructs.add(D);
     }
@@ -580,7 +581,7 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(@SuppressWarnings("unused") OWLSameIndividualAxiom axiom) {
+    public void visit(OWLSameIndividualAxiom axiom) {
         constructs.add(O);
     }
 
@@ -594,8 +595,7 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
     }
 
     @Override
-    public void visit(
-            @SuppressWarnings("unused") OWLInverseObjectPropertiesAxiom axiom) {
+    public void visit(OWLInverseObjectPropertiesAxiom axiom) {
         constructs.add(I);
     }
 
@@ -623,7 +623,7 @@ public class DLExpressivityChecker extends OWLObjectVisitorAdapter {
             this.s = s;
         }
 
-        private String s;
+        private final String s;
 
         @Override
         public String toString() {

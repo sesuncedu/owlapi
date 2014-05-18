@@ -12,11 +12,10 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. */
 package org.semanticweb.owlapi.rdf.rdfxml.renderer;
 
-import static org.semanticweb.owlapi.util.OWLAPIPreconditions.checkNotNull;
+import static org.semanticweb.owlapi.util.OWLAPIPreconditions.*;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,6 +31,8 @@ import org.semanticweb.owlapi.io.XMLUtils;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.util.StringLengthComparator;
 
+import com.google.common.collect.Lists;
+
 /**
  * Developed as part of the CO-ODE project http://www.co-ode.org
  * 
@@ -42,14 +43,14 @@ import org.semanticweb.owlapi.util.StringLengthComparator;
 public class XMLWriterImpl implements XMLWriter {
 
     @Nonnull
-    private Stack<XMLElement> elementStack;
+    private final Stack<XMLElement> elementStack;
     @Nonnull
     protected Writer writer;
     private String encoding = "";
     @Nonnull
-    private String xmlBase;
+    private final String xmlBase;
     @Nonnull
-    private XMLWriterNamespaceManager xmlWriterNamespaceManager;
+    private final XMLWriterNamespaceManager xmlWriterNamespaceManager;
     private Map<String, String> entities;
     private static final int TEXT_CONTENT_WRAP_LIMIT = Integer.MAX_VALUE;
     private boolean preambleWritten;
@@ -79,15 +80,13 @@ public class XMLWriterImpl implements XMLWriter {
         setupEntities();
     }
 
-    @SuppressWarnings("null")
     private void setupEntities() {
-        List<String> namespaces = new ArrayList<String>();
-        for (String s : xmlWriterNamespaceManager.getNamespaces()) {
-            namespaces.add(s);
-        }
+        List<String> namespaces = Lists.newArrayList(xmlWriterNamespaceManager
+                .getNamespaces());
         Collections.sort(namespaces, new StringLengthComparator());
         entities = new LinkedHashMap<String, String>();
         for (String curNamespace : namespaces) {
+            assert curNamespace != null;
             String curPrefix = "";
             if (xmlWriterNamespaceManager.getDefaultNamespace().equals(
                     curNamespace)) {
@@ -96,8 +95,9 @@ public class XMLWriterImpl implements XMLWriter {
                 curPrefix = xmlWriterNamespaceManager
                         .getPrefixForNamespace(curNamespace);
             }
-            if (curPrefix.length() > 0) {
-                entities.put(curNamespace, "&" + curPrefix + ";");
+            assert curPrefix != null;
+            if (!curPrefix.isEmpty()) {
+                entities.put(curNamespace, '&' + curPrefix + ';');
             }
         }
     }
@@ -233,12 +233,11 @@ public class XMLWriterImpl implements XMLWriter {
         writer.write("]>\n\n\n");
     }
 
-    @SuppressWarnings("null")
     @Override
     public void startDocument(@Nonnull IRI rootElement) throws IOException {
         String encodingString = "";
-        if (encoding.length() > 0) {
-            encodingString = " encoding=\"" + encoding + "\"";
+        if (!encoding.isEmpty()) {
+            encodingString = " encoding=\"" + encoding + '"';
         }
         writer.write("<?xml version=\"1.0\"" + encodingString + "?>\n");
         if (XMLWriterPreferences.getInstance().isUseNamespaceEntities()) {
@@ -251,14 +250,14 @@ public class XMLWriterImpl implements XMLWriter {
         writeStartElement(rootElement);
         setWrapAttributes(true);
         writeAttribute("xmlns", xmlWriterNamespaceManager.getDefaultNamespace());
-        if (xmlBase.length() != 0) {
+        if (!xmlBase.isEmpty()) {
             writeAttribute("xml:base", xmlBase);
         }
         for (String curPrefix : xmlWriterNamespaceManager.getPrefixes()) {
-            if (curPrefix.length() > 0) {
+            if (!curPrefix.isEmpty()) {
                 writeAttribute("xmlns:" + curPrefix,
-                        xmlWriterNamespaceManager
-                                .getNamespaceForPrefix(curPrefix));
+                        verifyNotNull(xmlWriterNamespaceManager
+                                .getNamespaceForPrefix(curPrefix)));
             }
         }
     }
@@ -275,8 +274,8 @@ public class XMLWriterImpl implements XMLWriter {
     /** xml element */
     public class XMLElement {
 
-        private String name;
-        private Map<String, String> attributes;
+        private final String name;
+        private final Map<String, String> attributes;
         @Nullable
         String textContent;
         private boolean startWritten;

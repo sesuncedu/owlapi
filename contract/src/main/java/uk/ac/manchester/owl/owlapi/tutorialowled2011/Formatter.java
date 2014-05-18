@@ -22,8 +22,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings({ "javadoc" })
+@SuppressWarnings("javadoc")
 public class Formatter {
+
+    private Formatter() {}
 
     public static void main(String[] args) throws Exception {
         System.out.println("Formatter.main() " + Long.MAX_VALUE
@@ -31,8 +33,8 @@ public class Formatter {
         Map<String, String> specials = new HashMap<String, String>();
         specials.put("public void test", "\\begin{beamerboxesrounded}{");
         specials.put("() throws Exception \\{", "}\n\\scriptsize");
-        String[] keywords = new String[] { " class ", " void ", " extends ",
-                "public", " static final", "return", "throws" };
+        String[] keywords = { " class ", " void ", " extends ", "public",
+                " static final", "return", "throws" };
         Pattern stringPattern = Pattern.compile("(\"[\\w\\.\\:\\s\\#/\\-]*\")");
         BufferedReader r = new BufferedReader(
                 new InputStreamReader(
@@ -40,7 +42,7 @@ public class Formatter {
                                 "../OWLAPI3/tutorial2011/uk/ac/manchester/owl/owlapi/tutorialowled2011/TutorialSnippets.java")));
         String line = r.readLine();
         while (line != null) {
-            if (line.trim().length() == 0) {
+            if (line.trim().isEmpty()) {
                 System.out.println("\\end{beamerboxesrounded}\n\n");
             } else {
                 line = line.replace("{", "\\{").replace("}", "\\}")
@@ -54,7 +56,7 @@ public class Formatter {
                         line = line.replace(s, specials.get(s));
                     }
                     for (String s : keywords) {
-                        line = line.replace(s, "\\codekeyword{" + s + "}");
+                        line = line.replace(s, "\\codekeyword{" + s + '}');
                     }
                     line = line
                             .replace("\t", "\\hspace{4mm}")
@@ -67,7 +69,7 @@ public class Formatter {
                         strings.add(match.group(1));
                     }
                     for (String s : strings) {
-                        line = line.replace(s, "\\codestring{" + s + "}");
+                        line = line.replace(s, "\\codestring{" + s + '}');
                     }
                     if (!line.contains("beamerboxesrounded")) {
                         System.out.print("\\coderegular{");

@@ -1,6 +1,5 @@
 package org.semanticweb.owlapi.search;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -15,6 +14,7 @@ import org.semanticweb.owlapi.model.OWLEquivalentDataPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentObjectPropertiesAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLSameIndividualAxiom;
+import org.semanticweb.owlapi.util.CollectionFactory;
 import org.semanticweb.owlapi.util.OWLAxiomVisitorExAdapter;
 
 @SuppressWarnings("unchecked")
@@ -22,17 +22,16 @@ class EquivalentVisitor<C extends OWLObject> extends
         OWLAxiomVisitorExAdapter<Set<C>> {
 
     private static final long serialVersionUID = 40000L;
-    private boolean equiv;
+    private final boolean equiv;
 
-    public EquivalentVisitor(boolean equiv) {
+    EquivalentVisitor(boolean equiv) {
         this.equiv = equiv;
     }
 
-    @SuppressWarnings("null")
     @Nonnull
     @Override
-    protected Set<C> doDefault(@SuppressWarnings("unused") OWLAxiom axiom) {
-        return Collections.emptySet();
+    protected Set<C> doDefault(OWLAxiom object) {
+        return CollectionFactory.emptySet();
     }
 
     @Nonnull

@@ -62,9 +62,9 @@ import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 public class OWLDataFactoryTestCase {
 
     @Nonnull
-    private AtomicInteger counter = new AtomicInteger(1);
+    private final AtomicInteger counter = new AtomicInteger(1);
     @Nonnull
-    private OWLDataFactory testSubject = new OWLDataFactoryImpl();
+    private final OWLDataFactory testSubject = new OWLDataFactoryImpl();
 
     @Nonnull
     private static IRI IRI() {
@@ -532,7 +532,7 @@ public class OWLDataFactoryTestCase {
         OWLObjectPropertyExpression[] properties = { OP(IRI()), OP(IRI()) };
         OWLEquivalentObjectPropertiesAxiom objA = testSubject
                 .getOWLEquivalentObjectPropertiesAxiom(properties);
-        assertTrue(objA.asSubObjectPropertyOfAxioms().size() == 2);
+        assertEquals(2, objA.asSubObjectPropertyOfAxioms().size());
     }
 
     @Test
@@ -626,7 +626,7 @@ public class OWLDataFactoryTestCase {
         OWLDataPropertyExpression[] properties = { a, b };
         OWLEquivalentDataPropertiesAxiom objA = testSubject
                 .getOWLEquivalentDataPropertiesAxiom(properties);
-        assertTrue(objA.asSubDataPropertyOfAxioms().size() == 2);
+        assertEquals(2, objA.asSubDataPropertyOfAxioms().size());
     }
 
     @Test
@@ -678,7 +678,7 @@ public class OWLDataFactoryTestCase {
         OWLClassExpression[] classExpressions = { C(IRI()), C(IRI()) };
         OWLEquivalentClassesAxiom objA = testSubject
                 .getOWLEquivalentClassesAxiom(classExpressions);
-        assertTrue(objA.asOWLSubClassOfAxioms().size() == 2);
+        assertEquals(2, objA.asOWLSubClassOfAxioms().size());
     }
 
     @Test

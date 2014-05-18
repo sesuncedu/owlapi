@@ -33,7 +33,7 @@ import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
  *         Informatics Group
  * @since 2.1.1
  */
-@HasPriority(value = 4)
+@HasPriority(4)
 public class ManchesterOWLSyntaxOntologyParser extends AbstractOWLParser {
 
     private static final long serialVersionUID = 40000L;
@@ -77,10 +77,10 @@ public class ManchesterOWLSyntaxOntologyParser extends AbstractOWLParser {
                 boolean foundMagicNumber = false;
                 while ((line = br.readLine()) != null) {
                     sb.append(line);
-                    sb.append("\n");
+                    sb.append('\n');
                     if (!foundMagicNumber) {
                         String trimmedLine = line.trim();
-                        if (trimmedLine.length() > 0
+                        if (!trimmedLine.isEmpty()
                                 && !trimmedLine.startsWith(COMMENT_START_CHAR)) {
                             // Non-empty line, that is not a comment. The
                             // trimmed line MUST start with our magic
@@ -94,16 +94,12 @@ public class ManchesterOWLSyntaxOntologyParser extends AbstractOWLParser {
                                 // Non-empty line that is NOT a comment. We
                                 // cannot possibly parse this.
                                 int startCol = line.indexOf(trimmedLine) + 1;
-                                StringBuilder msg = new StringBuilder(
-                                        "Encountered '")
-                                        .append(trimmedLine)
-                                        .append("' at line ")
-                                        .append(lineCount)
-                                        .append(" column ")
-                                        .append(startCol)
-                                        .append(".  Expected either 'Ontology:' or 'Prefix:'");
+                                String msg = String
+                                        .format("Encountered '%s' at line %s column %s.  Expected either 'Ontology:' or 'Prefix:'",
+                                                trimmedLine, lineCount,
+                                                startCol);
                                 throw new ManchesterOWLSyntaxParserException(
-                                        msg.toString(), lineCount, startCol);
+                                        msg, lineCount, startCol);
                             }
                         }
                     }
