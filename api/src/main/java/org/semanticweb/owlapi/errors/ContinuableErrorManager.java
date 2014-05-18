@@ -45,7 +45,6 @@ public class ContinuableErrorManager {
 
              }
          }
-
-
+          return result;
      }
 }
