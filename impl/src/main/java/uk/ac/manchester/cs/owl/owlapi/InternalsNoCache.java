@@ -113,7 +113,13 @@ public class InternalsNoCache implements OWLDataFactoryInternals, Serializable {
             return new OWLLiteralImpl(value, "",
                     getOWLDatatype(XSDVocabulary.STRING.getIRI()));
         }
-        return new OWLLiteralImplString(value);
+        //return new OWLLiteralImplString(value);
+        for(int i=0;i<value.length();i++) {
+            if(value.charAt(i) >255) {
+                return new OWLLiteralImplStringCharArrayNoHashcache(value);
+            }
+        }
+        return new OWLLiteralImplStringByteArrayNoHashcache(value);
     }
 
     @Override
