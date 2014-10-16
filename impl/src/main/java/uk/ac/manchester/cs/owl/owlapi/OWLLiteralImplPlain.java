@@ -29,7 +29,8 @@ import java.util.Set;
  * @author Matthew Horridge, The University Of Manchester, Bio-Health
  *         Informatics Group, Date: 26-Oct-2006
  */
-public class OWLLiteralImplPlain extends OWLObjectImplWithoutEntityAndAnonCaching implements OWLLiteral {
+public class OWLLiteralImplPlain extends
+        OWLObjectImplWithoutEntityAndAnonCaching implements OWLLiteral {
 
     private static final long serialVersionUID = 30406L;
     @Nonnull
@@ -39,6 +40,7 @@ public class OWLLiteralImplPlain extends OWLObjectImplWithoutEntityAndAnonCachin
     private final String literal;
     @Nonnull
     private final String lang;
+    private final int hashcode;
 
     /**
      * @param literal
@@ -58,12 +60,11 @@ public class OWLLiteralImplPlain extends OWLObjectImplWithoutEntityAndAnonCachin
 
     @Override
     public void addSignatureEntitiesToSet(Set<OWLEntity> entities) {
-            entities.add(RDF_PLAIN_LITERAL);
+        entities.add(RDF_PLAIN_LITERAL);
     }
 
     @Override
-    public void addAnonymousIndividualsToSet(Set<OWLAnonymousIndividual> anons) {
-    }
+    public void addAnonymousIndividualsToSet(Set<OWLAnonymousIndividual> anons) {}
 
     @Override
     protected int index() {
@@ -148,7 +149,7 @@ public class OWLLiteralImplPlain extends OWLObjectImplWithoutEntityAndAnonCachin
 
     @Override
     public int hashCode() {
-        return hashCode;
+        return hashcode;
     }
 
     private final int getHashCode() {
