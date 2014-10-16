@@ -53,6 +53,14 @@ public class OWLLiteralImplBoolean extends
         hashcode = getHashCode();
     }
 
+    @Override
+    public void addSignatureEntitiesToSet(Set<OWLEntity> entities) {
+        entities.add(datatype);
+    }
+
+    @Override
+    public void addAnonymousIndividualsToSet(Set<OWLAnonymousIndividual> anons) {}
+
     private final int hashcode;
 
     @Override

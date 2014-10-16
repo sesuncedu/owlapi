@@ -134,7 +134,8 @@ public abstract class OWLAxiomImplWithEntityAndAnonCaching extends
      * A convenience method for implementation that returns a set containing the
      * annotations on this axiom plus the annotations in the specified set.
      * 
-     * @param annos The annotations to add to the annotations on this axiom
+     * @param annos
+     *        The annotations to add to the annotations on this axiom
      * @return The annotations
      */
     @Nonnull

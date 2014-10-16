@@ -40,7 +40,6 @@ public class OWLLiteralImplPlain extends
     private final String literal;
     @Nonnull
     private final String lang;
-    private final int hashcode;
 
     /**
      * @param literal
@@ -149,7 +148,7 @@ public class OWLLiteralImplPlain extends
 
     @Override
     public int hashCode() {
-        return hashcode;
+        return hashCode;
     }
 
     private final int getHashCode() {

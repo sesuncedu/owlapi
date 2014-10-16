@@ -98,12 +98,12 @@ public class OWLInverseObjectPropertiesAxiomImpl extends
 
     @Override
     public OWLObjectPropertyExpression getFirstProperty() {
-        return first;
+        return properties.get(0);
     }
 
     @Override
     public OWLObjectPropertyExpression getSecondProperty() {
-        return second;
+        return properties.get(1);
     }
 
     @Override
