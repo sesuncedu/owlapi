@@ -58,9 +58,6 @@ task sbundle(type: BundleTask) {
     //bundleClasspath = project.fileTree(swrap.bundleOutputDir).files
     bundleClasspath = bundleClasspath = project.fileTree(wrap.bundleOutputDir).files
 
-    doFirst {
-        println "swap outputs = $swrap.outputs.properties   "
-    }
     manifest {
         attributes('Export-Package': "" +
                 "com.clarkparsia.*," +

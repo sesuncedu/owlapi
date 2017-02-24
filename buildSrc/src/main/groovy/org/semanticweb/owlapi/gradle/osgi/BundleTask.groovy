@@ -16,7 +16,6 @@ class BundleTask extends Jar {
     @Override
     protected void copy() {
         supercopy()
-        println configuration?.properties
         buildBundle()
     }
     /**

@@ -7,6 +7,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.DependencyResult
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
@@ -40,12 +41,12 @@ class OSGIWrapTask extends DefaultTask {
     Set<String> bundles = []
 
     Set<String> seenBundleVersions = new TreeSet<String>()
-    def postOrderTraversal(Set<DependencyResult> kids, Closure f, int level = 0) {
+    def postOrderTraversal(Set<ResolvedDependencyResult> kids, Closure f, int level = 0) {
         if (kids.empty)
             return
-        //println("walk level: ${level}")  ${dependencyToFileMap[kid.selected.id]}
-        for (DependencyResult kid : kids) {
-            Jar jar = dependencyToJarMap[kid.selected.id]
+        for (ResolvedDependencyResult kid : kids) {
+            ResolvedComponentResult selected = kid.selected
+            Jar jar = dependencyToJarMap[selected.id]
             if (jar?.bsn) {
                 String versionKey = makeBundleVersionKey(jar.bsn, jar.version).toString()
                 if (seenBundleVersions.contains(versionKey)) {
@@ -57,12 +58,10 @@ class OSGIWrapTask extends DefaultTask {
                 }
             }
             if (!jar?.bsn || walkExistingBundles) {
-                //println "${spaces(level)}${kid.selected.id} "
-                postOrderTraversal(kid.selected.dependencies, f, level + 1)
+                postOrderTraversal(selected.dependencies as Set<ResolvedDependencyResult>, f, level + 1)
             }
             f.call(kid)
         }
-        // println "end level ${level}"
     }
 
     private String makeBundleVersionKey(ComponentIdentifier id) {
@@ -105,14 +104,13 @@ class OSGIWrapTask extends DefaultTask {
 
         project.delete(bundleOutputDir.listFiles())
         buildDependencyToFileMap()
-        postOrderTraversal(configuration.incoming.resolutionResult.root.dependencies, {
+        postOrderTraversal(configuration.incoming.resolutionResult.root.dependencies as Set<ResolvedDependencyResult>, {
             ResolvedDependencyResult dep ->
                 ComponentIdentifier id = dep.selected.id
                 if (!seen.add(id)) {
                     return
                 }
                 if (id instanceof ProjectComponentIdentifier) {
-                    println dep.properties
                     if (copyExistingBundles) {
                         File f = dependencyToFileMap[id]
                         Path existing = f.toPath()
@@ -128,7 +126,7 @@ class OSGIWrapTask extends DefaultTask {
 
                 String bundleVersionKey = "${id.group}.${id.module};version=${id.version}" as String
 
-                aQute.bnd.osgi.Jar jar = dependencyToJarMap[id]
+                Jar jar = dependencyToJarMap[id]
                 if (!jar.bsn) {
                     logger.debug "try wrapping $bundleVersionKey"
                     if (!seenBundleVersions.add(bundleVersionKey)) {
@@ -140,7 +138,7 @@ class OSGIWrapTask extends DefaultTask {
                     wrapOneJar(dep, jar)
                     bundles += jar
                 } else {
-                    logger.info "jar is already a bundle ($jar.name - ${jar.bsn} $jar.version)"
+                    logger.debug "jar is already a bundle ($jar.name - ${jar.bsn} $jar.version)"
                     if (copyExistingBundles) {
                         def destFile = new File(bundleOutputDir, "${jar.source.name}")
                         Path destPath = destFile.toPath()
@@ -162,13 +160,16 @@ class OSGIWrapTask extends DefaultTask {
         }
         outputClasspath = project.files(files)
         logger.debug "outputClasspath = ${outputClasspath.properties}"
-        println outputs.fileProperties*.properties
+        if (logger.isDebugEnabled()) {
+            logger.debug  "{}" ,outputs.fileProperties*.properties
+        }
+
     }
 
 
     void wrapOneJar(DependencyResult dep, aQute.bnd.osgi.Jar toWrap) {
         Analyzer analyzer = new Analyzer()
-        analyzer.setClasspath(bundles)
+        analyzer.classpath = bundles
         analyzer.setJar(toWrap)
         def id = dep.selected.id
         def depId = id
@@ -178,7 +179,9 @@ class OSGIWrapTask extends DefaultTask {
         //analyzer.importPackage = "*"
         analyzer.analyze()
         toWrap.manifest = analyzer.calcManifest()
-        logger.debug "{}", toWrap.manifest.properties
+        if (logger.isDebugEnabled()) {
+            logger.debug "{}", toWrap.manifest.properties
+        }
         def outputFile = new File(bundleOutputDir, "osgi-wrapped.${depId.group}.${depId.module}-${depId.version}.jar")
         analyzer.save(outputFile, true)
         addSubmapEntry(id, outputFile)

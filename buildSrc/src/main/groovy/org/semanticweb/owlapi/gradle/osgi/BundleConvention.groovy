@@ -22,7 +22,7 @@ class BundleConvention {
     private final Jar task
     private File bndfile
     private SourceSet sourceSet
-    @Optional
+
     @Classpath
     @InputFiles
     Set<File> bundleClasspath = new TreeSet<>()
@@ -35,7 +35,6 @@ class BundleConvention {
     }
 
     void buildBundle() {
-        println "BUILD BUNDLE CALLED"
         task.configure {
             // create Builder and set trace level from gradle
             new Builder().withCloseable { builder ->
@@ -80,9 +79,11 @@ class BundleConvention {
                 builder.setJar(archiveCopyJar)
 
                 // set builder bundleClasspath
-                println "BCP = $bundleClasspath"
+                if (logger.isInfoEnabled()) {
+                    logger.info  "bundle classpath = $bundleClasspath"
+                }
                 if (!bundleClasspath) {
-                    def copyRecursive = getConfiguration().copyRecursive()
+                    Configuration copyRecursive = (configuration  ? configuration : project.configurations.compile).copyRecursive()
                     def resFiles = [sourceSet.output.classesDir]
 
                     resFiles += copyRecursive.resolvedConfiguration.resolvedArtifacts.findAll {
@@ -95,14 +96,14 @@ class BundleConvention {
                 Set<File> bcp = new HashSet<>(bundleClasspath)
                 bcp.add(getSourceSet().output.classesDir)
                 builder.setProperty('project.buildpath', project.files(bcp).asPath)
-                builder.setClasspath(bcp as File[])
+                builder.classpath = bcp as File[]
                 logger.info "CP*.source {}", builder.getClasspath()*.source
 
                 // set builder sourcepath
                 def sourcepath = project.files(getSourceSet().allSource.srcDirs.findAll { it.exists() })
                 builder.setProperty('project.sourcepath', sourcepath.asPath)
-                builder.setSourcepath(sourcepath as File[])
-                logger.debug 'builder sourcepath: {}', builder.getSourcePath()
+                builder.sourcepath = sourcepath as File[]
+                logger.debug 'builder sourcepath: {}', builder.sourcePath
 
                 // set bundle symbolic name from tasks's baseName property if necessary
                 String bundleSymbolicName = builder.getProperty(BUNDLE_SYMBOLICNAME)
@@ -190,7 +191,6 @@ class BundleConvention {
 
     SourceSet getSourceSet() {
         if (sourceSet == null) {
-            println "defaulting sourceset"
             setSourceSet(task.project.sourceSets.main)
         }
         return sourceSet
