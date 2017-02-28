@@ -23,6 +23,12 @@ package org.semanticweb.owlapi.benchmarks;/*
  * questions.
  */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.zip.GZIPInputStream;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
@@ -39,19 +45,12 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.zip.GZIPInputStream;
-
 @SuppressWarnings("javadoc")
 @State(Scope.Thread)
 public class FunctionalSyntaxParsingBenchmark {
 
-    private static String TAXON_URL=
-            "https://github.com/owlcs/owlapibenchmarks/raw/master/ncbitaxon/src/main/resources/ncbitaxon.rdf.ofn.gz";
+    private static String TAXON_URL =
+        "https://github.com/owlcs/owlapibenchmarks/raw/master/ncbitaxon/src/main/resources/ncbitaxon.rdf.ofn.gz";
     private File uncompressedTaxonFile;
 
     @Setup(Level.Trial)
