@@ -82,7 +82,7 @@ class BundleConvention {
                 if (logger.isInfoEnabled()) {
                     logger.info  "bundle classpath = $bundleClasspath"
                 }
-                if (!bundleClasspath) {
+                if (!bundleClasspath || bundleClasspath.size() == 0) {
                     Configuration copyRecursive = (configuration  ? configuration : project.configurations.compile).copyRecursive()
                     def resFiles = [sourceSet.output.classesDir]
 
