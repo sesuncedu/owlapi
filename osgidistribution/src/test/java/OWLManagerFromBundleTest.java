@@ -2,7 +2,17 @@
  * Created by ses on 1/21/17.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import aQute.bnd.osgi.Jar;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.jar.Manifest;
+import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -24,31 +34,24 @@ import org.semanticweb.owlapi.model.parameters.ChangeApplied;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.jar.Manifest;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 
 public class OWLManagerFromBundleTest {
+
     private static final Option[] OPTIONS_ARRAY = {};
     @SuppressWarnings("UnusedDeclaration")
     private static Logger logger = LoggerFactory.getLogger(OWLManagerFromBundleTest.class);
+    @Inject
+    BundleContext context;
 
     @Configuration
     public Option[] config() throws Exception {
         ArrayList<Option> options = new ArrayList<>();
         options.add(CoreOptions.cleanCaches());
         options.add(CoreOptions.junitBundles());
-        try (BufferedReader in = new BufferedReader(new FileReader("build/tmp/test/bundle-files.txt"))) {
+        try (BufferedReader in = new BufferedReader(
+            new FileReader("build/tmp/test/bundle-files.txt"))) {
             String url;
             while ((url = in.readLine()) != null) {
                 UrlProvisionOption bundle = CoreOptions.bundle(url);
@@ -74,9 +77,6 @@ public class OWLManagerFromBundleTest {
         }
 
     }
-
-    @Inject
-    BundleContext context;
 
     @Test
     public void createOWLOntologyManager() throws OWLOntologyCreationException {
