@@ -4,6 +4,20 @@ package org.semanticweb.owlapi;
  * Created by ses on 3/5/15.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nonnull;
 import org.apache.felix.framework.FrameworkFactory;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,27 +31,18 @@ import org.semanticweb.owlapi.test.IntegrationTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-
 @SuppressWarnings("javadoc")
 @Category(IntegrationTest.class)
 public class BundleIsLoadableIntegrationTestCase {
-    private static Logger logger = LoggerFactory.getLogger(BundleIsLoadableIntegrationTestCase.class);
+
+    private static Logger logger = LoggerFactory
+        .getLogger(BundleIsLoadableIntegrationTestCase.class);
+
     @Ignore
     @Test
-    public void startBundle() throws BundleException, ClassNotFoundException, IllegalAccessException,
-            InstantiationException, IOException {
+    public void startBundle()
+        throws BundleException, ClassNotFoundException, IllegalAccessException,
+        InstantiationException, IOException {
         // Stream.of(System.getProperty("java.class.path").split(":")).filter(x
         // -> x.contains(".jar")).forEach(
         // System.out::println);
@@ -54,18 +59,19 @@ public class BundleIsLoadableIntegrationTestCase {
         final BundleContext context = framework.getBundleContext();
         assertNotNull("context is null", context);
         BufferedReader in = new BufferedReader(new FileReader("build/tmp/test/bundleName"));
-        in.lines().forEach( archivePath -> {
+        in.lines().forEach(archivePath -> {
             File file = new File(archivePath);
             assertNotNull("file is null", file);
             URI uri = file.toURI();
             assertNotNull("uri is null", uri);
             Bundle bundle = null;
             try {
-                logger.info("{}",uri);
+                logger.info("{}", uri);
                 bundle = context.installBundle(uri.toString());
                 assertNotNull(bundle);
             } catch (BundleException e) {
-                logger.error("Caught Exception for {}", uri, e); //To change body of catch statement use File | Settings | File Templates.
+                logger.error("Caught Exception for {}", uri,
+                    e); //To change body of catch statement use File | Settings | File Templates.
             }
         });
 
@@ -100,10 +106,12 @@ public class BundleIsLoadableIntegrationTestCase {
             }
 
             Bundle bundle = context.getBundle();
-            Class<?> owlManagerClass = bundle.loadClass("org.semanticweb.owlapi.apibinding.OWLManager");
+            Class<?> owlManagerClass = bundle
+                .loadClass("org.semanticweb.owlapi.apibinding.OWLManager");
             assertNotNull("no class owlmanager", owlManagerClass);
             owlManagerClass.newInstance();
-            assertNotEquals("OWLManager class from bundle class loader  equals OWLManager class from system class path",
+            assertNotEquals(
+                "OWLManager class from bundle class loader  equals OWLManager class from system class path",
                 OWLManager.class, owlManagerClass);
         } catch (Exception e) {
             e.printStackTrace(System.out);
