@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OntologyManagerCreateBenchmark {
+
     @SuppressWarnings("UnusedDeclaration")
     private static Logger logger = LoggerFactory.getLogger(OntologyManagerCreateBenchmark.class);
 
@@ -37,8 +38,8 @@ public class OntologyManagerCreateBenchmark {
     public int countFactories() throws OWLOntologyCreationException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         return manager.getOntologyFactories().size() +
-                manager.getOntologyParsers().size() +
-                manager.getOntologyStorers().size();
+            manager.getOntologyParsers().size() +
+            manager.getOntologyStorers().size();
 
     }
 
